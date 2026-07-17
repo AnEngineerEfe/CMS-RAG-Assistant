@@ -10,8 +10,24 @@ class CMSLLM:
             temperature=0
         )
 
+    # -----------------------------------------
+    # Normal Response
+    # -----------------------------------------
+
     def generate(self, prompt):
 
         response = self.llm.invoke(prompt)
 
         return response.content
+
+    # -----------------------------------------
+    # Streaming Response
+    # -----------------------------------------
+
+    def stream(self, prompt):
+
+        for chunk in self.llm.stream(prompt):
+
+            if chunk.content:
+
+                yield chunk.content

@@ -1,19 +1,11 @@
+from src.config import *
 from src.pipeline.cms_pipeline import CMSPipeline
 from src.ingestion.loader import CMSDocumentLoader
 from src.ingestion.cleaner import TextCleaner
 from src.chunking.chunker import CMSChunker
 from src.embeddings.embedder import CMSEmbedder
 from src.vectorstore.faiss_store import CMSVectorStore
-
-from src.retrieval.retriever import CMSRetriever
-from src.retrieval.bm25_retriever import CMSBM25Retriever
-from src.retrieval.hybrid_retriever import CMSHybridRetriever
-
-from src.reranking.reranker import CMSReranker
-
-from src.generation.prompt_builder import CMSPromptBuilder
-from src.generation.llm import CMSLLM
-
+from src.metadata.metadata_manager import CMSMetadataManager
 
 
 def main():
@@ -28,9 +20,27 @@ def main():
 
     print("\n[1] Loading PDF...")
 
-    loader = CMSDocumentLoader(
-    "data/raw"
+    loader = CMSDocumentLoader(RAW_DATA_PATH)
+
+    metadata_manager = CMSMetadataManager(
+    METADATA_PATH
+    ) 
+
+    current_metadata = metadata_manager.build_metadata(
+        loader.get_pdf_files()
     )
+
+    old_metadata = metadata_manager.load()
+
+    if old_metadata == current_metadata:
+
+        print("\nMetadata unchanged.")
+
+    else:
+
+        print("\nDocuments changed.")
+
+        metadata_manager.save(current_metadata)
 
     documents = loader.load()
 
@@ -52,8 +62,8 @@ def main():
     print("\n[3] Chunking documents...")
 
     chunker = CMSChunker(
-        chunk_size=600,
-        chunk_overlap=100
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP
     )
 
     chunks = chunker.split(documents)
@@ -78,29 +88,74 @@ def main():
         embedder.get_model()
     )
 
-    DB_PATH = "data/vectorstore/faiss_index"
+    db = None
 
-    if vectorstore.exists(DB_PATH):
+    # ------------------------------------------------
+    # Try Loading Existing Database
+    # ------------------------------------------------
+
+    if old_metadata == current_metadata and vectorstore.exists(VECTOR_DB_PATH):
 
         print("Existing vector database found.")
 
-        db = vectorstore.load(DB_PATH)
+        db = vectorstore.load(VECTOR_DB_PATH)
 
         print("Vector database loaded successfully.")
 
-    else:
+    # ------------------------------------------------
+    # Create New Database
+    # ------------------------------------------------
 
-        print("No vector database found.")
+    else:
 
         print("Creating new vector database...")
 
+        # Load documents only when needed
+        documents = loader.load()
+
+        print(f"Loaded {len(documents)} pages.")
+
+        # Cleaning
+        for doc in documents:
+            doc.page_content = TextCleaner.clean(doc.page_content)
+
+        # Chunking
+        chunker = CMSChunker(
+            chunk_size=CHUNK_SIZE,
+            chunk_overlap=CHUNK_OVERLAP
+        )
+
+        chunks = chunker.split(documents)
+
+        print(f"Created {len(chunks)} chunks.")
+
+        # Create DB
         db = vectorstore.create(chunks)
 
-        vectorstore.save(db, DB_PATH)
+        # Save DB
+        vectorstore.save(db, VECTOR_DB_PATH)
+
+        # Save metadata
+        metadata_manager.save(current_metadata)
 
         print("Vector database saved successfully.")
 
     print(f"Indexed {db.index.ntotal} chunks.")
+
+    # Ensure chunks exist when DB is loaded from disk
+    if 'chunks' not in locals():
+
+        documents = loader.load()
+
+        for doc in documents:
+            doc.page_content = TextCleaner.clean(doc.page_content)
+
+        chunker = CMSChunker(
+            chunk_size=CHUNK_SIZE,
+            chunk_overlap=CHUNK_OVERLAP
+        )
+
+        chunks = chunker.split(documents)
 
     # ------------------------------------------------
     # Initialize Components (Only Once)
@@ -162,7 +217,12 @@ def main():
 
                 shown_pages.add(page)
 
-                print(f"• ADVENT CMS | Page {page}")
+                document = doc.metadata.get(
+                    "document",
+                    "Unknown"
+                )
+
+                print(f"• {document} | Page {page}")
 
 if __name__ == "__main__":
     main()

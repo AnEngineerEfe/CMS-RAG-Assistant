@@ -36,3 +36,9 @@ class CMSDocumentLoader:
             documents.extend(pages)
 
         return documents
+    
+    def get_pdf_files(self):
+
+        return list(
+            Path(self.data_folder).rglob("*.pdf")
+        )

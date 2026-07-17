@@ -1,4 +1,5 @@
-import os
+from pathlib import Path
+
 from langchain_community.vectorstores import FAISS
 
 
@@ -25,6 +26,11 @@ class CMSVectorStore:
 
     def save(self, vectorstore, path):
 
+        Path(path).parent.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
         vectorstore.save_local(path)
 
     # -----------------------------------------
@@ -45,4 +51,4 @@ class CMSVectorStore:
 
     def exists(self, path):
 
-        return os.path.exists(path)
+        return Path(path).exists()
