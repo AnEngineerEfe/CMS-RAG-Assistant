@@ -51,9 +51,12 @@ class CMSPipeline:
         # Prompt
         # -------------------------
 
+        history = self.memory.get_history()
+
         prompt = CMSPromptBuilder.build(
             query,
-            top_docs
+            top_docs,
+            history
         )
 
         # -------------------------
@@ -74,43 +77,30 @@ class CMSPipeline:
     
     def stream(self, query):
 
-        # -------------------------
         # Hybrid Retrieval
-        # -------------------------
-
         hybrid_results = self.hybrid.search(query)
 
-        # -------------------------
         # Reranking
-        # -------------------------
-
         reranked_results = self.reranker.rerank(
             query,
             hybrid_results,
             top_k=3
         )
 
-        # -------------------------
         # Documents
-        # -------------------------
-
         top_docs = [
             doc
             for score, doc in reranked_results
         ]
 
-        # -------------------------
         # Prompt
-        # -------------------------
+        history = self.memory.get_history()
 
         prompt = CMSPromptBuilder.build(
             query,
-            top_docs
+            top_docs,
+            history
         )
-
-        # -------------------------
-        # Streaming
-        # -------------------------
 
         answer = ""
 

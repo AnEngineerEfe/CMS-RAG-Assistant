@@ -2,12 +2,11 @@
 # Paths
 # -----------------------------
 
-RAW_DATA_PATH = "data/raw"
+RAW_DATA_PATH = "data/raw/uploaded"
 
 VECTOR_DB_PATH = "data/vectorstore/faiss_index"
 
 METADATA_PATH = "data/vectorstore/metadata.json"
-
 
 # -----------------------------
 # Chunking
@@ -34,3 +33,5 @@ OLLAMA_MODEL = "llama3"
 # -----------------------------
 
 TOP_K = 3
+
+UPLOAD_FOLDER = "data/raw/uploaded"

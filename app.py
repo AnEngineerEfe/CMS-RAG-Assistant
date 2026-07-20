@@ -1,7 +1,12 @@
+from embeddings import embedder
+from src.document.document_service import CMSDocumentService
+from src.document.document_manager import CMSDocumentManager
+from src.upload.upload_manager import CMSUploadManager
 from src.metadata.metadata_manager import CMSMetadataManager
 from src.config import *
 import streamlit as st
 import os
+
 
 from src.pipeline.cms_pipeline import CMSPipeline
 from src.ingestion.loader import CMSDocumentLoader
@@ -47,6 +52,10 @@ def rebuild_database():
 
     chunks = chunker.split(documents)
 
+    if len(chunks) == 0:
+
+        return None
+
     embedder = CMSEmbedder()
 
     vectorstore = CMSVectorStore(
@@ -91,6 +100,9 @@ def load_pipeline():
 
     chunks = chunker.split(documents)
 
+    if len(chunks) == 0:
+        return None
+
     embedder = CMSEmbedder()
 
     vectorstore = CMSVectorStore(
@@ -98,7 +110,7 @@ def load_pipeline():
     )
 
     db = vectorstore.load(
-    VECTOR_DB_PATH
+        VECTOR_DB_PATH
     )
 
     return CMSPipeline(
@@ -107,7 +119,14 @@ def load_pipeline():
     )
 
 
+
 pipeline = load_pipeline()
+
+if pipeline is None:
+
+    st.info("📂 No document uploaded yet.")
+
+    st.stop()
 
 with st.sidebar:
 
@@ -133,6 +152,51 @@ with st.sidebar:
 
     st.subheader("📂 Documents")
 
+    doc_manager = CMSDocumentManager()
+
+    documents = doc_manager.get_documents()
+
+    st.caption(f"{len(documents)} document(s)")
+
+    service = CMSDocumentService()
+
+    for document in documents:
+
+        with st.container(border=True):
+
+            st.markdown(f"📄 **{document['name']}**")
+
+            st.caption(f"{document['size']} MB")
+
+            if st.button(
+                "🗑 Delete",
+                key=f"delete_{document['path']}"
+            ):
+
+                deleted = service.delete(
+                    str(document["path"])
+                )
+
+                if deleted:
+
+                    rebuild_database()
+
+                    st.cache_resource.clear()
+
+                    pipeline = load_pipeline()
+
+                    st.success("Document deleted.")
+
+                    st.rerun()
+
+                else:
+
+                    st.error(
+                        "Delete failed."
+                    )
+
+    uploaded = False
+
     uploaded_files = st.file_uploader(
         "Upload PDF Files",
         type=["pdf"],
@@ -144,17 +208,27 @@ with st.sidebar:
         exist_ok=True
     )
 
+    manager = CMSUploadManager()
+
     if uploaded_files:
+
+        uploaded = False
 
         for file in uploaded_files:
 
-            save_path = os.path.join(
-                "data/raw/uploaded",
-                file.name
-            )
+            if manager.is_duplicate(file):
 
-            with open(save_path, "wb") as f:
-                f.write(file.getbuffer())
+                st.warning(
+                    f"⚠️ {file.name} already exists."
+                )
+
+                continue
+
+            manager.save_file(file)
+
+            uploaded = True
+
+    if uploaded:
 
         st.success("PDF(s) uploaded successfully!")
 
@@ -257,6 +331,7 @@ if question:
                     preview += "..."
 
                 st.write(preview)
+
 
     st.session_state.messages.append(
         {
