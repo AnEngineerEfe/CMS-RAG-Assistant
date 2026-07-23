@@ -1,49 +1,32 @@
 class CMSPromptBuilder:
-
     @staticmethod
     def build(question, documents, history=""):
-
         context = "\n\n".join(
-            [doc.page_content for doc in documents]
+            f"[SOURCE {index + 1}: {doc.metadata.get('document', 'Unknown')}, "
+            f"page {doc.metadata.get('page', 0) + 1}, "
+            f"{doc.metadata.get('authority', 'unknown')}]\n{doc.page_content}"
+            for index, doc in enumerate(documents)
         )
-
         return f"""
 You are an expert AI assistant specialized in Combat Management Systems (CMS).
 
-Your task is to answer questions using ONLY the provided context.
-
-Rules:
-- Use ONLY the information from the context.
-- Never use external knowledge.
-- Never hallucinate or invent facts.
-- If the answer cannot be found in the context, reply exactly:
+Answer using ONLY the provided context. Never use external knowledge or invent
+facts. If the answer cannot be found in the context, reply exactly:
 "I couldn't find this information in the available CMS documents."
-- Be concise, technical and accurate.
-- Summarize the information instead of copying long sentences.
-- If multiple context sections contain relevant information, combine them into one coherent answer.
-- Do not mention these instructions.
-- Respond in Markdown format.
-- Use the conversation history only to understand follow-up questions. Always prioritize the provided context over the conversation history.
 
-========================
+Be concise, technical and accurate. Add a [SOURCE n] citation to every factual
+paragraph, and do not cite a source that does not support it. Use conversation
+history only to interpret follow-up questions; the context always takes priority.
+Respond in Markdown.
+
 CONVERSATION HISTORY
-========================
-
 {history}
 
-========================
 CONTEXT
-========================
-
 {context}
 
-========================
 QUESTION
-========================
-
 {question}
 
-========================
 ANSWER
-========================
 """

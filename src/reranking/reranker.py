@@ -1,17 +1,21 @@
 from sentence_transformers import CrossEncoder
+from src.config import RERANKER_MODEL
 
 
 class CMSReranker:
 
-    def __init__(self, model_name="BAAI/bge-reranker-base"):
+    def __init__(self, model_name=RERANKER_MODEL):
 
         print("\nLoading Reranker Model...")
 
-        self.model = CrossEncoder(model_name)
+        self.model = CrossEncoder(model_name, local_files_only=True)
 
         print("Reranker Loaded Successfully!")
 
     def rerank(self, query, documents, top_k=3):
+
+        if not documents:
+            return []
 
         pairs = [
             (query, doc.page_content)

@@ -1,4 +1,5 @@
 from langchain_ollama import ChatOllama
+from src.config import OLLAMA_MODEL
 
 
 class CMSLLM:
@@ -6,7 +7,7 @@ class CMSLLM:
     def __init__(self):
 
         self.llm = ChatOllama(
-            model="qwen2.5:3b",
+            model=OLLAMA_MODEL,
             temperature=0
         )
 
