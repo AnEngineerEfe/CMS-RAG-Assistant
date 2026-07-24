@@ -8,7 +8,7 @@ from src.upload.upload_manager import CMSUploadManager
 
 st.set_page_config(page_title="CMS-RAG Assistant", page_icon="⚓", layout="wide")
 st.title("⚓ CMS-RAG Assistant")
-st.caption("Kaynak gösteren, yerel ve koleksiyon-ayrımlı CMS bilgi asistanı")
+st.caption("Kaynak gösteren, yerel ve koleksiyon ayrımlı CMS bilgi asistanı")
 
 
 @st.cache_resource
@@ -25,23 +25,37 @@ if "messages" not in st.session_state:
 
 with st.sidebar:
     st.header("Bilgi tabanı")
-    scope = st.selectbox("Sorgu kapsamı", ["all", "havelsan", "open_source"], format_func=lambda item: {
-        "all": "Birleşik (kaynaklar korunur)",
-        "havelsan": "Yalnızca HAVELSAN resmî kaynakları",
-        "open_source": "Yalnızca açık / kamu kaynakları",
-    }[item])
+    scope = st.selectbox(
+        "Sorgu kapsamı",
+        ["all", "havelsan", "open_source"],
+        format_func=lambda item: {
+            "all": "Birleşik (kaynaklar korunur)",
+            "havelsan": "Yalnızca HAVELSAN resmî kaynakları",
+            "open_source": "Yalnızca açık / kamu kaynakları",
+        }[item],
+    )
     uploaded_files = st.file_uploader("Resmî PDF yükle", type=["pdf"], accept_multiple_files=True)
     if uploaded_files and st.button("Yükle ve indeksle"):
         manager = CMSUploadManager()
         saved = sum(manager.save_file(file) for file in uploaded_files if not manager.is_duplicate(file))
-        st.success(f"{saved} dosya kaydedildi; {rebuild()} parça indekslendi.") if saved else st.info("Yeni dosya bulunamadı.")
+        if saved:
+            st.success(f"{saved} dosya kaydedildi; {rebuild()} parça indekslendi.")
+        else:
+            st.info("Yeni dosya bulunamadı.")
+
     if st.button("Yerel kaynaklardan yeniden indeksle"):
         st.success(f"{rebuild()} parça indekslendi.")
+
+    if st.button("Sohbeti temizle"):
+        st.session_state.messages = []
+        knowledge_base().clear_memory()
+        st.rerun()
+
     st.divider()
     st.caption("HAVELSAN resmî içerik ve açık/kamu referansları ayrı FAISS indekslerinde tutulur.")
     st.caption(f"Yerel PDF sayısı: {len(CMSDocumentManager().get_documents())}")
 
-if not knowledge_base().collections and any(RAW_DATA_PATH.rglob("*")):
+if not knowledge_base().collections and any(path.is_file() for path in RAW_DATA_PATH.rglob("*")):
     with st.spinner("Yerel kaynaklar indeksleniyor..."):
         rebuild()
 
@@ -61,5 +75,10 @@ if question:
         if sources:
             with st.expander("Kullanılan kaynaklar"):
                 for score, document in sources:
-                    st.markdown(f"- **{document.metadata.get('document', 'Bilinmeyen')}** — sayfa {document.metadata.get('page', 0) + 1} — {document.metadata.get('authority', 'bilinmiyor')} — skor: {float(score):.3f}")
+                    st.markdown(
+                        f"- **{document.metadata.get('document', 'Bilinmeyen')}** "
+                        f"— sayfa {document.metadata.get('page', 0) + 1} "
+                        f"— {document.metadata.get('authority', 'bilinmiyor')} "
+                        f"— alaka: {float(score):.0%}"
+                    )
     st.session_state.messages.append({"role": "assistant", "content": answer})

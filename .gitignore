@@ -1,0 +1,5 @@
+__pycache__/
+*.py[cod]
+.streamlit/
+data/vectorstore/
+data/raw/sync_failures.log

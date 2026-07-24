@@ -39,6 +39,8 @@ class CMSDocumentLoader:
     def _metadata(self, path: Path, page: int) -> dict:
         relative = path.relative_to(self.data_folder)
         collection = relative.parts[0] if len(relative.parts) > 1 else "uploaded"
+        if path.stem.startswith("page_") and path.stem[5:].isdigit():
+            page = int(path.stem[5:]) - 1
         return {
             "document": path.name,
             "source_path": str(relative).replace("\\", "/"),

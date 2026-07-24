@@ -1,26 +1,34 @@
-"""Collection-aware RAG orchestration.
-
-HAVELSAN and public/reference corpora are indexed independently, retrieved
-independently, then merged only for a user query.  This gives the caller a
-clear, auditable choice of source scope.
-"""
+"""Collection-aware RAG orchestration with guarded answer generation."""
 
 from __future__ import annotations
 
+import unicodedata
 from pathlib import Path
 
 from langchain_core.documents import Document
 
 from src.chunking.chunker import CMSChunker
-from src.config import CHUNK_OVERLAP, CHUNK_SIZE, RETRIEVAL_K, TOP_K, VECTOR_DB_PATH
+from src.config import (
+    CHUNK_OVERLAP,
+    CHUNK_SIZE,
+    MIN_RERANK_RELEVANCE,
+    PROCESSED_MARKDOWN_PATH,
+    RETRIEVAL_K,
+    TOP_K,
+    VECTOR_DB_PATH,
+)
 from src.embeddings.embedder import CMSEmbedder
 from src.generation.llm import CMSLLM
 from src.generation.prompt_builder import CMSPromptBuilder
 from src.ingestion.cleaner import TextCleaner
 from src.ingestion.loader import CMSDocumentLoader
+from src.memory.conversation_memory import CMSConversationMemory
 from src.reranking.reranker import CMSReranker
 from src.retrieval.hybrid_retriever import CMSHybridRetriever
 from src.vectorstore.faiss_store import CMSVectorStore
+
+
+NO_ANSWER = "Bu soruyu destekleyecek yeterli güvenilir kaynak bulunamadı."
 
 
 class CMSKnowledgeBase:
@@ -31,18 +39,19 @@ class CMSKnowledgeBase:
         self.collections: dict[str, CMSHybridRetriever] = {}
         self.reranker = CMSReranker()
         self.llm = CMSLLM()
+        self.memory = CMSConversationMemory()
 
     def build(self) -> int:
-        """Build independent indexes from the current local source corpus."""
         documents = CMSDocumentLoader(self.source_root).load()
+        documents.extend(self._legacy_advent_documents())
         grouped: dict[str, list[Document]] = {}
         for document in documents:
             document.page_content = TextCleaner.clean(document.page_content)
             if document.page_content.strip():
                 grouped.setdefault(document.metadata["collection"], []).append(document)
 
-        chunker = CMSChunker(CHUNK_SIZE, CHUNK_OVERLAP)
         self.collections.clear()
+        chunker = CMSChunker(CHUNK_SIZE, CHUNK_OVERLAP)
         indexed = 0
         for collection, items in grouped.items():
             chunks = chunker.split(items)
@@ -52,28 +61,83 @@ class CMSKnowledgeBase:
             self.vectorstore.save(index, VECTOR_DB_PATH / collection)
             self.collections[collection] = CMSHybridRetriever(index, chunks)
             indexed += len(chunks)
+        self.clear_memory()
         return indexed
 
     def ask(self, query: str, scope: str = "all") -> tuple[str, list[tuple[float, Document]]]:
-        selected = self.collections.items() if scope == "all" else [
-            (scope, self.collections[scope])
-        ] if scope in self.collections else []
+        if not query.strip():
+            return NO_ANSWER, []
+        retrieval_query = self._contextualise_short_query(query)
+        candidates = self._retrieve(retrieval_query, scope)
+        if not candidates:
+            return NO_ANSWER, []
+
+        ranked = self.reranker.rerank(retrieval_query, candidates[: RETRIEVAL_K * 2], TOP_K)
+        if not ranked or ranked[0][0] < MIN_RERANK_RELEVANCE:
+            return NO_ANSWER, ranked
+
+        answer = self.llm.generate(
+            CMSPromptBuilder.build(query, [document for _, document in ranked], self.memory.get_history())
+        )
+        self.memory.add(query, answer)
+        return answer, ranked
+
+    def clear_memory(self) -> None:
+        self.memory.clear()
+
+    def _retrieve(self, query: str, scope: str) -> list[Document]:
+        selected = self.collections.items() if scope == "all" else (
+            [(scope, self.collections[scope])] if scope in self.collections else []
+        )
         candidates: list[Document] = []
         seen: set[tuple[str, int, str]] = set()
         for _, retriever in selected:
             for document in retriever.search(query):
                 key = (
-                    document.metadata.get("source_path", document.metadata.get("document", "")),
+                    document.metadata.get("source_path", ""),
                     document.metadata.get("page", 0),
                     document.page_content[:120],
                 )
                 if key not in seen:
                     seen.add(key)
                     candidates.append(document)
+        return candidates
 
-        if not candidates:
-            return "Bu kapsamda sorgulanabilir bir kaynak bulunamadı.", []
+    def _contextualise_short_query(self, query: str) -> str:
+        history = self.memory.get_history()
+        if len(query.split()) <= 5 and history:
+            query = f"{history[-1]['question']} {query}"
+        # The active corpus contains English technical documents. This compact
+        # domain glossary improves Turkish query recall without sending any data
+        # to an external translation service.
+        glossary = {
+            "iz yonetimi": "track management",
+            "iz": "track",
+            "takip": "tracking",
+            "hedef": "target",
+            "veri bağlantısı": "data link",
+            "taktik veri linki": "tactical data link",
+            "durumsal farkindalik": "situational awareness",
+            "silah yonetimi": "weapon management",
+            "sensor fuzyonu": "sensor fusion",
+        }
+        lowered = unicodedata.normalize("NFKD", query.lower())
+        lowered = "".join(char for char in lowered if not unicodedata.combining(char))
+        lowered = lowered.translate(str.maketrans("çğıöşü", "cgiosu"))
+        additions = [english for turkish, english in glossary.items() if turkish in lowered]
+        return f"{query} {' '.join(additions)}" if additions else query
 
-        ranked = self.reranker.rerank(query, candidates[: RETRIEVAL_K * 2], top_k=TOP_K)
-        answer = self.llm.generate(CMSPromptBuilder.build(query, [doc for _, doc in ranked], []))
-        return answer, ranked
+    @staticmethod
+    def _legacy_advent_documents() -> list[Document]:
+        if not PROCESSED_MARKDOWN_PATH.exists():
+            return []
+        legacy = CMSDocumentLoader(PROCESSED_MARKDOWN_PATH).load()
+        for document in legacy:
+            original_name = document.metadata["document"]
+            document.metadata.update({
+                "collection": "havelsan",
+                "authority": "official",
+                "document": "ADVENT legacy extraction",
+                "source_path": f"processed/markdown/{original_name}",
+            })
+        return legacy
