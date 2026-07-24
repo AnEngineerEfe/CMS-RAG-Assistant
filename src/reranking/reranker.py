@@ -30,7 +30,7 @@ class CMSReranker:
             lexical_score = len(query_terms & document_terms) / len(query_terms) if query_terms else 0.0
             # Explicit terminology is vital for CMS/TDL questions. The model is
             # still retained as a secondary semantic signal.
-            combined_score = 0.8 * lexical_score + 0.2 * model_score
+            combined_score = model_score if not query_terms else 0.8 * lexical_score + 0.2 * model_score
             ranked.append((combined_score, document))
         return sorted(ranked, key=lambda item: item[0], reverse=True)[:top_k]
 

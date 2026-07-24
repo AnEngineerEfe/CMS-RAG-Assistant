@@ -8,15 +8,7 @@ from pathlib import Path
 from langchain_core.documents import Document
 
 from src.chunking.chunker import CMSChunker
-from src.config import (
-    CHUNK_OVERLAP,
-    CHUNK_SIZE,
-    MIN_RERANK_RELEVANCE,
-    PROCESSED_MARKDOWN_PATH,
-    RETRIEVAL_K,
-    TOP_K,
-    VECTOR_DB_PATH,
-)
+from src.config import CHUNK_OVERLAP, CHUNK_SIZE, MIN_RERANK_RELEVANCE, PROCESSED_MARKDOWN_PATH, RETRIEVAL_K, TOP_K, VECTOR_DB_PATH
 from src.embeddings.embedder import CMSEmbedder
 from src.generation.llm import CMSLLM
 from src.generation.prompt_builder import CMSPromptBuilder
@@ -28,7 +20,7 @@ from src.retrieval.hybrid_retriever import CMSHybridRetriever
 from src.vectorstore.faiss_store import CMSVectorStore
 
 
-NO_ANSWER = "Bu soruyu destekleyecek yeterli güvenilir kaynak bulunamadı."
+NO_ANSWER = "Bu soruyu destekleyecek yeterli g\u00fcvenilir kaynak bulunamad\u0131."
 
 
 class CMSKnowledgeBase:
@@ -42,8 +34,7 @@ class CMSKnowledgeBase:
         self.memory = CMSConversationMemory()
 
     def build(self) -> int:
-        documents = CMSDocumentLoader(self.source_root).load()
-        documents.extend(self._legacy_advent_documents())
+        documents = CMSDocumentLoader(self.source_root).load() + self._legacy_advent_documents()
         grouped: dict[str, list[Document]] = {}
         for document in documents:
             document.page_content = TextCleaner.clean(document.page_content)
@@ -51,16 +42,15 @@ class CMSKnowledgeBase:
                 grouped.setdefault(document.metadata["collection"], []).append(document)
 
         self.collections.clear()
-        chunker = CMSChunker(CHUNK_SIZE, CHUNK_OVERLAP)
         indexed = 0
+        chunker = CMSChunker(CHUNK_SIZE, CHUNK_OVERLAP)
         for collection, items in grouped.items():
             chunks = chunker.split(items)
-            if not chunks:
-                continue
-            index = self.vectorstore.create(chunks)
-            self.vectorstore.save(index, VECTOR_DB_PATH / collection)
-            self.collections[collection] = CMSHybridRetriever(index, chunks)
-            indexed += len(chunks)
+            if chunks:
+                index = self.vectorstore.create(chunks)
+                self.vectorstore.save(index, VECTOR_DB_PATH / collection)
+                self.collections[collection] = CMSHybridRetriever(index, chunks)
+                indexed += len(chunks)
         self.clear_memory()
         return indexed
 
@@ -75,10 +65,7 @@ class CMSKnowledgeBase:
         ranked = self.reranker.rerank(retrieval_query, candidates[: RETRIEVAL_K * 2], TOP_K)
         if not ranked or ranked[0][0] < MIN_RERANK_RELEVANCE:
             return NO_ANSWER, ranked
-
-        answer = self.llm.generate(
-            CMSPromptBuilder.build(query, [document for _, document in ranked], self.memory.get_history())
-        )
+        answer = self.llm.generate(CMSPromptBuilder.build(query, [doc for _, doc in ranked], self.memory.get_history()))
         self.memory.add(query, answer)
         return answer, ranked
 
@@ -86,18 +73,12 @@ class CMSKnowledgeBase:
         self.memory.clear()
 
     def _retrieve(self, query: str, scope: str) -> list[Document]:
-        selected = self.collections.items() if scope == "all" else (
-            [(scope, self.collections[scope])] if scope in self.collections else []
-        )
+        selected = self.collections.items() if scope == "all" else [(scope, self.collections[scope])] if scope in self.collections else []
         candidates: list[Document] = []
         seen: set[tuple[str, int, str]] = set()
         for _, retriever in selected:
             for document in retriever.search(query):
-                key = (
-                    document.metadata.get("source_path", ""),
-                    document.metadata.get("page", 0),
-                    document.page_content[:120],
-                )
+                key = (document.metadata.get("source_path", ""), document.metadata.get("page", 0), document.page_content[:120])
                 if key not in seen:
                     seen.add(key)
                     candidates.append(document)
@@ -107,24 +88,21 @@ class CMSKnowledgeBase:
         history = self.memory.get_history()
         if len(query.split()) <= 5 and history:
             query = f"{history[-1]['question']} {query}"
-        # The active corpus contains English technical documents. This compact
-        # domain glossary improves Turkish query recall without sending any data
-        # to an external translation service.
+        normalized = unicodedata.normalize("NFKD", query.lower())
+        normalized = "".join(char for char in normalized if not unicodedata.combining(char))
+        normalized = normalized.translate(str.maketrans("\u00e7\u011f\u0131\u00f6\u015f\u00fc", "cgiosu"))
         glossary = {
             "iz yonetimi": "track management",
             "iz": "track",
             "takip": "tracking",
             "hedef": "target",
-            "veri bağlantısı": "data link",
+            "veri baglantisi": "data link",
             "taktik veri linki": "tactical data link",
             "durumsal farkindalik": "situational awareness",
             "silah yonetimi": "weapon management",
             "sensor fuzyonu": "sensor fusion",
         }
-        lowered = unicodedata.normalize("NFKD", query.lower())
-        lowered = "".join(char for char in lowered if not unicodedata.combining(char))
-        lowered = lowered.translate(str.maketrans("çğıöşü", "cgiosu"))
-        additions = [english for turkish, english in glossary.items() if turkish in lowered]
+        additions = [english for turkish, english in glossary.items() if turkish in normalized]
         return f"{query} {' '.join(additions)}" if additions else query
 
     @staticmethod

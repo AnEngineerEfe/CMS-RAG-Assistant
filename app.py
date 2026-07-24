@@ -6,8 +6,8 @@ from src.services.knowledge_base import CMSKnowledgeBase
 from src.upload.upload_manager import CMSUploadManager
 
 
-st.set_page_config(page_title="CMS-RAG Assistant", page_icon="⚓", layout="wide")
-st.title("⚓ CMS-RAG Assistant")
+st.set_page_config(page_title="CMS-RAG Assistant", layout="wide")
+st.title("CMS-RAG Assistant")
 st.caption("Kaynak gösteren, yerel ve koleksiyon ayrımlı CMS bilgi asistanı")
 
 
@@ -35,17 +35,15 @@ with st.sidebar:
         }[item],
     )
     uploaded_files = st.file_uploader("Resmî PDF yükle", type=["pdf"], accept_multiple_files=True)
-    if uploaded_files and st.button("Yükle ve indeksle"):
-        manager = CMSUploadManager()
-        saved = sum(manager.save_file(file) for file in uploaded_files if not manager.is_duplicate(file))
-        if saved:
-            st.success(f"{saved} dosya kaydedildi; {rebuild()} parça indekslendi.")
-        else:
-            st.info("Yeni dosya bulunamadı.")
+    if uploaded_files and st.button("Yükle ve indeksle", type="primary"):
+        added, duplicates = CMSUploadManager().save_files(uploaded_files)
+        if added:
+            st.success(f"{len(added)} yeni dosya kaydedildi; {rebuild()} parça indekslendi.")
+        if duplicates:
+            st.warning(f"{len(duplicates)} dosya zaten kayıtlıydı; tekrar eklenmedi.")
 
     if st.button("Yerel kaynaklardan yeniden indeksle"):
         st.success(f"{rebuild()} parça indekslendi.")
-
     if st.button("Sohbeti temizle"):
         st.session_state.messages = []
         knowledge_base().clear_memory()
