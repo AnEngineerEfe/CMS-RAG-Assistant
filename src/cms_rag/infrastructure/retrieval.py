@@ -1,3 +1,5 @@
+"""Semantik ve sözcüksel aramayı yerel yeniden sıralamayla birleştirir."""
+
 from __future__ import annotations
 
 import os
@@ -8,13 +10,15 @@ import numpy as np
 from rank_bm25 import BM25Okapi
 from sentence_transformers import CrossEncoder, SentenceTransformer
 
-from .models import Chunk, SearchHit
+from ..domain.models import Chunk, SearchHit
 
 
 class HybridRetriever:
-    """In-memory hybrid search with RRF fusion and a local cross-encoder reranker."""
+    """Bellek içi FAISS + BM25 aramasını RRF ve cross-encoder ile birleştirir."""
 
     def __init__(self, chunks: list[Chunk]) -> None:
+        """Embedding, FAISS, BM25 ve varsa yerel reranker bileşenlerini hazırlar."""
+
         self.chunks = chunks
         offline = os.getenv("CMS_RAG_OFFLINE", "").strip().lower() in {"1", "true", "yes"}
         self._embedder = SentenceTransformer(
@@ -35,6 +39,9 @@ class HybridRetriever:
             self._reranker = None
 
     def search(self, query: str, limit: int = 4, scope: str = "all") -> list[SearchHit]:
+        """Kapsama uyan adayları iki aramayla bulur, birleştirir ve yeniden sıralar."""
+
+        # Koleksiyon filtresi aday üretiminden önce uygulanarak kapsam dışı kanıtı engeller.
         allowed_ids = [
             item_id for item_id, chunk in enumerate(self.chunks)
             if scope == "all" or chunk.collection == scope
@@ -49,6 +56,7 @@ class HybridRetriever:
         lexical_scores = self._bm25.get_scores(self._tokenise(query))
         lexical_ids = sorted(allowed_ids, key=lambda item_id: lexical_scores[item_id], reverse=True)[:candidate_count]
         fused: dict[int, float] = {}
+        # Reciprocal Rank Fusion, farklı puan ölçeklerini sıra bilgisi üzerinden birleştirir.
         for ranking in (semantic_ids, lexical_ids):
             for rank, item_id in enumerate(ranking, start=1):
                 fused[item_id] = fused.get(item_id, 0.0) + 1 / (60 + rank)
@@ -65,7 +73,7 @@ class HybridRetriever:
 
     @staticmethod
     def _deduplicate_by_page(hits: list[SearchHit], limit: int) -> list[SearchHit]:
-        """Merge complementary chunks from one page into one evidence item."""
+        """Aynı sayfadaki tamamlayıcı parçaları tek bir kanıt kartında birleştirir."""
         unique: list[SearchHit] = []
         positions: dict[tuple[str, int], int] = {}
         for hit in hits:
@@ -91,4 +99,6 @@ class HybridRetriever:
 
     @staticmethod
     def _tokenise(text: str) -> list[str]:
+        """BM25 için Unicode uyumlu, en az iki karakterli sözcükleri çıkarır."""
+
         return re.findall(r"\b[\w-]{2,}\b", text.lower(), flags=re.UNICODE)

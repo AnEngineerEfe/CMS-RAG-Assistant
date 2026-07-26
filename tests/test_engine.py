@@ -3,10 +3,13 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
-from src.cms_rag.engine import CMSRAGEngine
-from src.cms_rag.evidence import EvidenceResponder
-from src.cms_rag.models import Chunk, SearchHit
-from src.cms_rag.query import CMSQueryProcessor
+from src.cms_rag.application import CMSRAGEngine
+from src.cms_rag.domain import (
+    CMSQueryProcessor,
+    Chunk,
+    EvidenceResponder,
+    SearchHit,
+)
 
 
 class CMSRAGEngineTests(unittest.TestCase):

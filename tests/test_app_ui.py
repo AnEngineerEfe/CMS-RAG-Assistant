@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 from streamlit.testing.v1 import AppTest
 
-from src.cms_rag.engine import CMSRAGEngine
-from src.cms_rag.models import Chunk, SearchHit
+from src.cms_rag.application import CMSRAGEngine
+from src.cms_rag.domain import Chunk, SearchHit
 
 
 class StreamlitJourneyTests(unittest.TestCase):
