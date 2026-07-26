@@ -66,7 +66,7 @@ class CMSKnowledgeBase:
         ranked = self.reranker.rerank(retrieval_query, candidates[: RETRIEVAL_K * 2], TOP_K)
         if not ranked or ranked[0][0] < MIN_RERANK_RELEVANCE:
             return NO_ANSWER, ranked
-        evidence_answer = CMSEvidenceAnswers.answer(query, ranked)
+        evidence_answer = CMSEvidenceAnswers.answer(retrieval_query, ranked)
         if evidence_answer:
             self.memory.add(query, evidence_answer)
             return evidence_answer, ranked

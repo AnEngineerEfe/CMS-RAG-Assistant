@@ -28,3 +28,11 @@ class PromptAndMemoryTests(unittest.TestCase):
         )
         self.assertIn("ya\u015fam d\u00f6ng\u00fcs\u00fcn\u00fc", answer)
         self.assertIn("[SOURCE 1]", answer)
+
+    def test_track_management_follow_up_provides_labelled_example(self):
+        answer = CMSEvidenceAnswers.answer(
+            "\u0130z y\u00f6netimi nedir? \u00d6rnek ver.",
+            [(0.9, Document(page_content="TRACK MANAGEMENT manages the lifecycle of tracks."))],
+        )
+        self.assertIn("Temsili senaryo", answer)
+        self.assertIn("[SOURCE 1]", answer)

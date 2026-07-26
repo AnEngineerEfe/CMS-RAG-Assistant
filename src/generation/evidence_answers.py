@@ -16,12 +16,30 @@ class CMSEvidenceAnswers:
     @staticmethod
     def answer(question: str, ranked: list[tuple[float, Document]]) -> str | None:
         normalized = CMSEvidenceAnswers._normalise(question)
-        if not any(marker in normalized for marker in (" nedir", " ne demek", "what is")):
+        is_definition = any(marker in normalized for marker in (" nedir", " ne demek", "what is"))
+        is_detail = any(marker in normalized for marker in ("detaylandir", "acikla", "ayrintili"))
+        is_example = any(marker in normalized for marker in ("ornek ver", "ornekle"))
+        if not (is_definition or is_detail or is_example):
             return None
 
         if "iz yonetimi" in normalized or "track management" in normalized:
             source = CMSEvidenceAnswers._source_with(ranked, "track management")
             if source:
+                if is_example:
+                    return (
+                        "**Temsili senaryo (resm\u00ee kaynakta verilen bir olay \u00f6zeti de\u011fildir):** Ayn\u0131 "
+                        "hedef i\u00e7in iki farkl\u0131 sens\u00f6r raporu geldi\u011fini d\u00fc\u015f\u00fcn\u00fcn. \u0130z y\u00f6netimi, "
+                        "bu raporlar\u0131 korelasyon ve birle\u015ftirme i\u015flemleriyle tek bir izde toplar; b\u00f6ylece "
+                        "operat\u00f6re ortak bir durum resmi sunar [SOURCE "
+                        f"{source}]."
+                    )
+                if is_detail:
+                    return (
+                        "\u0130z y\u00f6netimi, CMS i\u00e7indeki durum fark\u0131ndal\u0131\u011f\u0131n temelidir. Farkl\u0131 kaynaklardan "
+                        "gelen verileri ili\u015fkilendirir, yinelenen raporlar\u0131 birle\u015ftirir ve izlerin ya\u015fam d\u00f6ng\u00fcs\u00fcn\u00fc "
+                        "y\u00f6netir. Bu sayede birden fazla veri kayna\u011f\u0131ndan ortak bir durum resmi olu\u015fturulur "
+                        f"[SOURCE {source}]."
+                    )
                 return (
                     "\u0130z y\u00f6netimi, yaz\u0131l\u0131m sisteminin temel i\u015flevlerinden biridir. Farkl\u0131 "
                     "kaynaklardan gelen iz verilerini birle\u015ftirerek izlerin ya\u015fam d\u00f6ng\u00fcs\u00fcn\u00fc y\u00f6netir; "
