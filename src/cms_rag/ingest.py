@@ -37,7 +37,8 @@ class PDFIngestor:
                 boundary = text.rfind(". ", start, end)
                 if boundary > start + self.chunk_size // 2:
                     end = boundary + 1
-            result.append(Chunk(text=text[start:end], document=path.name, page=page, source_path=str(path)))
+            document = re.sub(r"^[a-f0-9]{64}_", "", path.name)
+            result.append(Chunk(text=text[start:end], document=document, page=page, source_path=str(path)))
             if end >= len(text):
                 break
             start = max(end - self.overlap, start + 1)

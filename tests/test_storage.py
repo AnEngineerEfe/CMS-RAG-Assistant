@@ -27,3 +27,9 @@ class DocumentStoreTests(unittest.TestCase):
             result = store.save_uploads([Upload("ADVENT brochure.pdf", b"document")])
             self.assertEqual(result.added, ["ADVENT brochure.pdf"])
             self.assertEqual(len(store.pdfs()[0].name.split("_", 1)[0]), 64)
+
+    def test_display_name_hides_content_hash(self):
+        self.assertEqual(
+            DocumentStore.display_name(Path("a" * 64 + "_advent_cms.pdf")),
+            "advent_cms.pdf",
+        )

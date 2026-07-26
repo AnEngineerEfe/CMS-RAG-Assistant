@@ -42,3 +42,8 @@ class DocumentStore:
 
     def pdfs(self) -> list[Path]:
         return sorted(self.root.glob("*.pdf"))
+
+    @staticmethod
+    def display_name(path: Path) -> str:
+        """Hide the storage hash; users should see the original uploaded name."""
+        return re.sub(r"^[a-f0-9]{64}_", "", path.name)
