@@ -1,14 +1,35 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from src.cms_rag.engine import CMSRAGEngine
 from src.cms_rag.evidence import EvidenceResponder
-from src.cms_rag.models import Chunk
+from src.cms_rag.models import Chunk, SearchHit
 from src.cms_rag.query import CMSQueryProcessor
 
 
 class CMSRAGEngineTests(unittest.TestCase):
+    def test_stream_appends_a_missing_source_marker(self):
+        class FakeOllama:
+            @staticmethod
+            def chat(**kwargs):
+                del kwargs
+                yield {"message": {"content": "Kaynaklı kısa yanıt."}}
+
+        with TemporaryDirectory() as directory:
+            engine = CMSRAGEngine(Path(directory))
+            engine._ollama = FakeOllama()
+            hit = SearchHit(Chunk("kanıt", "official.pdf", 1, "official.pdf"), 1.0)
+            answer = "".join(engine._ollama_stream("Soru", "İstem", [hit]))
+            self.assertEqual(answer, "Kaynaklı kısa yanıt. [SOURCE 1]")
+
+    def test_model_can_be_selected_from_environment(self):
+        with TemporaryDirectory() as directory:
+            with patch.dict("os.environ", {"CMS_RAG_MODEL": "qwen2.5:3b"}):
+                engine = CMSRAGEngine(Path(directory))
+            self.assertEqual(engine.model, "qwen2.5:3b")
+
     def test_engine_requires_document_before_question(self):
         with TemporaryDirectory() as directory:
             engine = CMSRAGEngine(Path(directory))

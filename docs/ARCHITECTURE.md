@@ -77,7 +77,10 @@ Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanı
 - Takip soruları yalnızca sınırlı sohbet bağlamıyla genişletilir.
 - Üretim istemi yalnızca verilen bağlamı kullanmaya ve desteklenmeyen iddia
   üretmemeye yönlendirir.
-- Ollama istemcisi zaman aşımı ve cevap token sınırıyla sınırlandırılmıştır.
+- Ollama istemcisi 120 saniye zaman aşımı, 96 token cevap sınırı ve 30 dakika
+  sıcak tutma süresiyle sınırlandırılmıştır.
+- CPU tabanlı etkileşimli kullanımda varsayılan model `qwen2.5:3b`dir;
+  `CMS_RAG_MODEL` ile daha büyük bir yerel model seçilebilir.
 
 ## 7. Güvenlik ve gizlilik
 

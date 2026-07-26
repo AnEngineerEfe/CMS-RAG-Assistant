@@ -60,12 +60,13 @@ birlikte ayağa kalkabildiğini doğrular.
 2026-07-26 tarihinde temiz kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `23/23` başarılı
+- Otomatik testler: `26/26` başarılı
 - Retrieval kabul seti: `4/4` başarılı
 - İndekslenen kanıt parçası: `57`
 - Streamlit sağlık endpoint'i: `HTTP 200`
 - Ollama: erişilebilir
-- Yerel üretim modeli: `qwen2.5:7b` kurulu
+- Varsayılan yerel üretim modeli: `qwen2.5:3b`
+- İsteğe bağlı kalite modeli: `qwen2.5:7b` kurulu
 
 Bu değerler, yukarıdaki komutların aynı çalışma alanında yeniden çalıştırılmasıyla
 elde edilmiştir.

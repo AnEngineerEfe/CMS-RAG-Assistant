@@ -34,7 +34,7 @@ sonucunda seçilen kanıtlara dayanır.
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-ollama pull qwen2.5:7b
+ollama pull qwen2.5:3b
 ```
 
 Bir terminalde Ollama'yı, ikinci terminalde uygulamayı çalıştırın:
@@ -51,6 +51,15 @@ streamlit run app.py
 Uygulama varsayılan olarak `http://localhost:8501` adresinde açılır.
 Embedding ve reranker ağırlıkları bir kez indirildikten sonra katı çevrimdışı
 çalışma için uygulamayı başlatmadan önce `$env:CMS_RAG_OFFLINE="1"` ayarlanabilir.
+
+Varsayılan `qwen2.5:3b`, CPU tabanlı makinelerde etkileşimli kullanım için
+seçilmiştir. Daha güçlü donanımda 7B kalite modu kullanılabilir:
+
+```powershell
+ollama pull qwen2.5:7b
+$env:CMS_RAG_MODEL="qwen2.5:7b"
+streamlit run app.py
+```
 
 ## Kullanım
 

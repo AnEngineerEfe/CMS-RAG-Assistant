@@ -6,6 +6,11 @@ from streamlit.testing.v1 import AppTest
 
 
 class StreamlitJourneyTests(unittest.TestCase):
+    def test_scope_control_defaults_to_combined_collection(self):
+        app = AppTest.from_file("app.py", default_timeout=180).run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.selectbox[0].value, "all")
+
     def test_grounded_follow_up_and_unsupported_question(self):
         app = AppTest.from_file("app.py", default_timeout=180).run()
         self.assertFalse(app.exception)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -17,11 +18,11 @@ NO_ANSWER = "Bu soruyu destekleyecek yeterli kaynak bulunamad\u0131."
 
 
 class CMSRAGEngine:
-    def __init__(self, data_dir: Path, model: str = "qwen2.5:7b") -> None:
+    def __init__(self, data_dir: Path, model: str | None = None) -> None:
         self.store = DocumentStore(data_dir / "documents")
         self.data_dir = data_dir
-        self.model = model
-        self._ollama = Client(timeout=90.0)
+        self.model = model or os.getenv("CMS_RAG_MODEL", "qwen2.5:3b")
+        self._ollama = Client(timeout=120.0)
         self.retriever: HybridRetriever | None = None
         self.history: list[dict[str, str]] = []
 
@@ -53,7 +54,7 @@ class CMSRAGEngine:
         if not hits:
             return self._completed(question, NO_ANSWER), []
         prompt = self._prompt(question, hits)
-        return self._ollama_stream(question, prompt), hits
+        return self._ollama_stream(question, prompt, hits), hits
 
     def clear_chat(self) -> None:
         self.history.clear()
@@ -75,7 +76,8 @@ class CMSRAGEngine:
             for number, hit in enumerate(hits, start=1)
         )
         return f"""You are a careful CMS documentation assistant. Answer only from CONTEXT.
-Write fluent Turkish in at most two short paragraphs. Do not invent examples, systems, capabilities, or facts.
+Write fluent Turkish in one concise paragraph of at most 55 words.
+Do not invent examples, systems, capabilities, or facts.
 If the user asks for an example and the context does not contain one, say that
 the documents do not provide a concrete example; never create a fictional case.
 If evidence is insufficient, answer exactly: {NO_ANSWER}
@@ -99,7 +101,12 @@ QUESTION
             self._remember(question, answer)
         return iterator()
 
-    def _ollama_stream(self, question: str, prompt: str) -> Iterator[str]:
+    def _ollama_stream(
+        self,
+        question: str,
+        prompt: str,
+        hits: list[SearchHit],
+    ) -> Iterator[str]:
         def iterator() -> Iterator[str]:
             parts: list[str] = []
             try:
@@ -107,13 +114,18 @@ QUESTION
                     model=self.model,
                     messages=[{"role": "user", "content": prompt}],
                     stream=True,
-                    options={"temperature": 0.1, "num_predict": 180},
+                    options={"temperature": 0.1, "num_predict": 96},
+                    keep_alive="30m",
                 ):
                     token = response["message"]["content"]
                     if token:
                         parts.append(token)
                         yield token
                 answer = "".join(parts).strip() or NO_ANSWER
+                if hits and "[SOURCE" not in answer.upper() and answer != NO_ANSWER:
+                    citation = " [SOURCE 1]"
+                    answer += citation
+                    yield citation
             except Exception:
                 answer = "Yerel Ollama servisine ula\u015f\u0131lamad\u0131. `ollama serve` komutunu \u00e7al\u0131\u015ft\u0131r\u0131n."
                 yield answer

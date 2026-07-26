@@ -7,6 +7,8 @@ from src.cms_rag.engine import CMSRAGEngine
 
 
 ROOT = Path(__file__).parent
+ENGINE_SOURCE_FILES = tuple((ROOT / "src" / "cms_rag").glob("*.py"))
+ENGINE_CACHE_VERSION = max(path.stat().st_mtime_ns for path in ENGINE_SOURCE_FILES)
 st.set_page_config(
     page_title="CMS-RAG | Knowledge Operations",
     page_icon="◆",
@@ -37,8 +39,14 @@ st.markdown(
 
 
 @st.cache_resource
-def engine() -> CMSRAGEngine:
+def cached_engine(source_version: int) -> CMSRAGEngine:
+    """Cache heavy models, but invalidate when any engine source file changes."""
+    del source_version
     return CMSRAGEngine(ROOT / "data")
+
+
+def engine() -> CMSRAGEngine:
+    return cached_engine(ENGINE_CACHE_VERSION)
 
 
 def source_payload(hit) -> dict:
@@ -236,7 +244,11 @@ if question:
         )
         answer = st.write_stream(stream)
         answer = str(answer or "Yanıt üretilemedi; lütfen sorguyu yeniden deneyin.")
-        if "yeterli kaynak bulunamadı" in answer.lower():
+        unsupported_markers = (
+            "yeterli kaynak bulunamadı",
+            "ollama servisine ulaşılamadı",
+        )
+        if any(marker in answer.lower() for marker in unsupported_markers):
             sources = []
         final_status = (
             "Yanıt kaynaklarla birlikte tamamlandı"
