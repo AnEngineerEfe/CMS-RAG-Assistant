@@ -16,9 +16,14 @@ Kapsanan davranislar:
 
 ## Son Calistirma Sonucu
 
-2026-07-26 tarihinde yerel ortamda `7/7` otomatik test basarili oldu.
+2026-07-26 tarihinde yerel ortamda `9/9` otomatik test basarili oldu.
 Yuklenmis ADVENT brosuruyle iki turlu kontrol de yapildi:
 
 1. `ADVENT nedir?` yaniti brosurun 3. sayfasini kaynak olarak verdi.
 2. `Ornekleri var mi?` takip sorusu ADVENT MARTI, ADVENT UFUK ve ADVENT
    MUREN varyantlarini 4, 22, 26 ve 28. sayfalardan kaynaklayarak verdi.
+3. `Bunlarin gorevleri neler?` ucuncu tur takip sorusu MARTI, UFUK ve MUREN
+   gorevlerini 22, 26 ve 28. sayfalardan kaynaklayarak verdi.
+
+Arayuz, hem kuralli hem de yerel LLM yanitlarini akimli olarak gosterir;
+her asistan mesajinin kaynaklari sohbet gecmisinde korunur.

@@ -35,3 +35,26 @@ class CMSRAGEngineTests(unittest.TestCase):
         answer, sources = result
         self.assertIn("ADVENT MARTI", answer)
         self.assertEqual([source.chunk.page for source in sources], [22, 26, 28])
+
+    def test_variant_duties_follow_the_example_turn(self):
+        chunks = [
+            Chunk("ADVENT MARTI is for special mission aircraft.", "official.pdf", 22, "official.pdf"),
+            Chunk("ADVENT UFUK supports maritime security.", "official.pdf", 26, "official.pdf"),
+            Chunk("ADVENT M\u00dcREN is for underwater platforms.", "official.pdf", 28, "official.pdf"),
+        ]
+        history = [{
+            "question": "\u00d6rnek ver",
+            "answer": "ADVENT MARTI, ADVENT UFUK ve ADVENT M\u00dcREN varyantlar\u0131 bulunur.",
+        }]
+        result = EvidenceResponder.answer("Bunlar\u0131n g\u00f6revleri neler?", history, chunks)
+        self.assertIsNotNone(result)
+        answer, sources = result
+        self.assertIn("su alt\u0131", answer)
+        self.assertEqual([source.chunk.page for source in sources], [22, 26, 28])
+
+    def test_completed_stream_remembers_answer_after_consumption(self):
+        with TemporaryDirectory() as directory:
+            engine = CMSRAGEngine(Path(directory))
+            answer = "Kaynakl\u0131 yan\u0131t."
+            self.assertEqual("".join(engine._completed("Soru", answer)).strip(), answer)
+            self.assertEqual(engine.history[-1]["question"], "Soru")

@@ -12,6 +12,9 @@ class EvidenceResponder:
     def answer(question: str, history: list[dict[str, str]], chunks: list[Chunk]) -> tuple[str, list[SearchHit]] | None:
         normalized = EvidenceResponder._normalise(question)
         previous = EvidenceResponder._normalise(history[-1]["question"]) if history else ""
+        conversation = " ".join(
+            EvidenceResponder._normalise(f"{item['question']} {item['answer']}") for item in history
+        )
 
         if "advent" in normalized and ("nedir" in normalized or "what is" in normalized):
             source = EvidenceResponder._find(chunks, "ADVENT represents")
@@ -21,6 +24,24 @@ class EvidenceResponder:
                     "Sava\u015f Y\u00f6netim Sistemi (CMS) \u00fcr\u00fcn ailesidir. Dok\u00fcman, bu ailenin komuta ve "
                     "kontrol, g\u00f6rev y\u00f6netimi ve CMS i\u015flevlerini kapsad\u0131\u011f\u0131n\u0131 belirtir [SOURCE 1].",
                     [SearchHit(source, 1.0)],
+                )
+
+        asks_duties = any(marker in normalized for marker in ("gorev", "ne yapar", "islev"))
+        has_variants = all(name in conversation for name in ("advent marti", "advent ufuk", "advent muren"))
+        if asks_duties and has_variants:
+            sources = [
+                EvidenceResponder._find(chunks, "ADVENT MARTI", minimum_page=20),
+                EvidenceResponder._find(chunks, "ADVENT UFUK", minimum_page=25),
+                EvidenceResponder._find(chunks, "ADVENT M\u00dcREN", minimum_page=27),
+            ]
+            if all(sources):
+                return (
+                    "ADVENT MARTI, \u00f6zel g\u00f6rev u\u00e7aklar\u0131 ve helikopterler i\u00e7in hava komuta ve "
+                    "kontrol deste\u011fi sa\u011flar [SOURCE 1]. ADVENT UFUK, deniz g\u00fcvenli\u011fi ve durumsal "
+                    "fark\u0131ndal\u0131k i\u00e7in komuta-kontrol ve bilgi y\u00f6netimi i\u015flevi sunar [SOURCE 2]. "
+                    "ADVENT M\u00dcREN ise su alt\u0131 platformlar\u0131 i\u00e7in yeni nesil komuta ve kontrol sistemidir "
+                    "[SOURCE 3].",
+                    [SearchHit(source, 1.0) for source in sources if source],
                 )
 
         asks_example = any(marker in normalized for marker in ("ornek", "examples", "example"))

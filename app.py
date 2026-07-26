@@ -66,8 +66,8 @@ if question:
         st.markdown(question)
     with st.chat_message("assistant"):
         with st.spinner("Kaynaklar aran\u0131yor..."):
-            answer, hits = engine().ask(question)
+            stream, hits = engine().stream_ask(question)
         sources = [{"document": hit.chunk.document, "page": hit.chunk.page} for hit in hits]
-        st.markdown(answer)
+        answer = st.write_stream(stream)
         show_sources(sources)
     st.session_state.messages.append({"role": "assistant", "content": answer, "sources": sources})
