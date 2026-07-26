@@ -40,7 +40,7 @@ RAGEngine
 ## 4. Sorgu hattı
 
 ```text
-Soru + en fazla üç önceki tur
+Soru + aynı kaynak kapsamındaki en fazla üç önceki tur
   -> sohbet dışı / kişisel soru güvenli reddi
   -> kontrollü bağlamlandırma
   -> Türkçe CMS terim genişletmesi
@@ -75,6 +75,11 @@ Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanı
 - Kanıt yetersizse sistem açıkça yeterli kaynak bulunamadığını söyler.
 - Kaynak etiketleri cevap metni ile kanıt kartları arasında korunur.
 - Takip soruları yalnızca sınırlı sohbet bağlamıyla genişletilir.
+- Resmî, açık-kaynak ve birleşik kapsamların sohbet geçmişleri birbirine
+  taşınmaz; bir koleksiyondaki ürün iddiası diğer koleksiyonun cevabını
+  kirletemez.
+- Güncel NATO birlikte çalışabilirlik soruları, doğrulanmış açık-kaynak
+  kaydından deterministik olarak cevaplanır.
 - Üretim istemi yalnızca verilen bağlamı kullanmaya ve desteklenmeyen iddia
   üretmemeye yönlendirir.
 - Ollama istemcisi 120 saniye zaman aşımı, 96 token cevap sınırı ve 30 dakika

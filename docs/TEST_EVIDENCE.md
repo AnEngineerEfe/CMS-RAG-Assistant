@@ -19,12 +19,15 @@ Bu belge yalnızca tekrar çalıştırılabilir otomasyon sonuçlarını kaydede
 - Markdown front matter içinden koleksiyon, otorite ve URL okunması
 - Belgesiz bilgi tabanında güvenli yönlendirme
 - Takip sorusunun sınırlı sohbet bağlamıyla genişletilmesi
+- Sohbet geçmişinin kaynak kapsamları arasında izole edilmesi
 - Kişisel/sohbet sorularına kaynak uydurmadan ret
 - Resmî/açık kaynak koleksiyon filtreleri
+- NATO açık-kaynak cevabında ürün ilişkisi uydurulmaması
 - Aynı sayfadaki tamamlayıcı kanıtların birleştirilmesi
 - Kaynakların her asistan mesajında korunması
 - Streamlit arayüzünde üç turluk gerçek kullanıcı yolculuğu
 - Kaynaksız yanıtta ilgisiz kanıt kartlarının gösterilmemesi
+- Ollama hata mesajında retrieval kanıtlarının gizlenmesi
 
 ## Retrieval kabul seti
 
@@ -60,9 +63,9 @@ birlikte ayağa kalkabildiğini doğrular.
 2026-07-26 tarihinde temiz kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `26/26` başarılı
+- Otomatik testler: `30/30` başarılı
 - Retrieval kabul seti: `4/4` başarılı
-- İndekslenen kanıt parçası: `57`
+- İndekslenen kanıt parçası: `59`
 - Streamlit sağlık endpoint'i: `HTTP 200`
 - Ollama: erişilebilir
 - Varsayılan yerel üretim modeli: `qwen2.5:3b`

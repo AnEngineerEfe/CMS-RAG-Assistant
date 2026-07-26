@@ -39,38 +39,44 @@ class CMSRAGEngine:
 
     def stream_ask(self, question: str, scope: str = "all") -> tuple[Iterator[str], list[SearchHit]]:
         if not self.retriever:
-            return self._completed(question, "\u00d6nce resm\u00ee PDF dok\u00fcman\u0131n\u0131 y\u00fckleyip indeksleyin."), []
+            return self._completed(
+                question,
+                "\u00d6nce resm\u00ee PDF dok\u00fcman\u0131n\u0131 y\u00fckleyip indeksleyin.",
+                scope,
+            ), []
 
         if CMSQueryProcessor.is_non_domain_chitchat(question):
-            return self._completed(question, NO_ANSWER), []
+            return self._completed(question, NO_ANSWER, scope), []
+        scoped_history = self._history_for(scope)
         evidence_chunks = [chunk for chunk in self.retriever.chunks if scope == "all" or chunk.collection == scope]
-        evidence_answer = EvidenceResponder.answer(question, self.history, evidence_chunks)
+        evidence_answer = EvidenceResponder.answer(question, scoped_history, evidence_chunks)
         if evidence_answer:
             answer, hits = evidence_answer
-            return self._completed(question, answer), hits
+            return self._completed(question, answer, scope), hits
 
-        retrieval_query = CMSQueryProcessor.expand(self.build_retrieval_query(question))
+        retrieval_query = CMSQueryProcessor.expand(self.build_retrieval_query(question, scope))
         hits = self.retriever.search(retrieval_query, scope=scope)
         if not hits:
-            return self._completed(question, NO_ANSWER), []
-        prompt = self._prompt(question, hits)
-        return self._ollama_stream(question, prompt, hits), hits
+            return self._completed(question, NO_ANSWER, scope), []
+        prompt = self._prompt(question, hits, scope)
+        return self._ollama_stream(question, prompt, hits, scope), hits
 
     def clear_chat(self) -> None:
         self.history.clear()
 
-    def build_retrieval_query(self, question: str) -> str:
+    def build_retrieval_query(self, question: str, scope: str = "all") -> str:
         """Resolve short references using the complete bounded conversation."""
         reference_words = ("bunlar", "bunun", "onlar", "detay", "ornek", "baska", "gorev")
         is_follow_up = len(question.split()) <= 7 or any(word in question.lower() for word in reference_words)
-        if is_follow_up and self.history:
+        scoped_history = self._history_for(scope)
+        if is_follow_up and scoped_history:
             conversation = "\n".join(
-                f"{item['question']} {item['answer']}" for item in self.history[-3:]
+                f"{item['question']} {item['answer']}" for item in scoped_history[-3:]
             )
             return f"{conversation}\nTakip sorusu: {question}"
         return question
 
-    def _prompt(self, question: str, hits: list[SearchHit]) -> str:
+    def _prompt(self, question: str, hits: list[SearchHit], scope: str = "all") -> str:
         context = "\n\n".join(
             f"[SOURCE {number}: {hit.chunk.document}, page {hit.chunk.page}]\n{hit.chunk.text}"
             for number, hit in enumerate(hits, start=1)
@@ -85,7 +91,7 @@ Use [SOURCE n] after every factual paragraph. Conversation history resolves
 follow-up questions but is not evidence.
 
 CONVERSATION HISTORY
-{self._format_history()}
+{self._format_history(scope)}
 
 CONTEXT
 {context}
@@ -94,11 +100,11 @@ QUESTION
 {question}
 """
 
-    def _completed(self, question: str, answer: str) -> Iterator[str]:
+    def _completed(self, question: str, answer: str, scope: str = "all") -> Iterator[str]:
         def iterator() -> Iterator[str]:
             for word in answer.split(" "):
                 yield f"{word} "
-            self._remember(question, answer)
+            self._remember(question, answer, scope)
         return iterator()
 
     def _ollama_stream(
@@ -106,6 +112,7 @@ QUESTION
         question: str,
         prompt: str,
         hits: list[SearchHit],
+        scope: str = "all",
     ) -> Iterator[str]:
         def iterator() -> Iterator[str]:
             parts: list[str] = []
@@ -129,16 +136,27 @@ QUESTION
             except Exception:
                 answer = "Yerel Ollama servisine ula\u015f\u0131lamad\u0131. `ollama serve` komutunu \u00e7al\u0131\u015ft\u0131r\u0131n."
                 yield answer
-            self._remember(question, answer)
+            self._remember(question, answer, scope)
         return iterator()
 
-    def _remember(self, question: str, answer: str) -> None:
-        self.history = (self.history + [{"question": question, "answer": answer}])[-3:]
+    def _remember(self, question: str, answer: str, scope: str = "all") -> None:
+        self.history = (
+            self.history
+            + [{"question": question, "answer": answer, "scope": scope}]
+        )[-3:]
 
-    def _format_history(self) -> str:
-        if not self.history:
+    def _history_for(self, scope: str) -> list[dict[str, str]]:
+        return [
+            item
+            for item in self.history
+            if item.get("scope", "all") == scope
+        ]
+
+    def _format_history(self, scope: str = "all") -> str:
+        scoped_history = self._history_for(scope)
+        if not scoped_history:
             return "(Yok)"
         return "\n".join(
             f"Kullan\u0131c\u0131: {item['question']}\nAsistan: {item['answer']}"
-            for item in self.history[-3:]
+            for item in scoped_history[-3:]
         )

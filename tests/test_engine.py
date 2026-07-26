@@ -45,6 +45,46 @@ class CMSRAGEngineTests(unittest.TestCase):
             self.assertIn("ADVENT nedir?", query)
             self.assertIn("\u00d6rnekleri var m\u0131?", query)
 
+    def test_history_is_isolated_by_source_scope(self):
+        with TemporaryDirectory() as directory:
+            engine = CMSRAGEngine(Path(directory))
+            engine.history = [
+                {
+                    "question": "ADVENT nedir?",
+                    "answer": "Resm\u00ee \u00fcr\u00fcn yan\u0131t\u0131.",
+                    "scope": "official",
+                },
+                {
+                    "question": "NATO birlikte \u00e7al\u0131\u015fabilirlik nedir?",
+                    "answer": "A\u00e7\u0131k kaynak yan\u0131t\u0131.",
+                    "scope": "open_source",
+                },
+            ]
+            query = engine.build_retrieval_query("Detayland\u0131r\u0131r m\u0131s\u0131n?", "open_source")
+            self.assertIn("NATO birlikte", query)
+            self.assertNotIn("ADVENT nedir?", query)
+
+    def test_nato_interoperability_answer_does_not_invent_advent_link(self):
+        chunk = Chunk(
+            "The Alliance Data Sharing Ecosystem allows trusted actors to share "
+            "interoperable data. It is governed by a data-centric framework.",
+            "nato-interoperability.md",
+            1,
+            "nato-interoperability.md",
+            collection="open_source",
+            authority="NATO official public reference",
+        )
+        result = EvidenceResponder.answer(
+            "NATO veri merkezli birlikte \u00e7al\u0131\u015fabilirlik ne sa\u011flar?",
+            [],
+            [chunk],
+        )
+        self.assertIsNotNone(result)
+        answer, sources = result
+        self.assertNotIn("ADVENT", answer)
+        self.assertIn("[SOURCE 1]", answer)
+        self.assertEqual(sources[0].chunk.collection, "open_source")
+
     def test_advent_follow_up_examples_are_source_grounded(self):
         chunks = [
             Chunk("ADVENT represents a CMS family.", "official.pdf", 4, "official.pdf"),

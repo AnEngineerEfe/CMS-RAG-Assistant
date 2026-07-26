@@ -16,6 +16,27 @@ class EvidenceResponder:
             EvidenceResponder._normalise(f"{item['question']} {item['answer']}") for item in history
         )
 
+        asks_interoperability = any(
+            marker in normalized
+            for marker in (
+                "birlikte calisabilirlik",
+                "interoperability",
+                "veri merkezli",
+                "data centric",
+            )
+        )
+        nato_source = EvidenceResponder._find(chunks, "Alliance Data Sharing Ecosystem")
+        if asks_interoperability and nato_source and nato_source.collection == "open_source":
+            return (
+                "NATO'nun dijital birlikte \u00e7al\u0131\u015fabilirlik yakla\u015f\u0131m\u0131; sens\u00f6rleri, karar "
+                "vericileri, akt\u00f6rleri ve efekt\u00f6rleri g\u00fcvenli bir dijital omurga \u00fczerinden ba\u011flamay\u0131 "
+                "ve birlikte \u00e7al\u0131\u015fabilir verinin m\u00fcttefikler ile g\u00fcvenilir akt\u00f6rler aras\u0131nda "
+                "payla\u015f\u0131lmas\u0131n\u0131 hedefler. Veri-merkezli y\u00f6neti\u015fim; veri egemenli\u011fi ve ulusal "
+                "d\u00fczenlemeleri korurken karar deste\u011fini ve operasyonel verimlili\u011fi geli\u015ftirir "
+                "[SOURCE 1].",
+                [SearchHit(nato_source, 1.0)],
+            )
+
         if "advent" in normalized and ("nedir" in normalized or "what is" in normalized):
             source = EvidenceResponder._find(chunks, "ADVENT represents")
             if source:
