@@ -117,6 +117,19 @@ Ayrıntılı tasarım için [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), dal ve
 sürüm politikası için [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md), test
 kanıtları için [docs/TEST_EVIDENCE.md](docs/TEST_EVIDENCE.md) dosyasına bakın.
 
+## Nihai sunum teslimatları
+
+- [Nihai Teknik Dokümantasyon](deliverables/CMS-RAG_Nihai_Teknik_Dokumantasyon.docx)
+- [Nihai Proje Sunumu](deliverables/CMS-RAG_Nihai_Proje_Sunumu.pptx)
+- [Teslimat kullanım rehberi](deliverables/README.md)
+
+Her iki Office dosyası aşağıdaki komutla aynı proje verilerinden yeniden
+üretilebilir ve yapısal olarak doğrulanabilir:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\generate_final_deliverables.py
+```
+
 ## Test ve kabul
 
 ```powershell
