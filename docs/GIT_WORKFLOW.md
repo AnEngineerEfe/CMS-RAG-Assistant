@@ -87,6 +87,7 @@ GitHub üzerinde `main` ve `develop` için şu kurallar önerilir:
 
 - Eski `main` geçmişi değiştirilmeden korunmuştur.
 - Son doğrulanmış ürün `develop` tabanına alınmıştır.
-- Modüler mimari çalışması `codex/modular-architecture` dalında yürütülmektedir.
+- Modüler mimari çalışması `codex/modular-architecture` dalında tamamlanmış ve
+  `d022506` merge commit'iyle `develop` dalına alınmıştır.
 - Uzak depoya gönderme ve GitHub dal koruma ayarları, kullanıcı onayı ve uzak
   depo yetkisi gerektiren ayrı yayımlama adımlarıdır.
