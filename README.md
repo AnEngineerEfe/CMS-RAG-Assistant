@@ -1,34 +1,22 @@
 # CMS-RAG Assistant
 
-Yerelde calisan, kaynak kaniti gosteren CMS dokuman asistani.
+Yerel calisan, kaynak gosteren Combat Management System (CMS) dokuman asistani.
 
-## Calistirma
+## Baslatma
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ollama serve
-ollama pull qwen2.5:7b
 streamlit run app.py
 ```
 
-Varsayilan model `qwen2.5:7b`'dir. Daha dusuk donanimli bilgisayarlarda
-istege bagli olarak daha kucuk bir yerel model secilebilir:
+Ilk kullanimda sol panelden resmi PDF dokumanini yukleyin. Sistem PDF metnini
+sayfa bilgisiyle isler, ayni dosyayi SHA-256 ile engeller ve yerel bilgi tabanini
+yeniden kurar.
 
-```powershell
-$env:CMS_RAG_OLLAMA_MODEL="qwen2.5:7b"
-streamlit run app.py
-```
+## Mimari
 
-## Veri kurallari
+`PDF -> sayfa metni -> parcalama -> semantic (FAISS) + BM25 -> rerank -> Ollama -> kaynaklar`
 
-- `data/raw/havelsan/`: resmi kaynaklar ve kullanici PDF yuklemeleri
-- `data/raw/open_source/`: onayli kamu kaynaklari
-- PDF'ler SHA-256 icerigiyle tekillestirilir; ayni icerik ikinci kez indekslenmez.
-- Kaynak, koleksiyon, yetki seviyesi ve sayfa bilgisi yanitta gorunur.
-
-Kabul degerlendirmesi:
-
-```powershell
-python -m scripts.evaluate_retrieval
-python -m unittest discover -s tests -v
-```
+Tum veriler `data/documents` altinda yerelde tutulur. Harici web taramasi veya
+bulut API'si kullanilmaz.
