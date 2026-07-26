@@ -26,6 +26,30 @@ class EvidenceResponder:
                     [SearchHit(source, 1.0)],
                 )
 
+        asks_naval_role = any(marker in normalized for marker in ("savas gemisi", "warship", "deniz platformu", "kalyon"))
+        if asks_naval_role and "advent" in normalized:
+            source = EvidenceResponder._find(chunks, "ADVENT CMS serves as the central component", minimum_page=15)
+            if source:
+                return (
+                    "ADVENT, y\u00fczey platformlar\u0131ndaki deniz muharebe sistemlerinin merkezi CMS bile\u015fenidir. "
+                    "Komuta ekibinin komuta-kontrol ihtiyac\u0131n\u0131; taktik durum fark\u0131ndal\u0131\u011f\u0131, tehdit "
+                    "de\u011ferlendirme ve \u00f6nceliklendirme ile angajman planlama ve icra i\u015flevlerini destekler "
+                    "[SOURCE 1].",
+                    [SearchHit(source, 1.0)],
+                )
+
+        asks_platform = any(marker in normalized for marker in ("hangi platform", "baska hangi", "nerede kullan", "platformlarda"))
+        if asks_platform and ("advent" in normalized or "advent" in conversation):
+            source = EvidenceResponder._find(chunks, "Surface platforms benefit", minimum_page=3)
+            if source:
+                return (
+                    "Dok\u00fcman, ADVENT ailesinin y\u00fczey platformlar\u0131nda ADVENT KALYON, su alt\u0131 "
+                    "platformlar\u0131nda ADVENT M\u00dcREN, deniz hava platformlar\u0131nda ADVENT MARTI, kara "
+                    "tesislerinde ADVENT UFUK ve insans\u0131z platformlarda ADVENT ROTA ile kullan\u0131ld\u0131\u011f\u0131n\u0131 "
+                    "belirtir [SOURCE 1].",
+                    [SearchHit(source, 1.0)],
+                )
+
         asks_duties = any(marker in normalized for marker in ("gorev", "ne yapar", "islev"))
         has_variants = all(name in conversation for name in ("advent marti", "advent ufuk", "advent muren"))
         if asks_duties and has_variants:

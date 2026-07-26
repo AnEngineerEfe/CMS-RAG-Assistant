@@ -1,0 +1,181 @@
+{
+  "indexed_chunks": 57,
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "id": "official_advent_surface_platform",
+      "scope": "official",
+      "passed": true,
+      "matched_terms": [
+        "surface platforms",
+        "command and control"
+      ],
+      "expected_terms": [
+        "surface platforms",
+        "command and control"
+      ],
+      "sources": [
+        {
+          "document": "advent_cms.pdf",
+          "page": 18,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "havelsan-advent-web.md",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN official website"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 4,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 3,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 5,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 8,
+          "collection": "official",
+          "authority": "uploaded_official"
+        }
+      ]
+    },
+    {
+      "id": "official_track_management",
+      "scope": "official",
+      "passed": true,
+      "matched_terms": [
+        "track management",
+        "lifecycle"
+      ],
+      "expected_terms": [
+        "track management",
+        "lifecycle"
+      ],
+      "sources": [
+        {
+          "document": "advent_cms.pdf",
+          "page": 9,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 26,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 3,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 6,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 22,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 8,
+          "collection": "official",
+          "authority": "uploaded_official"
+        }
+      ]
+    },
+    {
+      "id": "official_tactical_data_links",
+      "scope": "official",
+      "passed": true,
+      "matched_terms": [
+        "link 11",
+        "link 16"
+      ],
+      "expected_terms": [
+        "link 11",
+        "link 16"
+      ],
+      "sources": [
+        {
+          "document": "advent_cms.pdf",
+          "page": 12,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 28,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 26,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 32,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 22,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 23,
+          "collection": "official",
+          "authority": "uploaded_official"
+        }
+      ]
+    },
+    {
+      "id": "open_source_nato_interoperability",
+      "scope": "open_source",
+      "passed": true,
+      "matched_terms": [
+        "interoperability",
+        "data-centric"
+      ],
+      "expected_terms": [
+        "interoperability",
+        "data-centric"
+      ],
+      "sources": [
+        {
+          "document": "nato-interoperability.md",
+          "page": 1,
+          "collection": "open_source",
+          "authority": "NATO official public reference"
+        }
+      ]
+    }
+  ]
+}

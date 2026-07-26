@@ -3,11 +3,12 @@ from __future__ import annotations
 from collections.abc import Iterator
 from pathlib import Path
 
-from ollama import chat
+from ollama import Client
 
 from .evidence import EvidenceResponder
-from .ingest import PDFIngestor
+from .ingest import MarkdownIngestor, PDFIngestor
 from .models import SearchHit
+from .query import CMSQueryProcessor
 from .retrieval import HybridRetriever
 from .storage import DocumentStore
 
@@ -18,31 +19,37 @@ NO_ANSWER = "Bu soruyu destekleyecek yeterli kaynak bulunamad\u0131."
 class CMSRAGEngine:
     def __init__(self, data_dir: Path, model: str = "qwen2.5:7b") -> None:
         self.store = DocumentStore(data_dir / "documents")
+        self.data_dir = data_dir
         self.model = model
+        self._ollama = Client(timeout=90.0)
         self.retriever: HybridRetriever | None = None
         self.history: list[dict[str, str]] = []
 
     def rebuild(self) -> int:
-        chunks = PDFIngestor().load(self.store.pdfs())
+        chunks = PDFIngestor().load(self.store.pdfs(), collection="official", authority="uploaded_official")
+        chunks.extend(MarkdownIngestor().load_directory(self.data_dir / "references"))
         self.retriever = HybridRetriever(chunks) if chunks else None
         self.history.clear()
         return len(chunks)
 
-    def ask(self, question: str) -> tuple[str, list[SearchHit]]:
-        stream, hits = self.stream_ask(question)
+    def ask(self, question: str, scope: str = "all") -> tuple[str, list[SearchHit]]:
+        stream, hits = self.stream_ask(question, scope)
         return "".join(stream), hits
 
-    def stream_ask(self, question: str) -> tuple[Iterator[str], list[SearchHit]]:
+    def stream_ask(self, question: str, scope: str = "all") -> tuple[Iterator[str], list[SearchHit]]:
         if not self.retriever:
             return self._completed(question, "\u00d6nce resm\u00ee PDF dok\u00fcman\u0131n\u0131 y\u00fckleyip indeksleyin."), []
 
-        evidence_answer = EvidenceResponder.answer(question, self.history, self.retriever.chunks)
+        if CMSQueryProcessor.is_non_domain_chitchat(question):
+            return self._completed(question, NO_ANSWER), []
+        evidence_chunks = [chunk for chunk in self.retriever.chunks if scope == "all" or chunk.collection == scope]
+        evidence_answer = EvidenceResponder.answer(question, self.history, evidence_chunks)
         if evidence_answer:
             answer, hits = evidence_answer
             return self._completed(question, answer), hits
 
-        retrieval_query = self.build_retrieval_query(question)
-        hits = self.retriever.search(retrieval_query)
+        retrieval_query = CMSQueryProcessor.expand(self.build_retrieval_query(question))
+        hits = self.retriever.search(retrieval_query, scope=scope)
         if not hits:
             return self._completed(question, NO_ANSWER), []
         prompt = self._prompt(question, hits)
@@ -96,7 +103,12 @@ QUESTION
         def iterator() -> Iterator[str]:
             parts: list[str] = []
             try:
-                for response in chat(model=self.model, messages=[{"role": "user", "content": prompt}], stream=True):
+                for response in self._ollama.chat(
+                    model=self.model,
+                    messages=[{"role": "user", "content": prompt}],
+                    stream=True,
+                    options={"temperature": 0.1, "num_predict": 180},
+                ):
                     token = response["message"]["content"]
                     if token:
                         parts.append(token)

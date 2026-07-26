@@ -1,22 +1,120 @@
 # CMS-RAG Assistant
 
-Yerel calisan, kaynak gosteren Combat Management System (CMS) dokuman asistani.
+Yerel çalışan, kaynak gösteren ve koleksiyon ayrımı uygulayan Combat Management
+System (CMS) doküman asistanı.
 
-## Baslatma
+Sistem; kullanıcı tarafından yüklenen resmî PDF'leri, seçilmiş HAVELSAN resmî
+içeriğini ve açık/kamu kaynaklarını ayrı yetki sınıflarıyla indeksler. Yanıtlar
+FAISS semantik arama, BM25, Reciprocal Rank Fusion ve cross-encoder reranking
+sonucunda seçilen kanıtlara dayanır.
+
+## Özellikler
+
+- SHA-256 tabanlı dosya kimliği ve aynı PDF'in tekrar yüklenmesini engelleme
+- PDF imzası, boyut ve bozuk dosya kontrolleri
+- Belge/sayfa/koleksiyon/otorite/URL meta verisini koruyan parçalama
+- `Resmî`, `Açık kaynak` ve `Birleşik` sorgu kapsamları
+- Hibrit arama: semantic FAISS + BM25 + RRF + reranking
+- Türkçe CMS terimleri için kontrollü sorgu genişletme
+- Üç turluk kontrollü sohbet bağlamı
+- Ollama üzerinden yerel ve akışlı yanıt üretimi
+- Her mesajla kalıcı kanıt kartları ve kaynak sayfası
+- Belge silme, yeniden indeksleme ve güvenli boş-bilgi-tabani davranışı
+
+## Gereksinimler
+
+- Python 3.11 veya üzeri
+- Ollama
+- En az 8 GB RAM; embedding ve reranker modellerinin ilk açılışta indirilmesi
+  için internet erişimi
+
+## Kurulum
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+ollama pull qwen2.5:7b
+```
+
+Bir terminalde Ollama'yı, ikinci terminalde uygulamayı çalıştırın:
+
+```powershell
+ollama serve
+```
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
-ollama serve
 streamlit run app.py
 ```
 
-Ilk kullanimda sol panelden resmi PDF dokumanini yukleyin. Sistem PDF metnini
-sayfa bilgisiyle isler, ayni dosyayi SHA-256 ile engeller ve yerel bilgi tabanini
-yeniden kurar.
+Uygulama varsayılan olarak `http://localhost:8501` adresinde açılır.
+Embedding ve reranker ağırlıkları bir kez indirildikten sonra katı çevrimdışı
+çalışma için uygulamayı başlatmadan önce `$env:CMS_RAG_OFFLINE="1"` ayarlanabilir.
+
+## Kullanım
+
+1. Sol panelden yalnızca kamuya açık veya kullanım yetkiniz bulunan resmî PDF'i
+   seçin.
+2. `Belgeyi doğrula ve indeksle` düğmesine basın. Aynı içerik yeniden seçilirse
+   ikinci bir kayıt oluşturulmaz.
+3. Sorgu kapsamını `Birleşik`, `Yalnızca resmî` veya `Yalnızca açık kaynak`
+   olarak seçin.
+4. Yanıtın altındaki kanıt paketinden belgeyi, sayfayı, otoriteyi ve varsa
+   kaynak URL'sini denetleyin.
+
+`İndeksi yenile` mevcut yerel belgeleri yeniden işler.
+Belge satırındaki silme işlemi hem dosyayı hem manifest kaydını kaldırır ve
+indeksi yeniler.
 
 ## Mimari
 
-`PDF -> sayfa metni -> parcalama -> semantic (FAISS) + BM25 -> rerank -> Ollama -> kaynaklar`
+```text
+PDF + seçilmiş Markdown kaynakları
+  -> doğrulama ve meta veri
+  -> sayfa bazlı parçalama
+  -> semantic FAISS + BM25
+  -> Reciprocal Rank Fusion
+  -> cross-encoder reranking
+  -> koleksiyon filtresi ve kanıt birleştirme
+  -> kaynaklı hızlı yanıt veya yerel Ollama akışı
+  -> kalıcı sohbet ve kanıt kartları
+```
 
-Tum veriler `data/documents` altinda yerelde tutulur. Harici web taramasi veya
-bulut API'si kullanilmaz.
+Ana modüller:
+
+- `storage.py`: içerik adresli belge yaşam döngüsü ve manifest
+- `ingest.py`: PDF/Markdown doğrulama ve parçalama
+- `retrieval.py`: hibrit arama, füzyon, reranking ve kapsam filtresi
+- `query.py`: takip sorusu bağlamlandırma ve kontrollü terim genişletme
+- `evidence.py`: doğrudan kanıta dayalı hızlı yanıtlar
+- `engine.py`: indeks, retrieval, güvenli ret ve yerel üretim orkestrasyonu
+- `app.py`: Streamlit operasyon arayüzü ve oturum durumu
+
+Ayrıntılı tasarım için [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), test
+kanıtları için [docs/TEST_EVIDENCE.md](docs/TEST_EVIDENCE.md) dosyasına bakın.
+
+## Test ve kabul
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+.\.venv\Scripts\python.exe -m scripts.evaluate_retrieval
+```
+
+İkinci komut, sabit kabul sorularının beklenen sayfa/koleksiyon/terimleri getirip
+getirmediğini denetler ve raporu `docs/retrieval_evaluation_report.json`
+dosyasına yazar.
+
+## Veri ve güvenlik sınırı
+
+- Uygulama rastgele web taraması yapmaz. Web kaynakları incelenip yerel Markdown
+  kayıtları olarak seçilmiştir.
+- Yanıt üretimi Ollama ile yereldir; doküman metni bir bulut LLM servisine
+  gönderilmez.
+- Yalnızca tasnif dışı, kamuya açık veya kullanım yetkisi bulunan belgeler
+  sisteme alınmalıdır.
+- Bu bir operasyonel karar sistemi değildir. Kritik iddialar her zaman gösterilen
+  asıl belge ve sayfadan doğrulanmalıdır.
+- Kamuya açık resmî ADVENT broşürü, temiz kurulumda kabul testlerinin
+  tekrarlanabilmesi için başlangıç belgesi olarak sürümlenir. Sonradan yüklenen
+  PDF'ler ve manifest ise `.gitignore` ile sürüm kontrolü dışında tutulur.
