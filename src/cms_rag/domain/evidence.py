@@ -1,4 +1,4 @@
-"""Fast, source-grounded answers for unambiguous brochure questions."""
+"""Belgede açıkça bulunan sık sorular için hızlı ve kaynaklı cevap kuralları."""
 
 from __future__ import annotations
 
@@ -8,14 +8,19 @@ from .models import Chunk, SearchHit
 
 
 class EvidenceResponder:
+    """Model çağrısı gerektirmeyen, kanıtı kesin cevap şablonlarını uygular."""
+
     @staticmethod
     def answer(question: str, history: list[dict[str, str]], chunks: list[Chunk]) -> tuple[str, list[SearchHit]] | None:
+        """Soru bir güvenli şablonla eşleşirse cevap ve kanıtlarını, aksi hâlde None döndürür."""
+
         normalized = EvidenceResponder._normalise(question)
         previous = EvidenceResponder._normalise(history[-1]["question"]) if history else ""
         conversation = " ".join(
             EvidenceResponder._normalise(f"{item['question']} {item['answer']}") for item in history
         )
 
+        # NATO kuralı yalnız açık kaynak koleksiyonundaki doğrulanmış ifadeyle çalışabilir.
         asks_interoperability = any(
             marker in normalized
             for marker in (
@@ -37,6 +42,7 @@ class EvidenceResponder:
                 [SearchHit(nato_source, 1.0)],
             )
 
+        # Aşağıdaki kurallar broşürdeki benzersiz ifadeleri arayarak doğru sayfayı bağlar.
         if "advent" in normalized and ("nedir" in normalized or "what is" in normalized):
             source = EvidenceResponder._find(chunks, "ADVENT represents")
             if source:
@@ -113,6 +119,8 @@ class EvidenceResponder:
 
     @staticmethod
     def _find(chunks: list[Chunk], phrase: str, minimum_page: int = 0) -> Chunk | None:
+        """İfadeyi, isteğe bağlı alt sayfa sınırına uyan ilk kanıt parçasında bulur."""
+
         phrase = phrase.lower()
         return next(
             (chunk for chunk in chunks if chunk.page >= minimum_page and phrase in chunk.text.lower()),
@@ -121,6 +129,8 @@ class EvidenceResponder:
 
     @staticmethod
     def _normalise(text: str) -> str:
+        """Türkçe karakter ve Unicode farklarını kural eşleştirmesi için sadeleştirir."""
+
         text = unicodedata.normalize("NFKD", text.lower())
         text = "".join(char for char in text if not unicodedata.combining(char))
         return text.translate(str.maketrans("\u00e7\u011f\u0131\u00f6\u015f\u00fc", "cgiosu"))

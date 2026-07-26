@@ -1,9 +1,8 @@
 from pathlib import Path
 import unittest
 
-from src.cms_rag.ingest import MarkdownIngestor, PDFIngestor
-from src.cms_rag.models import Chunk, SearchHit
-from src.cms_rag.retrieval import HybridRetriever
+from src.cms_rag.domain import Chunk, SearchHit
+from src.cms_rag.infrastructure import HybridRetriever, MarkdownIngestor, PDFIngestor
 
 
 class PDFIngestorTests(unittest.TestCase):

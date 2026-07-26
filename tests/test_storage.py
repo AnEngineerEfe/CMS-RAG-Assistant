@@ -3,7 +3,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from src.cms_rag.storage import DocumentStore
+from src.cms_rag.infrastructure import DocumentStore
 
 
 class Upload(BytesIO):

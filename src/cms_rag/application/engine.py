@@ -1,3 +1,5 @@
+"""Belge hazırlama, retrieval ve yerel üretim adımlarını yöneten uygulama servisi."""
+
 from __future__ import annotations
 
 import os
@@ -6,19 +8,23 @@ from pathlib import Path
 
 from ollama import Client
 
-from .evidence import EvidenceResponder
-from .ingest import MarkdownIngestor, PDFIngestor
-from .models import SearchHit
-from .query import CMSQueryProcessor
-from .retrieval import HybridRetriever
-from .storage import DocumentStore
+from ..domain.evidence import EvidenceResponder
+from ..domain.models import SearchHit
+from ..domain.query import CMSQueryProcessor
+from ..infrastructure.ingest import MarkdownIngestor, PDFIngestor
+from ..infrastructure.retrieval import HybridRetriever
+from ..infrastructure.storage import DocumentStore
 
 
 NO_ANSWER = "Bu soruyu destekleyecek yeterli kaynak bulunamad\u0131."
 
 
 class CMSRAGEngine:
+    """CMS-RAG kullanım senaryolarını tek bir durumlu servis üzerinden yürütür."""
+
     def __init__(self, data_dir: Path, model: str | None = None) -> None:
+        """Veri deposunu ve Ollama istemcisini hazırlar; indekslemeyi tembel bırakır."""
+
         self.store = DocumentStore(data_dir / "documents")
         self.data_dir = data_dir
         self.model = model or os.getenv("CMS_RAG_MODEL", "qwen2.5:3b")
@@ -27,6 +33,9 @@ class CMSRAGEngine:
         self.history: list[dict[str, str]] = []
 
     def rebuild(self) -> int:
+        """PDF ve Markdown kaynaklarını okuyup hibrit indeksi baştan kurar."""
+
+        # Resmî yüklemeler ile açık referanslar aynı modelde, ayrı koleksiyonlarda tutulur.
         chunks = PDFIngestor().load(self.store.pdfs(), collection="official", authority="uploaded_official")
         chunks.extend(MarkdownIngestor().load_directory(self.data_dir / "references"))
         self.retriever = HybridRetriever(chunks) if chunks else None
@@ -34,10 +43,14 @@ class CMSRAGEngine:
         return len(chunks)
 
     def ask(self, question: str, scope: str = "all") -> tuple[str, list[SearchHit]]:
+        """Akışlı yanıtı tüketerek klasik metin ve kaynak listesi arayüzü sağlar."""
+
         stream, hits = self.stream_ask(question, scope)
         return "".join(stream), hits
 
     def stream_ask(self, question: str, scope: str = "all") -> tuple[Iterator[str], list[SearchHit]]:
+        """Soruyu kanıt kuralları, retrieval ve Ollama sırasıyla akışlı cevaplar."""
+
         if not self.retriever:
             return self._completed(
                 question,
@@ -45,10 +58,12 @@ class CMSRAGEngine:
                 scope,
             ), []
 
+        # Alan dışı sohbeti erken reddetmek gecikmeyi ve belgesiz üretim riskini azaltır.
         if CMSQueryProcessor.is_non_domain_chitchat(question):
             return self._completed(question, NO_ANSWER, scope), []
         scoped_history = self._history_for(scope)
         evidence_chunks = [chunk for chunk in self.retriever.chunks if scope == "all" or chunk.collection == scope]
+        # Açıkça belgelenmiş sık sorular model belirsizliğine bırakılmadan cevaplanır.
         evidence_answer = EvidenceResponder.answer(question, scoped_history, evidence_chunks)
         if evidence_answer:
             answer, hits = evidence_answer
@@ -62,6 +77,8 @@ class CMSRAGEngine:
         return self._ollama_stream(question, prompt, hits, scope), hits
 
     def clear_chat(self) -> None:
+        """Motorun kapsam etiketli kısa konuşma belleğini temizler."""
+
         self.history.clear()
 
     def build_retrieval_query(self, question: str, scope: str = "all") -> str:
@@ -77,6 +94,8 @@ class CMSRAGEngine:
         return question
 
     def _prompt(self, question: str, hits: list[SearchHit], scope: str = "all") -> str:
+        """Kaynakları numaralandırıp modeli yalnızca bu bağlamdan cevap vermeye zorlar."""
+
         context = "\n\n".join(
             f"[SOURCE {number}: {hit.chunk.document}, page {hit.chunk.page}]\n{hit.chunk.text}"
             for number, hit in enumerate(hits, start=1)
@@ -101,7 +120,11 @@ QUESTION
 """
 
     def _completed(self, question: str, answer: str, scope: str = "all") -> Iterator[str]:
+        """Hazır cevabı kelime kelime yayınlayan ve sonunda belleğe alan akış kurar."""
+
         def iterator() -> Iterator[str]:
+            """Streamlit yazım animasyonu için cevabı küçük parçalar hâlinde üretir."""
+
             for word in answer.split(" "):
                 yield f"{word} "
             self._remember(question, answer, scope)
@@ -114,7 +137,11 @@ QUESTION
         hits: list[SearchHit],
         scope: str = "all",
     ) -> Iterator[str]:
+        """Ollama akışını yayınlar, kaynak işaretini garanti eder ve hatayı anlaşılır kılar."""
+
         def iterator() -> Iterator[str]:
+            """Model tokenlarını iletir ve tamamlanan yanıtı kapsamıyla kaydeder."""
+
             parts: list[str] = []
             try:
                 for response in self._ollama.chat(
@@ -129,6 +156,7 @@ QUESTION
                         parts.append(token)
                         yield token
                 answer = "".join(parts).strip() or NO_ANSWER
+                # Model etiketi atlarsa retrieval'ın ilk kanıtını deterministik biçimde ekleriz.
                 if hits and "[SOURCE" not in answer.upper() and answer != NO_ANSWER:
                     citation = " [SOURCE 1]"
                     answer += citation
@@ -140,12 +168,16 @@ QUESTION
         return iterator()
 
     def _remember(self, question: str, answer: str, scope: str = "all") -> None:
+        """Son üç turu kapsamıyla saklayarak sınırsız bağlam büyümesini önler."""
+
         self.history = (
             self.history
             + [{"question": question, "answer": answer, "scope": scope}]
         )[-3:]
 
     def _history_for(self, scope: str) -> list[dict[str, str]]:
+        """Yalnız aynı kapsamdaki turları döndürerek koleksiyon sızıntısını önler."""
+
         return [
             item
             for item in self.history
@@ -153,6 +185,8 @@ QUESTION
         ]
 
     def _format_history(self, scope: str = "all") -> str:
+        """Uygun geçmişi model isteminde kullanılacak okunur metne dönüştürür."""
+
         scoped_history = self._history_for(scope)
         if not scoped_history:
             return "(Yok)"

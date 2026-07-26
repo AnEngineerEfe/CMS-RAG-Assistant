@@ -28,6 +28,9 @@ Bu belge yalnızca tekrar çalıştırılabilir otomasyon sonuçlarını kaydede
 - Streamlit arayüzünde üç turluk gerçek kullanıcı yolculuğu
 - Kaynaksız yanıtta ilgisiz kanıt kartlarının gösterilmemesi
 - Ollama hata mesajında retrieval kanıtlarının gizlenmesi
+- Streamlit giriş noktasının ince ve iş mantığından arındırılmış kalması
+- Domain, application, infrastructure ve presentation bağımlılık yönleri
+- Tüm kaynak sınıf ve fonksiyonlarının Türkçe işlev açıklaması taşıması
 
 ## Retrieval kabul seti
 
@@ -63,7 +66,7 @@ birlikte ayağa kalkabildiğini doğrular.
 2026-07-26 tarihinde temiz kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `30/30` başarılı
+- Otomatik testler: `33/33` başarılı
 - Retrieval kabul seti: `4/4` başarılı
 - İndekslenen kanıt parçası: `59`
 - Streamlit sağlık endpoint'i: `HTTP 200`

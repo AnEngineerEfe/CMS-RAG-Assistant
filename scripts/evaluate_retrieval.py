@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from src.cms_rag.engine import CMSRAGEngine
-from src.cms_rag.query import CMSQueryProcessor
+from src.cms_rag.application import CMSRAGEngine
+from src.cms_rag.domain import CMSQueryProcessor
 
 
 CASES = [

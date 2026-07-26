@@ -1,3 +1,5 @@
+"""PDF ve küratörlü Markdown kaynaklarını izlenebilir parçalara dönüştürür."""
+
 from __future__ import annotations
 
 import re
@@ -6,11 +8,15 @@ from pathlib import Path
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 
-from .models import Chunk
+from ..domain.models import Chunk
 
 
 class PDFIngestor:
+    """PDF sayfalarını temizler ve örtüşmeli, kaynak bilgili parçalara böler."""
+
     def __init__(self, chunk_size: int = 900, overlap: int = 150) -> None:
+        """Parça uzunluğunu ve bağlam kaybını azaltan örtüşme miktarını ayarlar."""
+
         self.chunk_size = chunk_size
         self.overlap = overlap
 
@@ -20,6 +26,8 @@ class PDFIngestor:
         collection: str = "official",
         authority: str = "user_uploaded",
     ) -> list[Chunk]:
+        """Okunabilen tüm PDF sayfalarını işler; bozuk tek dosya tüm işlemi durdurmaz."""
+
         chunks: list[Chunk] = []
         for path in paths:
             try:
@@ -33,6 +41,8 @@ class PDFIngestor:
 
     @staticmethod
     def _clean(text: str) -> str:
+        """PDF çıkarımındaki tekrarlı boşluk ve satır sonlarını tek boşluğa indirger."""
+
         return re.sub(r"\s+", " ", text).strip()
 
     def _split(
@@ -44,12 +54,15 @@ class PDFIngestor:
         authority: str = "user_uploaded",
         source_url: str = "",
     ) -> list[Chunk]:
+        """Metni mümkünse cümle sınırından ve kontrollü örtüşmeyle parçalara ayırır."""
+
         if not text:
             return []
         result: list[Chunk] = []
         start = 0
         while start < len(text):
             end = min(len(text), start + self.chunk_size)
+            # Sert karakter kesimi yerine yakın bir cümle sonunu tercih ederiz.
             if end < len(text):
                 boundary = text.rfind(". ", start, end)
                 if boundary > start + self.chunk_size // 2:
@@ -66,9 +79,11 @@ class PDFIngestor:
 
 
 class MarkdownIngestor(PDFIngestor):
-    """Loads curated public web references with lightweight front matter."""
+    """Küratörlü web referanslarını basit front matter bilgisiyle yükler."""
 
     def load_directory(self, root: Path) -> list[Chunk]:
+        """Alt klasörlerdeki Markdown dosyalarını koleksiyon metadatasıyla işler."""
+
         chunks: list[Chunk] = []
         if not root.exists():
             return chunks
@@ -84,6 +99,8 @@ class MarkdownIngestor(PDFIngestor):
 
     @staticmethod
     def _parse_front_matter(text: str) -> tuple[dict[str, str], str]:
+        """Başlıktaki anahtar/değer çiftlerini metin gövdesinden ayırır."""
+
         if not text.startswith("---\n"):
             return {}, text
         _, header, body = text.split("---\n", 2)

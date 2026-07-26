@@ -90,17 +90,31 @@ PDF + seçilmiş Markdown kaynakları
   -> kalıcı sohbet ve kanıt kartları
 ```
 
-Ana modüller:
+Katmanlı proje yapısı:
 
-- `storage.py`: içerik adresli belge yaşam döngüsü ve manifest
-- `ingest.py`: PDF/Markdown doğrulama ve parçalama
-- `retrieval.py`: hibrit arama, füzyon, reranking ve kapsam filtresi
-- `query.py`: takip sorusu bağlamlandırma ve kontrollü terim genişletme
-- `evidence.py`: doğrudan kanıta dayalı hızlı yanıtlar
-- `engine.py`: indeks, retrieval, güvenli ret ve yerel üretim orkestrasyonu
-- `app.py`: Streamlit operasyon arayüzü ve oturum durumu
+```text
+app.py                         İnce Streamlit giriş noktası
+src/cms_rag/
+  domain/                      Veri modelleri ve saf iş kuralları
+  application/                 RAG kullanım senaryosu orkestrasyonu
+  infrastructure/              PDF, manifest, FAISS, BM25 ve reranker
+  presentation/                Streamlit tema, bileşen, sidebar ve sohbet akışı
+data/
+  documents/                   İçerik adresli PDF deposu
+  references/official/         Doğrulanmış üretici kaynakları
+  references/open_source/      Doğrulanmış açık/kamu kaynakları
+scripts/                       Tekrarlanabilir değerlendirme araçları
+tests/                         Birim, UI ve mimari sınır testleri
+docs/                          Mimari, Git akışı ve kabul kanıtları
+```
 
-Ayrıntılı tasarım için [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), test
+Bağımlılık yönü `presentation → application → domain` biçimindedir.
+`infrastructure`, alan modellerini uygular; `domain` hiçbir üst katmana bağımlı
+değildir. Mimari testler bu sınırı ve kaynak sınıf/fonksiyonlarının açıklama
+taşımasını otomatik olarak korur.
+
+Ayrıntılı tasarım için [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), dal ve
+sürüm politikası için [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md), test
 kanıtları için [docs/TEST_EVIDENCE.md](docs/TEST_EVIDENCE.md) dosyasına bakın.
 
 ## Test ve kabul
