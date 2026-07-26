@@ -12,7 +12,7 @@ doğrulanmıştır.
 
 | Kontrol | Sonuç |
 |---|---:|
-| Otomatik test | 30/30 başarılı |
+| Otomatik test | 33/33 başarılı |
 | Retrieval kabul vakası | 4/4 başarılı |
 | İndekslenen chunk | 59 |
 | PDF sayfası | 34/34 metinli |
@@ -67,6 +67,8 @@ doğrulanmıştır.
 - Kişisel/alan dışı soru kaynak uydurulmadan reddedilir.
 - Türkçe karakter bozulması, TODO/gizli anahtar ve tehlikeli dinamik çalıştırma
   kalıpları için statik tarama temizdir.
+- Katman bağımlılık yönü, ince Streamlit giriş noktası ve kaynak
+  sınıf/fonksiyonlarının Türkçe açıklama taşıması mimari testlerle korunur.
 
 ## Canlı görünür kullanıcı yolculuğu
 

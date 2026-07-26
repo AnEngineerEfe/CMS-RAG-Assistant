@@ -21,7 +21,38 @@ eğitim, araştırma ve sunum hazırlığı için tasarlanmıştır.
 Her parça; belge adı, sayfa, kaynak yolu, koleksiyon, otorite ve kaynak URL'sini
 taşır. Açık kaynak bağlamı, ürün-spesifik resmî iddia gibi sunulmaz.
 
-## 3. Bileşenler
+## 3. Katmanlar ve bağımlılık yönü
+
+```text
+app.py
+  |
+  v
+presentation/  ---- Streamlit ekranı, durum ve kullanıcı etkileşimi
+  |
+  v
+application/   ---- RAG kullanım senaryosu ve iş akışı orkestrasyonu
+  |        \
+  v         v
+domain/     infrastructure/
+  ^         ---- PDF, depolama, embedding, FAISS, BM25 ve reranker
+  |
+  +------------- Katmanlar arası modeller ve saf karar kuralları
+```
+
+- `domain`, başka bir proje katmanına veya Streamlit/Ollama/FAISS gibi bir
+  teknolojiye bağımlı değildir.
+- `infrastructure`, yalnız alan modellerini kullanır ve dosya/arama ayrıntılarını
+  uygulama katmanından gizler.
+- `application`, domain kuralları ile altyapı uygulamalarını tek kullanım
+  senaryosunda birleştirir.
+- `presentation`, kullanıcı etkileşimini yürütür; retrieval veya depolama iş
+  kuralı içermez.
+- Kök `app.py`, Streamlit'in sabit çalıştırma hedefidir ve yalnız sunum
+  orkestratörünü çağırır.
+
+Bu bağımlılık sınırları `tests/test_architecture.py` ile otomatik korunur.
+
+## 4. Bileşenler
 
 ```text
 Streamlit UI
@@ -37,7 +68,7 @@ RAGEngine
   +-- Ollama ------------ yerel ve akışlı üretim
 ```
 
-## 4. Sorgu hattı
+## 5. Sorgu hattı
 
 ```text
 Soru + aynı kaynak kapsamındaki en fazla üç önceki tur
@@ -58,7 +89,7 @@ Semantik arama anlam yakınlığını, BM25 ise ürün adı, kısaltma ve teknik
 eşleşmesini yakalar. RRF skor ölçeklerini doğrudan karşılaştırmadan iki sıralamayı
 birleştirir. Cross-encoder son adayları soru-parça çifti olarak yeniden sıralar.
 
-## 5. Belge yaşam döngüsü
+## 6. Belge yaşam döngüsü
 
 1. Dosya PDF imzası ve boyut sınırıyla doğrulanır.
 2. İçerik SHA-256 ile kimliklendirilir.
@@ -69,7 +100,7 @@ birleştirir. Cross-encoder son adayları soru-parça çifti olarak yeniden sır
 
 Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanır.
 
-## 6. Yanıt güvenilirliği
+## 7. Yanıt güvenilirliği
 
 - Kaynaksız kişisel/sohbet soruları retrieval çalıştırmadan reddedilir.
 - Kanıt yetersizse sistem açıkça yeterli kaynak bulunamadığını söyler.
@@ -87,7 +118,7 @@ Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanı
 - CPU tabanlı etkileşimli kullanımda varsayılan model `qwen2.5:3b`dir;
   `CMS_RAG_MODEL` ile daha büyük bir yerel model seçilebilir.
 
-## 7. Güvenlik ve gizlilik
+## 8. Güvenlik ve gizlilik
 
 - Doküman içeriği yerel Ollama dışında bir üretim servisine gönderilmez.
 - Rastgele web taraması yoktur; kaynaklar kontrollü biçimde seçilip depoya alınır.
@@ -100,13 +131,24 @@ Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanı
 disk şifreleme, merkezi audit kaydı, kötü amaçlı dosya taraması, kaynak onay
 iş akışı ve ağ çıkış politikası.
 
-## 8. İşletim ve gözlemlenebilirlik
+## 9. İşletim ve gözlemlenebilirlik
 
 Arayüz; yüklü belge sayısı, indeks parça sayısı, aktif model, arama yöntemi ve her
 yanıtın kanıt paketini gösterir. Yeniden indeksleme deterministik bir kurtarma
 yoludur. Retrieval kabul raporu makinece okunabilir JSON olarak üretilir.
 
-## 9. Bilinen sınırlar
+## 10. Kod açıklama standardı
+
+- Her kaynak modülü katmanın amacını açıklayan Türkçe bir modül docstring'i
+  taşır.
+- Her sınıf ve fonksiyon; sorumluluğunu, girdi/çıktı davranışını veya güvenlik
+  kararını açıklayan Türkçe docstring'e sahiptir.
+- Yorumlar sözdizimini tekrar etmez; kapsam izolasyonu, RRF, hash tabanlı tekrar
+  engelleme ve kanıt gizleme gibi ilk bakışta görünmeyen kararların nedenini
+  belgeler.
+- Bu kural `ArchitectureGuardTests` tarafından AST üzerinden denetlenir.
+
+## 11. Bilinen sınırlar
 
 - Görüntü tabanlı taranmış PDF'ler için OCR katmanı yoktur.
 - Kaynak yenileme otomatik değildir; seçilmiş referanslar gözden geçirilerek
