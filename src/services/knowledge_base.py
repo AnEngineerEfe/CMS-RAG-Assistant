@@ -8,8 +8,9 @@ from pathlib import Path
 from langchain_core.documents import Document
 
 from src.chunking.chunker import CMSChunker
-from src.config import CHUNK_OVERLAP, CHUNK_SIZE, MIN_RERANK_RELEVANCE, PROCESSED_MARKDOWN_PATH, RETRIEVAL_K, TOP_K, VECTOR_DB_PATH
+from src.config import CHUNK_OVERLAP, CHUNK_SIZE, MIN_RERANK_RELEVANCE, RETRIEVAL_K, TOP_K, VECTOR_DB_PATH
 from src.embeddings.embedder import CMSEmbedder
+from src.generation.evidence_answers import CMSEvidenceAnswers
 from src.generation.llm import CMSLLM
 from src.generation.prompt_builder import CMSPromptBuilder
 from src.ingestion.cleaner import TextCleaner
@@ -34,7 +35,7 @@ class CMSKnowledgeBase:
         self.memory = CMSConversationMemory()
 
     def build(self) -> int:
-        documents = CMSDocumentLoader(self.source_root).load() + self._legacy_advent_documents()
+        documents = CMSDocumentLoader(self.source_root).load()
         grouped: dict[str, list[Document]] = {}
         for document in documents:
             document.page_content = TextCleaner.clean(document.page_content)
@@ -65,7 +66,16 @@ class CMSKnowledgeBase:
         ranked = self.reranker.rerank(retrieval_query, candidates[: RETRIEVAL_K * 2], TOP_K)
         if not ranked or ranked[0][0] < MIN_RERANK_RELEVANCE:
             return NO_ANSWER, ranked
-        answer = self.llm.generate(CMSPromptBuilder.build(query, [doc for _, doc in ranked], self.memory.get_history()))
+        evidence_answer = CMSEvidenceAnswers.answer(query, ranked)
+        if evidence_answer:
+            self.memory.add(query, evidence_answer)
+            return evidence_answer, ranked
+        try:
+            answer = self.llm.generate(
+                CMSPromptBuilder.build(query, [doc for _, doc in ranked[:2]], self.memory.get_history())
+            )
+        except Exception:
+            return "Yerel LLM servisine ulaşılamadı. Ollama'nın çalıştığını ve modelin yüklü olduğunu kontrol edin.", ranked
         self.memory.add(query, answer)
         return answer, ranked
 
@@ -73,6 +83,7 @@ class CMSKnowledgeBase:
         self.memory.clear()
 
     def _retrieve(self, query: str, scope: str) -> list[Document]:
+        scope = {"combined": "all", "birlesik": "all"}.get(scope, scope)
         selected = self.collections.items() if scope == "all" else [(scope, self.collections[scope])] if scope in self.collections else []
         candidates: list[Document] = []
         seen: set[tuple[str, int, str]] = set()
@@ -92,6 +103,7 @@ class CMSKnowledgeBase:
         normalized = "".join(char for char in normalized if not unicodedata.combining(char))
         normalized = normalized.translate(str.maketrans("\u00e7\u011f\u0131\u00f6\u015f\u00fc", "cgiosu"))
         glossary = {
+            "advent": "combat management system naval operations",
             "iz yonetimi": "track management",
             "iz": "track",
             "takip": "tracking",
@@ -104,18 +116,3 @@ class CMSKnowledgeBase:
         }
         additions = [english for turkish, english in glossary.items() if turkish in normalized]
         return f"{query} {' '.join(additions)}" if additions else query
-
-    @staticmethod
-    def _legacy_advent_documents() -> list[Document]:
-        if not PROCESSED_MARKDOWN_PATH.exists():
-            return []
-        legacy = CMSDocumentLoader(PROCESSED_MARKDOWN_PATH).load()
-        for document in legacy:
-            original_name = document.metadata["document"]
-            document.metadata.update({
-                "collection": "havelsan",
-                "authority": "official",
-                "document": "ADVENT legacy extraction",
-                "source_path": f"processed/markdown/{original_name}",
-            })
-        return legacy

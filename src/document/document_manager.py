@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.config import *
+from src.config import RAW_DATA_PATH
 
 
 class CMSDocumentManager:
@@ -19,6 +19,7 @@ class CMSDocumentManager:
                 {
                     "name": pdf.name,
                     "path": pdf,
+                    "collection": pdf.relative_to(RAW_DATA_PATH).parts[0],
                     "size": round(
                         pdf.stat().st_size / 1024 / 1024,
                         2
@@ -28,5 +29,5 @@ class CMSDocumentManager:
 
         return sorted(
             documents,
-            key=lambda x: x["name"].lower()
+            key=lambda x: (x["collection"], x["name"].lower())
         )

@@ -1,5 +1,6 @@
 """Central configuration for the local CMS-RAG application."""
 
+import os
 from pathlib import Path
 
 
@@ -18,7 +19,7 @@ CHUNK_OVERLAP = 150
 # English counterpart before retrieval in CMSKnowledgeBase.
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 RERANKER_MODEL = "BAAI/bge-reranker-base"
-OLLAMA_MODEL = "qwen2.5:3b"
+OLLAMA_MODEL = os.getenv("CMS_RAG_OLLAMA_MODEL", "qwen2.5:7b")
 
 RETRIEVAL_K = 20
 TOP_K = 4

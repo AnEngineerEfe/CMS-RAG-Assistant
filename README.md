@@ -1,14 +1,34 @@
 # CMS-RAG Assistant
 
-Yerel çalışacak şekilde tasarlanmış, kaynak gösteren bir Combat Management
-System bilgi asistanı. Resmî HAVELSAN içeriği ile kamu/açık kaynak referansları
-ayrı indekslenir; istenirse sorgu sırasında birleştirilir ve reranking uygulanır.
+Yerelde calisan, kaynak kaniti gosteren CMS dokuman asistani.
 
-1. `pip install -r requirements.txt`
-2. `ollama pull qwen2.5:3b`
-3. Onaylı kamu kaynakları için `python scripts/sync_sources.py`
-4. `streamlit run app.py`
+## Calistirma
 
-Hassas belgeleri yalnızca izinli, ağdan yalıtılmış ortamda
-`data/raw/havelsan/` altında saklayın. Kamu kaynakları `data/raw/open_source/`
-altında tutulur.
+```powershell
+.\.venv\Scripts\Activate.ps1
+ollama serve
+ollama pull qwen2.5:7b
+streamlit run app.py
+```
+
+Varsayilan model `qwen2.5:7b`'dir. Daha dusuk donanimli bilgisayarlarda
+istege bagli olarak daha kucuk bir yerel model secilebilir:
+
+```powershell
+$env:CMS_RAG_OLLAMA_MODEL="qwen2.5:7b"
+streamlit run app.py
+```
+
+## Veri kurallari
+
+- `data/raw/havelsan/`: resmi kaynaklar ve kullanici PDF yuklemeleri
+- `data/raw/open_source/`: onayli kamu kaynaklari
+- PDF'ler SHA-256 icerigiyle tekillestirilir; ayni icerik ikinci kez indekslenmez.
+- Kaynak, koleksiyon, yetki seviyesi ve sayfa bilgisi yanitta gorunur.
+
+Kabul degerlendirmesi:
+
+```powershell
+python -m scripts.evaluate_retrieval
+python -m unittest discover -s tests -v
+```

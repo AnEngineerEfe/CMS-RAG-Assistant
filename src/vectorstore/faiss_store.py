@@ -33,22 +33,3 @@ class CMSVectorStore:
 
         vectorstore.save_local(path)
 
-    # -----------------------------------------
-    # Load
-    # -----------------------------------------
-
-    def load(self, path):
-
-        return FAISS.load_local(
-            path,
-            self.embedding_model,
-            allow_dangerous_deserialization=True
-        )
-
-    # -----------------------------------------
-    # Exists
-    # -----------------------------------------
-
-    def exists(self, path):
-
-        return Path(path).exists()

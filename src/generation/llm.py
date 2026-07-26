@@ -11,6 +11,10 @@ class CMSLLM:
             temperature=0
         )
 
+    @property
+    def model_name(self):
+        return OLLAMA_MODEL
+
     def generate(self, prompt):
 
         response = self.llm.invoke(prompt)

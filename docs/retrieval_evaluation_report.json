@@ -1,0 +1,85 @@
+{
+  "indexed_chunks": 68,
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "id": "advent_overview",
+      "passed": true,
+      "matched_terms": [
+        "advent"
+      ],
+      "expected_terms": [
+        "advent"
+      ],
+      "top_source": "havelsan/havelsan-advent-brochure.pdf",
+      "context_sources": [
+        "havelsan/havelsan-advent-brochure.pdf",
+        "havelsan/havelsan-advent-brochure.pdf",
+        "havelsan/havelsan-advent-brochure.pdf",
+        "havelsan/havelsan-advent-brochure.pdf"
+      ],
+      "top_score": 0.76
+    },
+    {
+      "id": "track_management_turkish",
+      "passed": true,
+      "matched_terms": [
+        "track management",
+        "lifecycle"
+      ],
+      "expected_terms": [
+        "track management",
+        "lifecycle"
+      ],
+      "top_source": "havelsan/havelsan-advent-brochure.pdf",
+      "context_sources": [
+        "havelsan/havelsan-advent-brochure.pdf",
+        "havelsan/havelsan-advent-brochure.pdf",
+        "havelsan/havelsan-advent-brochure.pdf",
+        "havelsan/havelsan-advent-brochure.pdf"
+      ],
+      "top_score": 0.6
+    },
+    {
+      "id": "tactical_data_links",
+      "passed": true,
+      "matched_terms": [
+        "link 11",
+        "link 16"
+      ],
+      "expected_terms": [
+        "link 11",
+        "link 16"
+      ],
+      "top_source": "havelsan/havelsan-advent-brochure.pdf",
+      "context_sources": [
+        "havelsan/havelsan-advent-brochure.pdf",
+        "havelsan/havelsan-advent-brochure.pdf",
+        "havelsan/havelsan-advent-brochure.pdf",
+        "havelsan/havelsan-advent-brochure.pdf"
+      ],
+      "top_score": 0.681
+    },
+    {
+      "id": "nato_interoperability",
+      "passed": true,
+      "matched_terms": [
+        "interoperability",
+        "allies"
+      ],
+      "expected_terms": [
+        "interoperability",
+        "allies"
+      ],
+      "top_source": "open_source/nato-interoperability.md",
+      "context_sources": [
+        "open_source/nato-interoperability.md",
+        "open_source/nato-interoperability.md",
+        "open_source/nato-interoperability.md",
+        "open_source/nato-interoperability.md"
+      ],
+      "top_score": 0.543
+    }
+  ]
+}
