@@ -1,5 +1,5 @@
 {
-  "indexed_chunks": 57,
+  "indexed_chunks": 59,
   "passed": 4,
   "total": 4,
   "results": [
@@ -87,6 +87,12 @@
         },
         {
           "document": "advent_cms.pdf",
+          "page": 2,
+          "collection": "official",
+          "authority": "uploaded_official"
+        },
+        {
+          "document": "advent_cms.pdf",
           "page": 6,
           "collection": "official",
           "authority": "uploaded_official"
@@ -94,12 +100,6 @@
         {
           "document": "advent_cms.pdf",
           "page": 22,
-          "collection": "official",
-          "authority": "uploaded_official"
-        },
-        {
-          "document": "advent_cms.pdf",
-          "page": 8,
           "collection": "official",
           "authority": "uploaded_official"
         }
@@ -143,14 +143,14 @@
           "authority": "uploaded_official"
         },
         {
-          "document": "advent_cms.pdf",
-          "page": 22,
+          "document": "havelsan-advent-web.md",
+          "page": 1,
           "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN official website"
         },
         {
           "document": "advent_cms.pdf",
-          "page": 23,
+          "page": 22,
           "collection": "official",
           "authority": "uploaded_official"
         }
