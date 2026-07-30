@@ -3,10 +3,26 @@
 Yerel çalışan, kaynak gösteren ve koleksiyon ayrımı uygulayan Combat Management
 System (CMS) doküman asistanı.
 
-Sistem; kullanıcı tarafından yüklenen resmî PDF'leri, seçilmiş HAVELSAN resmî
-içeriğini ve açık/kamu kaynaklarını ayrı yetki sınıflarıyla indeksler. Yanıtlar
+Sistem; geliştirme/kurasyon aşamasında araştırılmış kamuya açık kaynakları PDF
+bilgi paketlerine dönüştürür ve belge embeddinglerini önceden hesaplar. Normal
+çalışma sırasında internet araştırması yapmaz: hazır yerel snapshot üzerinden
 FAISS semantik arama, BM25, Reciprocal Rank Fusion ve cross-encoder reranking
-sonucunda seçilen kanıtlara dayanır.
+uygular; seçilen kanıtları yerel Ollama modeline verir.
+
+## Çalışma modeli
+
+```text
+GELİŞTİRME / KÜRASYON (internet yalnız burada)
+Birincil kamu kaynakları → küratörlü metin → PDF → chunk → embedding snapshot
+
+NORMAL KULLANIM (çevrimdışı)
+Kullanıcı sorusu → hazır snapshot → hibrit arama → yerel Ollama → kaynaklı cevap
+```
+
+Model PDF'leri “ezberlemez”; RAG tasarımında doğrulanmış bilgi önceden
+parçalanıp indekslenir, soru geldiğinde yalnız ilgili parçalar modele bağlam
+olarak verilir. Böylece kaynak güncellenebilir, cevap izlenebilir ve çalışma
+anında web taraması gerekmez.
 
 ## Özellikler
 
@@ -19,14 +35,18 @@ sonucunda seçilen kanıtlara dayanır.
 - Üç turluk kontrollü sohbet bağlamı
 - Ollama üzerinden yerel ve akışlı yanıt üretimi
 - Her mesajla kalıcı kanıt kartları ve kaynak sayfası
+- Dört PDF kaynağı ve 75 chunk içeren sürümlenmiş başlangıç snapshot'ı
+- Normal kullanımda belge embeddinglerini yeniden hesaplamayan hızlı açılış
+- Çalışma anında kapalı web erişimi ve yalnız yerel üretim
 - Belge silme, yeniden indeksleme ve güvenli boş-bilgi-tabani davranışı
 
 ## Gereksinimler
 
 - Python 3.11 veya üzeri
 - Ollama
-- En az 8 GB RAM; embedding ve reranker modellerinin ilk açılışta indirilmesi
-  için internet erişimi
+- En az 8 GB RAM
+- Yalnız ilk geliştirici hazırlığında model ağırlıklarını kurmak için internet;
+  normal soru-cevap çalışmasında internet gerekmez
 
 ## Kurulum
 
@@ -49,8 +69,8 @@ streamlit run app.py
 ```
 
 Uygulama varsayılan olarak `http://localhost:8501` adresinde açılır.
-Embedding ve reranker ağırlıkları bir kez indirildikten sonra katı çevrimdışı
-çalışma için uygulamayı başlatmadan önce `$env:CMS_RAG_OFFLINE="1"` ayarlanabilir.
+Embedding/reranker ağırlıkları yerelde bulunur ve uygulama varsayılan olarak
+çevrimdışı modda açılır. Çalışma sırasında web kaynağı indirilmez.
 
 Varsayılan `qwen2.5:3b`, CPU tabanlı makinelerde etkileşimli kullanım için
 seçilmiştir. Daha güçlü donanımda 7B kalite modu kullanılabilir:
@@ -63,25 +83,37 @@ streamlit run app.py
 
 ## Kullanım
 
-1. Sol panelden yalnızca kamuya açık veya kullanım yetkiniz bulunan resmî PDF'i
-   seçin.
-2. `Belgeyi doğrula ve indeksle` düğmesine basın. Aynı içerik yeniden seçilirse
-   ikinci bir kayıt oluşturulmaz.
-3. Sorgu kapsamını `Birleşik`, `Yalnızca resmî` veya `Yalnızca açık kaynak`
+1. Uygulamayı açın; dört belgeli hazır bilgi tabanı otomatik yüklenir.
+2. Sorgu kapsamını `Birleşik`, `Yalnızca resmî` veya `Yalnızca açık kaynak`
    olarak seçin.
+3. ADVENT/CMS veya kamuya açıklanmış AI entegrasyonu hakkında sorunuzu yazın.
 4. Yanıtın altındaki kanıt paketinden belgeyi, sayfayı, otoriteyi ve varsa
    kaynak URL'sini denetleyin.
 
-`İndeksi yenile` mevcut yerel belgeleri yeniden işler.
-Belge satırındaki silme işlemi hem dosyayı hem manifest kaydını kaldırır ve
-indeksi yeniler.
+Ek PDF zorunlu değildir. Gerektiğinde `İsteğe bağlı ek belge` alanından yalnızca
+kamuya açık veya kullanım yetkiniz bulunan PDF eklenebilir. Aynı içerik ikinci
+kez saklanmaz. Çekirdek bilgi tabanı arayüzden silinemez.
+
+## Bilgi tabanını hazırlama
+
+Kaynak araştırması güncellendiğinde geliştirici araçlarını kurup tek komut
+çalıştırın:
+
+```powershell
+python -m pip install -r requirements-tools.txt
+.\.venv\Scripts\python.exe -m scripts.build_knowledge_base
+```
+
+Komut üç küratörlü PDF'yi, `manifest.json` dosyasını ve belge embedding
+snapshot'ını yeniden üretir. Normal kullanıcı bu komutu çalıştırmaz.
 
 ## Mimari
 
 ```text
-PDF + seçilmiş Markdown kaynakları
-  -> doğrulama ve meta veri
-  -> sayfa bazlı parçalama
+Önceden küratörlenmiş PDF bilgi paketi
+  -> geliştirme aşamasında sayfa bazlı parçalama ve embedding
+  -> sürümlenmiş yerel snapshot
+  -> normal kullanımda snapshot yükleme
   -> semantic FAISS + BM25
   -> Reciprocal Rank Fusion
   -> cross-encoder reranking
@@ -101,8 +133,12 @@ src/cms_rag/
   presentation/                Streamlit tema, bileşen, sidebar ve sohbet akışı
 data/
   documents/                   İçerik adresli PDF deposu
+  knowledge_base/
+    sources/                   Önceden hazırlanmış kamuya açık PDF paketi
+    snapshot/                  Chunk meta verisi ve hazır embedding matrisi
   references/official/         Doğrulanmış üretici kaynakları
   references/open_source/      Doğrulanmış açık/kamu kaynakları
+knowledge_base/content/        PDF üretiminde kullanılan küratörlü kaynak metinleri
 scripts/                       Tekrarlanabilir değerlendirme araçları
 tests/                         Birim, UI ve mimari sınır testleri
 docs/                          Mimari, Git akışı ve kabul kanıtları

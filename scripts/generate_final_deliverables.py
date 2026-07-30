@@ -26,9 +26,9 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "deliverables"
 DOCX_PATH = OUTPUT_DIR / "CMS-RAG_Nihai_Teknik_Dokumantasyon.docx"
 PPTX_PATH = OUTPUT_DIR / "CMS-RAG_Nihai_Proje_Sunumu.pptx"
-TODAY = date(2026, 7, 26)
-VERSION = "1.0"
-COMMIT = "d022506"
+TODAY = date(2026, 7, 30)
+VERSION = "1.1"
+COMMIT = "codex/offline-knowledge-base"
 
 NAVY = "0B1F3A"
 BLUE = "1B5FA7"
@@ -314,18 +314,19 @@ def build_word_document() -> None:
         [
             ["Sürüm", VERSION],
             ["Tarih", TODAY.strftime("%d.%m.%Y")],
-            ["Doğrulanmış dal", "develop"],
-            ["Referans commit", COMMIT],
-            ["Durum", "Nihai kabul — 33/33 test, 4/4 retrieval"],
+            ["Doğrulanmış dal", COMMIT],
+            ["Mimari", "Hazır PDF paketi + önceden hesaplanmış embedding snapshot'ı"],
+            ["Durum", "Nihai kabul — 38/38 test, 8/8 retrieval"],
         ],
         [5.0, 11.5],
     )
     add_word_callout(
         document,
         "Kullanım sınırı",
-        "Bu sistem tasnif dışı, kamuya açık veya kullanım yetkisi bulunan belgeler üzerinde "
-        "bilgi keşfi içindir. Operasyonel karar sistemi değildir; kritik iddialar gösterilen "
-        "asıl belge ve sayfadan doğrulanmalıdır.",
+        "Bu çalışma, HAVELSAN'ın deniz savaş yönetim sistemleri alanındaki kamuya açık "
+        "çalışma ve ürünleri ile yapay zekâ entegrasyonu süreçlerine yönelik bir ön çalışma "
+        "ve araştırmadır. Şirket içi, özel veya tasnifli veri kullanılmamıştır. Operasyonel "
+        "karar sistemi değildir; kritik iddialar asıl belge ve sayfadan doğrulanmalıdır.",
         ORANGE,
     )
     document.add_page_break()
@@ -338,10 +339,10 @@ def build_word_document() -> None:
         [
             ["Hedef kitle", "Mentör, jüri, geliştirici, teknik yönetici ve sistem kullanıcısı"],
             ["Kapsam", "Amaç, mimari, veri, retrieval, güvenlik, kurulum, test, Git ve yol haritası"],
-            ["Kaynaklar", "Resmî ADVENT PDF'i, seçilmiş HAVELSAN içeriği ve NATO açık referansı"],
+            ["Kaynaklar", "Dört önceden hazırlanmış kamuya açık PDF; şirket verisi kullanılmaz"],
             ["Çalışma modeli", "Yerel Ollama qwen2.5:3b; güçlü donanımda qwen2.5:7b"],
             ["Arayüz", "Streamlit tabanlı, kaynak kartlı ve akışlı sohbet"],
-            ["Son kabul", "Temiz Git arşivinde 33/33 otomatik test ve 4/4 retrieval kabulü"],
+            ["Son kabul", "38/38 otomatik test, 8/8 retrieval ve 75/75 snapshot doğrulaması"],
         ],
         [4.2, 12.3],
     )
@@ -380,18 +381,20 @@ def build_word_document() -> None:
     )
     add_word_body(
         document,
-        "Sistem, bulut tabanlı bir üretim servisine belge göndermek yerine Ollama üzerinde "
-        "yerel model çalıştırır. Streamlit arayüzü; PDF yükleme, aynı içeriği tekrar engelleme, "
-        "yeniden indeksleme, kapsam seçme, akışlı cevap ve her cevapla kalıcı kanıt kartı sunar."
+        "Araştırma ve kaynak toplama normal kullanımdan önce tamamlanır. Dört metin "
+        "çıkarılabilir PDF, 75 anlamlı parça ve bunların önceden hesaplanmış embeddingleri "
+        "sürümlenmiş bir snapshot olarak hazırlanır. Streamlit açıldığında bu hazır paket "
+        "yüklenir; çalışma anında web taraması veya çekirdek belgeleri yeniden embedding "
+        "etme işlemi yapılmaz. Yerel Ollama yalnız getirilen kanıt üzerinden cevap üretir."
     )
     add_word_table(
         document,
         ["Kabul göstergesi", "Sonuç", "Yorum"],
         [
-            ["Otomatik test", "33 / 33", "Birim, entegrasyon, UI ve mimari sınır testleri"],
-            ["Retrieval kabulü", "4 / 4", "Resmî ve açık kaynak kapsamlarının doğru ayrımı"],
-            ["İndekslenen kanıt", "59", "34 sayfalık resmî PDF + seçilmiş web referansları"],
-            ["PDF bütünlüğü", "34 / 34 sayfa", "32.129 çıkarılmış metin karakteri"],
+            ["Otomatik test", "38 / 38", "Birim, entegrasyon, UI ve mimari sınır testleri"],
+            ["Retrieval kabulü", "8 / 8", "Hazır kamuya açık bilgi paketinde doğru kanıt erişimi"],
+            ["İndekslenen kanıt", "75", "Dört PDF ve önceden hesaplanmış 75 embedding"],
+            ["PDF bütünlüğü", "40 / 40 sayfa", "44.398 çıkarılmış metin karakteri"],
             ["Canlı servis", "HTTP 200", "Ana sayfa ve health endpoint"],
             ["Git yeniden üretim", "Başarılı", "Temiz git archive içinde aynı sonuçlar"],
         ],
@@ -400,8 +403,8 @@ def build_word_document() -> None:
     add_word_callout(
         document,
         "Projenin ayırt edici değeri",
-        "Asistan yalnızca cevap üretmez; hangi belge, sayfa, otorite ve koleksiyonun cevabı "
-        "desteklediğini de gösterir. Böylece kullanıcı model çıktısını denetleyebilir.",
+        "Asistan çalışma anında araştırma yapmaz. Önceden hazırlanıp doğrulanmış yerel bilgi "
+        "paketinden kanıt getirir; belge ve sayfa bilgisini cevapla birlikte gösterir.",
     )
     document.add_page_break()
 
@@ -437,7 +440,7 @@ def build_word_document() -> None:
             ["Tekrarlı PDF", "İkinci kayıt oluşmamalı", "SHA-256 ile engellendi"],
             ["Takip sorusu", "Son bağlamı anlamalı", "3 turluk kapsam izole bellek"],
             ["Hata davranışı", "İlgisiz kaynak göstermemeli", "UI ve motor testleriyle doğrulandı"],
-            ["Yeniden üretim", "Temiz kopyada aynı sonuç", "33/33 ve 4/4"],
+            ["Yeniden üretim", "Hazır paket ve snapshot", "38/38, 8/8 ve 75/75"],
         ],
         [5.0, 5.8, 5.7],
     )
@@ -449,9 +452,11 @@ def build_word_document() -> None:
     add_word_bullets(
         document,
         [
-            "ADVENT ve CMS kavramları hakkında doküman destekli soru-cevap.",
-            "Resmî PDF yükleme, doğrulama, içerik hash'i ve indeksleme.",
-            "HAVELSAN resmî seçilmiş içeriği ile NATO açık referansının ayrı tutulması.",
+            "ADVENT ve CMS kavramları hakkında hazır doküman paketinden kaynaklı soru-cevap.",
+            "Kamuya açık kaynakların ön araştırması, kürasyonu ve PDF paketine dönüştürülmesi.",
+            "Chunk ve embedding snapshot'ının normal kullanımdan önce hazırlanması.",
+            "İsteğe bağlı ek PDF yükleme, doğrulama, içerik hash'i ve indeksleme.",
+            "HAVELSAN resmî içeriği ile NATO/açık kamu referanslarının kaynak kimliğiyle korunması.",
             "Hibrit retrieval, reranking ve sayfa bazlı kanıt birleştirme.",
             "Yerel Ollama üzerinden akışlı Türkçe yanıt.",
             "Tek kullanıcılı yerel Streamlit arayüzü.",
@@ -462,8 +467,8 @@ def build_word_document() -> None:
         document,
         [
             "Gerçek zamanlı savaş yönetimi, silah kontrolü veya operasyonel karar verme.",
-            "Tasnifli/veri sahibi izni bulunmayan içeriğin işlenmesi.",
-            "Rastgele ve kontrolsüz internet taraması.",
+            "HAVELSAN şirket içi, özel, tasnifli veya veri sahibi izni bulunmayan içerik.",
+            "Normal soru-cevap sırasında internet araştırması veya web taraması.",
             "Çok kiracılı kurumsal kimlik ve rol yönetimi.",
             "Görüntü tabanlı taranmış PDF'ler için OCR.",
         ],
@@ -489,8 +494,8 @@ def build_word_document() -> None:
         document,
         ["Koleksiyon", "İçerik", "Otorite", "İzin verilen iddia"],
         [
-            ["official", "Yüklenen resmî PDF + HAVELSAN seçilmiş içerik", "Üretici / resmî", "ADVENT ürün ve yetenek bilgileri"],
-            ["open_source", "NATO gibi kamuya açık referanslar", "Açık / kamu", "Genel C2, veri ve birlikte çalışabilirlik"],
+            ["official", "Hazır ADVENT broşürü + HAVELSAN kamu içeriği", "Üretici / resmî", "ADVENT ürün ve yetenek bilgileri"],
+            ["open_source", "NATO ve diğer kamuya açık birincil referanslar", "Açık / kamu", "Genel C2, veri ve sorumlu yapay zekâ"],
             ["all", "Her iki koleksiyon", "Kaynakta korunur", "Geniş araştırma; kaynak kimliği kaybolmaz"],
         ],
         [3.0, 5.4, 3.4, 4.8],
@@ -846,10 +851,10 @@ def build_word_document() -> None:
         document,
         ["Gösterge", "Değer"],
         [
-            ["Otomatik test", "33/33"],
-            ["Retrieval kabulü", "4/4"],
-            ["İndekslenen parça", "59"],
-            ["PDF sayfası", "34/34 metinli"],
+            ["Otomatik test", "38/38"],
+            ["Retrieval kabulü", "8/8"],
+            ["İndekslenen parça", "75"],
+            ["PDF sayfası", "40/40 metinli"],
             ["Boş parça / eksik kaynak yolu", "0 / 0"],
             ["Canlı Streamlit", "HTTP 200"],
             ["Temiz Git arşivi", "Aynı test sonuçları"],
@@ -973,7 +978,7 @@ def build_word_document() -> None:
             ["3 dk", "Mimari", "Katmanlar, hibrit retrieval ve kanıt zinciri"],
             ["2 dk", "Güvenilirlik", "Hash, güvenli ret, kapsam izolasyonu ve yerel model"],
             ["3 dk", "Canlı demo", "ADVENT → takip sorusu → NATO kapsamı → kaynaksız ret"],
-            ["1 dk", "Test", "33/33, 4/4 ve temiz Git arşivi"],
+            ["1 dk", "Test", "38/38, 8/8 ve 75/75 snapshot"],
             ["1 dk", "Yol haritası", "OCR, kalıcı indeks, RBAC ve audit"],
         ],
         [2.5, 4.5, 9.6],
@@ -1277,23 +1282,23 @@ def build_powerpoint() -> None:
         color="C7D5E8",
     )
     # Sağ tarafta soyut kanıt ağı
-    nodes = [(8.0, 1.6, "PDF"), (10.3, 1.25, "WEB"), (11.25, 3.0, "RRF"), (9.25, 3.65, "RAG"), (7.55, 5.0, "SOURCE")]
+    nodes = [(8.0, 1.6, "PDF"), (10.3, 1.25, "SNAPSHOT"), (11.25, 3.0, "RRF"), (9.25, 3.65, "RAG"), (7.55, 5.0, "SOURCE")]
     for x, y, label in nodes:
         add_ppt_box(slide, x, y, 1.25, 0.72, fill="15365F", line=CYAN)
         add_ppt_text(slide, label, x, y + 0.23, 1.25, 0.22, size=9, color=WHITE, bold=True, align=PP_ALIGN.CENTER)
     for (x1, y1, _), (x2, y2, _) in zip(nodes, nodes[1:]):
         line = add_ppt_line(slide, x1 + 0.62, y1 + 0.36, x2 + 0.62, y2 + 0.36, CYAN, 1.3)
         line.line.dash_style = MSO_LINE_DASH_STYLE.DASH
-    add_ppt_text(slide, f"Sürüm {VERSION}  ·  {TODAY.strftime('%d.%m.%Y')}  ·  develop@{COMMIT}", 0.75, 6.72, 7.0, 0.3, size=9, color="8FA8C8")
+    add_ppt_text(slide, f"Sürüm {VERSION}  ·  {TODAY.strftime('%d.%m.%Y')}  ·  {COMMIT}", 0.75, 6.72, 7.0, 0.3, size=9, color="8FA8C8")
 
     # 2 Yönetici özeti
     slide = presentation.slides.add_slide(blank)
     set_slide_background(slide)
     add_slide_frame(slide, 2, "Yönetici Özeti")
-    add_slide_title(slide, "Tek cümlede proje", "Dağınık teknik dokümanı denetlenebilir, yerel ve kaynaklı cevaba dönüştürür.")
-    add_metric_card(slide, 0.7, 2.1, 2.7, "33 / 33", "OTOMATİK TEST")
-    add_metric_card(slide, 3.55, 2.1, 2.7, "4 / 4", "RETRIEVAL KABULÜ", GREEN)
-    add_metric_card(slide, 6.4, 2.1, 2.7, "59", "KANIT PARÇASI", ORANGE)
+    add_slide_title(slide, "Tek cümlede proje", "Önceden hazırlanmış kamu bilgisini çevrimdışı, yerel ve kaynaklı cevaba dönüştürür.")
+    add_metric_card(slide, 0.7, 2.1, 2.7, "38 / 38", "OTOMATİK TEST")
+    add_metric_card(slide, 3.55, 2.1, 2.7, "8 / 8", "RETRIEVAL KABULÜ", GREEN)
+    add_metric_card(slide, 6.4, 2.1, 2.7, "75", "KANIT PARÇASI", ORANGE)
     add_metric_card(slide, 9.25, 2.1, 2.7, "HTTP 200", "CANLI SERVİS", BLUE)
     add_ppt_box(slide, 0.7, 3.75, 11.95, 2.2, fill=NAVY, line=NAVY)
     add_ppt_text(slide, "Çözüm değeri", 1.05, 4.08, 2.3, 0.35, size=11, color=CYAN, bold=True)
@@ -1309,8 +1314,8 @@ def build_powerpoint() -> None:
         bold=True,
     )
     add_ppt_text(slide, "Kullanıcı model çıktısını yalnız okumaz; kanıtı açıp denetler.", 1.08, 5.25, 8.4, 0.4, size=13, color="C7D5E8")
-    add_label(slide, "Yerel Ollama", 9.5, 4.1, 2.1, CYAN)
-    add_label(slide, "Koleksiyon izolasyonu", 9.25, 4.75, 2.6, CYAN)
+    add_label(slide, "Çevrimdışı çalışma", 9.25, 4.1, 2.6, CYAN)
+    add_label(slide, "Hazır snapshot", 9.5, 4.75, 2.1, CYAN)
     add_label(slide, "Hibrit retrieval", 9.5, 5.4, 2.1, CYAN)
 
     # 3 Problem
@@ -1377,25 +1382,25 @@ def build_powerpoint() -> None:
     slide = presentation.slides.add_slide(blank)
     set_slide_background(slide)
     add_slide_frame(slide, 6, "Belge Yaşam Döngüsü")
-    add_slide_title(slide, "PDF, yüklemeden kanıta kadar izlenebilir")
+    add_slide_title(slide, "Araştırmadan hazır yerel kanıta kadar izlenebilir")
     add_pipeline_nodes(
         slide,
         [
-            ("Doğrula", "%PDF + 200 MB"),
-            ("Kimlik", "SHA-256"),
-            ("Sakla", "İçerik adresli"),
-            ("Manifest", "Ad + boyut + tarih"),
+            ("Araştır", "Birincil kamu kaynağı"),
+            ("Kürasyon", "Kapsam + kaynak"),
+            ("PDF", "Metin çıkarılabilir"),
             ("Parçala", "Sayfa + overlap"),
-            ("İndeksle", "FAISS + BM25"),
+            ("Embedding", "Önceden hesapla"),
+            ("Snapshot", "Manifest + vektör"),
         ],
         2.4,
     )
     add_ppt_box(slide, 0.78, 4.65, 5.7, 1.22, fill="EDF9F1", line=GREEN)
-    add_ppt_text(slide, "Aynı içerik?", 1.05, 4.94, 1.6, 0.3, size=14, color=GREEN, bold=True)
-    add_ppt_text(slide, "İkinci kayıt yok · kullanıcıya duplicate bilgisi", 2.55, 4.94, 3.55, 0.4, size=11, color=INK)
+    add_ppt_text(slide, "Normal kullanım", 1.05, 4.94, 1.8, 0.3, size=14, color=GREEN, bold=True)
+    add_ppt_text(slide, "Hazır snapshot yüklenir · web erişimi yok", 2.65, 4.94, 3.45, 0.4, size=11, color=INK)
     add_ppt_box(slide, 6.72, 4.65, 5.7, 1.22, fill="FFF6E5", line=ORANGE)
-    add_ppt_text(slide, "Bozuk PDF?", 7.0, 4.94, 1.6, 0.3, size=14, color=ORANGE, bold=True)
-    add_ppt_text(slide, "Dosya atlanır · tüm indeksleme durmaz", 8.55, 4.94, 3.45, 0.4, size=11, color=INK)
+    add_ppt_text(slide, "Ek belge?", 7.0, 4.94, 1.6, 0.3, size=14, color=ORANGE, bold=True)
+    add_ppt_text(slide, "SHA-256 kontrolü · yalnız ek belge indekslenir", 8.55, 4.94, 3.45, 0.4, size=11, color=INK)
 
     # 7 RAG pipeline
     slide = presentation.slides.add_slide(blank)
@@ -1658,7 +1663,7 @@ def build_powerpoint() -> None:
         ("LOCAL", "Veri gizliliği"),
         ("HYBRID", "Yüksek retrieval kapsaması"),
         ("GROUNDED", "Belge ve sayfa kanıtı"),
-        ("TESTED", "33/33 + 4/4"),
+        ("TESTED", "38/38 + 8/8"),
     ]
     for index, (tag, body) in enumerate(closing):
         y = 1.85 + index * 0.78
@@ -1666,7 +1671,7 @@ def build_powerpoint() -> None:
         add_ppt_text(slide, body, 10.0, y + 0.06, 1.65, 0.24, size=10, color=WHITE, bold=True)
     add_ppt_text(slide, "Sorularınız?", 0.78, 5.15, 4.6, 0.55, size=25, color=WHITE, bold=True)
     add_ppt_text(slide, "http://localhost:8501", 0.8, 5.95, 4.5, 0.3, size=12, color="9DB4D1")
-    add_ppt_text(slide, f"develop@{COMMIT}  ·  Sürüm {VERSION}", 8.25, 6.15, 3.85, 0.3, size=9, color="9DB4D1", align=PP_ALIGN.RIGHT)
+    add_ppt_text(slide, f"{COMMIT}  ·  Sürüm {VERSION}", 8.25, 6.15, 3.85, 0.3, size=9, color="9DB4D1", align=PP_ALIGN.RIGHT)
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     presentation.save(PPTX_PATH)

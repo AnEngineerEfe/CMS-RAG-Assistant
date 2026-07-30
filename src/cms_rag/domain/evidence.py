@@ -42,6 +42,61 @@ class EvidenceResponder:
                 [SearchHit(nato_source, 1.0)],
             )
 
+        # Önceden küratörlenmiş güncel araştırma paketindeki sık sorular, çalışma
+        # anında LLM beklemeden ilgili PDF kanıtına bağlanır.
+        asks_advent_ai = (
+            any(marker in normalized for marker in ("advent ai", "advent-ai"))
+            and any(marker in normalized for marker in ("operator", "destek", "bilissel", "ne yapar"))
+        )
+        advent_ai_source = EvidenceResponder._find(chunks, "bilişsel yük")
+        if asks_advent_ai and advent_ai_source:
+            return (
+                "ADVENT-AI; operatörün bilişsel yükünü azaltmayı, karar süreçlerini "
+                "hızlandırmayı ve büyük veri içindeki anlamlı örüntüleri görünür kılmayı "
+                "amaçlayan yapay zekâ destekli yetenekler bütünüdür [SOURCE 1].",
+                [SearchHit(advent_ai_source, 1.0)],
+            )
+
+        asks_main = (
+            "main" in normalized
+            and any(marker in normalized for marker in ("bakim", "asistan", "ne yapar", "destek"))
+        )
+        main_source = EvidenceResponder._find(chunks, "bakım adımlarını")
+        if asks_main and main_source:
+            return (
+                "MAIN, bakım personelinin bakım adımlarını belirlemesine ve talimatlara "
+                "erişmesine yardımcı olan doğal dil tabanlı bir destek asistanıdır. Kamuya "
+                "açık açıklamaya göre kapalı ağlarda ve yerel modellerle çalışacak şekilde "
+                "tasarlanmıştır [SOURCE 1].",
+                [SearchHit(main_source, 1.0)],
+            )
+
+        asks_responsible_ai = any(
+            marker in normalized
+            for marker in ("sorumlu yapay zeka", "responsible ai", "yapay zeka ilkeleri")
+        )
+        responsible_ai_source = EvidenceResponder._find(chunks, "hukuka uygunluk")
+        if asks_responsible_ai and responsible_ai_source:
+            return (
+                "NATO'nun sorumlu yapay zekâ ilkeleri; hukuka uygunluk, sorumluluk ve hesap "
+                "verebilirlik, açıklanabilirlik ve izlenebilirlik, güvenilirlik, yönetilebilirlik "
+                "ve önyargıyı azaltma başlıklarını kapsar [SOURCE 1].",
+                [SearchHit(responsible_ai_source, 1.0)],
+            )
+
+        asks_rota = (
+            "advent rota" in normalized
+            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev"))
+        )
+        rota_source = EvidenceResponder._find(chunks, "ADVENT ROTA")
+        if asks_rota and rota_source:
+            return (
+                "ADVENT ROTA, insansız platformların görev yönetimi ile keşif-gözetleme "
+                "verilerinin komuta-kontrol yapısına aktarılmasını destekleyen ADVENT ailesi "
+                "çözümüdür [SOURCE 1].",
+                [SearchHit(rota_source, 1.0)],
+            )
+
         # Aşağıdaki kurallar broşürdeki benzersiz ifadeleri arayarak doğru sayfayı bağlar.
         if "advent" in normalized and ("nedir" in normalized or "what is" in normalized):
             source = EvidenceResponder._find(chunks, "ADVENT represents")

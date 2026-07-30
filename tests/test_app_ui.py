@@ -24,7 +24,7 @@ class StreamlitJourneyTests(unittest.TestCase):
         ).run()
         page = "\n".join(item.value for item in app.markdown)
         self.assertIn("NATO'nun dijital birlikte", page)
-        self.assertIn("nato-interoperability.md", page)
+        self.assertIn("deniz_c2_veri_ai_yonetisim_arastirma.pdf", page)
         self.assertNotIn("ADVENT gibi", page)
         self.assertFalse(app.exception)
 

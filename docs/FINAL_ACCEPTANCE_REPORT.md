@@ -1,95 +1,109 @@
 # Nihai Kabul Raporu
 
-Tarih: 2026-07-26
+Tarih: 2026-07-30
 
 ## Sonuç
 
-CMS-RAG Assistant; kod, veri, retrieval, yerel üretim, Streamlit arayüzü,
-temiz-Git yeniden üretilebilirliği ve canlı kullanıcı yolculuğu katmanlarında
-doğrulanmıştır.
+CMS-RAG Assistant, önceden araştırılmış ve küratör kontrolünden geçirilmiş kamuya
+açık belgeleri çalışma anında internete çıkmadan kullanan yerel bir RAG asistanı
+olarak doğrulanmıştır. Hazırlama hattı ile normal soru-cevap hattı birbirinden
+ayrılmıştır. Normal kullanımda uygulama hazır PDF paketini, chunk meta verilerini
+ve önceden hesaplanmış embedding snapshot'ını yükler.
+
+Bu çalışma yalnızca kamuya açık kaynaklarla hazırlanmış bir ön çalışma ve araştırma
+niteliğindedir. HAVELSAN'a ait şirket içi, özel, tasnifli veya erişim kısıtlı hiçbir
+veri kullanılmamıştır.
 
 ## Ölçülen kabul sonuçları
 
 | Kontrol | Sonuç |
 |---|---:|
-| Otomatik test | 33/33 başarılı |
-| Retrieval kabul vakası | 4/4 başarılı |
-| İndekslenen chunk | 59 |
-| PDF sayfası | 34/34 metinli |
-| PDF metin karakteri | 32.129 |
-| Boş chunk | 0 |
-| Geçersiz sayfa meta verisi | 0 |
-| Eksik kaynak yolu | 0 |
-| Streamlit health | HTTP 200 |
-| Streamlit root | HTTP 200 |
-| 8501 dinleyici sayısı | 1 |
+| Otomatik test | 38/38 başarılı |
+| Retrieval kabul vakası | 8/8 başarılı |
+| Hazır PDF kaynağı | 4 |
+| İndekslenen chunk | 75 |
+| Önceden hesaplanmış embedding | 75 |
+| PDF sayfası | 40/40 metinli |
+| PDF metin karakteri | 44.398 |
+| Snapshot yükleme | Başarılı |
+| Çalışma anı web erişimi | Kapalı |
 | Varsayılan model | qwen2.5:3b |
 
-## Temiz Git arşivi
+## Hazır bilgi tabanı
 
-`git archive HEAD` ile oluşturulan bağımsız klasörde:
+Paket aşağıdaki kamuya açık içeriklerden oluşturulmuştur:
 
-- çalışma manifestinin arşivde bulunmadığı doğrulandı;
-- uygulama manifesti kendisi oluşturdu;
-- sürümlenen ADVENT broşürü `advent_cms.pdf` olarak tanındı;
-- otomatik testler ve retrieval kabul seti yeniden çalıştırıldı.
+- HAVELSAN ADVENT resmî ürün broşürü
+- ADVENT CMS ve ürün ailesi kamuya açık araştırma özeti
+- ADVENT-AI ve MAIN yapay zekâ entegrasyonu kamuya açık araştırma özeti
+- Deniz C2, veri ve sorumlu yapay zekâ yönetişimi kamuya açık araştırma özeti
 
-## Kaynak doğrulaması
+Her araştırma PDF'i kaynak adreslerini, veri sınırını ve hazırlanma tarihini taşır.
+Manifest, kaynak hash'lerini ve üretilen PDF'leri; snapshot ise chunk meta verileri
+ile embedding matrisini sürümlenebilir biçimde saklar.
 
-- HAVELSAN ADVENT ürün sayfası erişilebilir ve yerel resmî özet güncel ürün
-  bilgileriyle eşleştirilmiştir.
-- NATO URL'sinin Digital Transformation Implementation Strategy 2.0 sayfasına
-  yönlendiği doğrulanmış; yerel açık-kaynak özet güncel resmî metne göre
-  yenilenmiştir.
-- Ürün-spesifik resmî iddialar ile genel NATO bağlamı ayrı koleksiyonlarda
-  tutulmaktadır.
+## Çalışma modeli
+
+### Hazırlama aşaması
+
+1. Birincil ve kamuya açık kaynaklar araştırılır.
+2. İçerik kapsam ve kaynak kontrolünden geçirilir.
+3. Metin çıkarılabilir PDF paketi oluşturulur.
+4. Belgeler sayfa bilgisi korunarak chunk'lara ayrılır.
+5. Embeddingler bir kez hesaplanır ve snapshot'a yazılır.
+
+### Normal kullanım
+
+1. Uygulama yerel manifesti ve snapshot'ı yükler.
+2. Kullanıcı sorusu hibrit retrieval ile hazır kanıtlarda aranır.
+3. FAISS, BM25, RRF ve cross-encoder sıralaması uygulanır.
+4. Yerel Ollama modeli yalnız getirilen kanıta dayanarak cevap üretir.
+5. Cevapla birlikte belge ve sayfa kaynakları gösterilir.
+
+Bu akışta web taraması, çalışma anı araştırması veya çekirdek belgelerin yeniden
+embedding edilmesi yoktur.
 
 ## Retrieval ve cevap güvenilirliği
 
-- Semantic FAISS, BM25, RRF ve cross-encoder sıralaması birlikte çalışmaktadır.
-- Resmî kapsam yalnızca `official`, açık kapsam yalnızca `open_source`
-  koleksiyonundan sonuç döndürmüştür.
-- Tüm skorların sonlu olduğu doğrulanmıştır.
-- Aynı sayfadaki tamamlayıcı parçalar kaybolmadan tek kanıtta birleştirilmiştir.
-- Sohbet geçmişi kaynak kapsamına göre izole edilmiştir.
-- Resmî ADVENT turundan sonra açık-kaynak NATO sorusu sorulduğunda cevapta
-  desteklenmeyen ADVENT ilişkisi oluşmadığı doğrulanmıştır.
-- Başarılı cevaplarda metin içi `[SOURCE n]` etiketi zorunludur.
+- ADVENT su üstü rolü, iz yönetimi, taktik veri bağları ve NATO birlikte
+  çalışabilirliği test edilmiştir.
+- ADVENT-AI operatör desteği, MAIN bakım destek asistanı, NATO sorumlu yapay zekâ
+  ilkeleri ve ADVENT ROTA sorguları doğru hazırlanmış kaynaklara yönelmiştir.
+- Tüm sekiz kabul vakasında beklenen belge/koleksiyon ve anahtar içerik bulunmuştur.
+- Başarılı cevaplarda metin içi `[SOURCE n]` etiketi ve açılabilir kaynak kartı
+  korunur.
+- Sohbet geçmişi takip sorularını destekler; önceki mesajların kaynakları ekranda
+  kaybolmaz.
 
-## Hata ve kötüye kullanım testleri
+## Veri güvenliği ve hata davranışı
 
-- PDF olmayan içerik reddedilir.
-- 200 MB üzerindeki PDF reddedilir.
-- Aynı içerik hash'i ikinci kez saklanmaz.
-- Bozuk PDF tüm indekslemeyi durdurmaz.
-- Manifest yol taşmasıyla depo dışına silme engellenir.
+- PDF olmayan içerik ve 200 MB üzerindeki dosya reddedilir.
+- Aynı içerik SHA-256 özetiyle ikinci kez saklanmaz.
+- Hazır çekirdek kaynaklar kullanıcı ek belge yönetiminden silinemez.
+- Bozuk ek PDF, çekirdek indeksin yüklenmesini engellemez.
+- Manifest yol taşmasıyla proje dışı dosya erişimi engellenir.
 - Ollama hatasında ilgisiz kaynak kartı gösterilmez.
-- Kişisel/alan dışı soru kaynak uydurulmadan reddedilir.
-- Türkçe karakter bozulması, TODO/gizli anahtar ve tehlikeli dinamik çalıştırma
-  kalıpları için statik tarama temizdir.
-- Katman bağımlılık yönü, ince Streamlit giriş noktası ve kaynak
-  sınıf/fonksiyonlarının Türkçe açıklama taşıması mimari testlerle korunur.
+- Kişisel veya kapsam dışı sorularda kaynak uydurulmadan güvenli ret verilir.
+- Şirket içi, özel ve tasnifli veri kapsam dışıdır.
 
-## Canlı görünür kullanıcı yolculuğu
+## Yeniden üretim
 
-Aynı Chrome oturumunda:
+Hazır bilgi tabanı aşağıdaki komutla yeniden üretilebilir:
 
-1. `ADVENT nedir?` resmî kapsamda kaynaklı tamamlandı.
-2. Kapsam gerçek seçim olayıyla `open_source` olarak değiştirildi.
-3. NATO birlikte çalışabilirlik sorusu yalnızca
-   `nato-interoperability.md`, sayfa 1 kaynağıyla cevaplandı.
-4. NATO cevabında önceki ADVENT konuşmasından bilgi sızıntısı olmadı.
-5. `Ben kimim?` güvenli ret verdi ve kanıt paketi sayısını artırmadı.
+```powershell
+.\.venv\Scripts\python.exe -m scripts.build_knowledge_base
+```
 
-## Bağımlılık denetimi
-
-`pip check` sonucu temizdir. `pip-audit` aracı yerel sanal ortama kurulmuştur;
-ancak çevrimiçi CVE sorgusu kurulu paket envanterini harici güvenlik servisine
-göndereceği için ek açık izin olmadan çalıştırılmamıştır.
+Bu işlem PDF'leri, manifesti, chunk'ları ve embedding snapshot'ını birlikte yeniler.
+Normal kullanıcı bu komutu çalıştırmak zorunda değildir.
 
 ## Bilinen mimari sınırlar
 
-- OCR katmanı yoktur.
-- Vektör indeks süreç başlangıcında yeniden kurulur.
-- Sistem tek kullanıcılı yerel çalışma istasyonunu hedefler.
+- Görüntü tabanlı taranmış PDF'ler için OCR katmanı yoktur.
+- Yerel model kalitesi donanım ve seçilen Ollama modeline bağlıdır.
+- FAISS bellekte hazır embeddinglerden kurulur; çok kullanıcılı kurumsal kullanım
+  için kalıcı ve sunucu tabanlı vektör deposu gerekir.
+- Bu sürüm tek kullanıcılı yerel çalışma istasyonunu hedefler.
+- Kaynak güncellemesi otomatik değildir; kürasyon ve snapshot hazırlama hattı
+  kontrollü biçimde yeniden çalıştırılmalıdır.
 - Kritik iddialar gösterilen asıl belge ve sayfadan doğrulanmalıdır.

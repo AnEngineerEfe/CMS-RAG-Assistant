@@ -31,15 +31,24 @@ Bu belge yalnızca tekrar çalıştırılabilir otomasyon sonuçlarını kaydede
 - Streamlit giriş noktasının ince ve iş mantığından arındırılmış kalması
 - Domain, application, infrastructure ve presentation bağımlılık yönleri
 - Tüm kaynak sınıf ve fonksiyonlarının Türkçe işlev açıklaması taşıması
+- Küratörlü PDF'lerin metin çıkarımı ve açık veri sınırı taşıması
+- Manifestin dört kamuya açık kaynak ve kapalı çalışma-anı web erişimi bildirmesi
+- Snapshot chunk/embedding sayılarının bire bir eşleşmesi
+- Hazır resmî broşürün ek belge yönetiminden silinememesi
+- Motorun belge embeddinglerini yeniden üretmeden snapshot yüklemesi
 
 ## Retrieval kabul seti
 
-`scripts/evaluate_retrieval` dört sabit davranışı ölçer:
+`scripts/evaluate_retrieval` sekiz sabit davranışı ölçer:
 
 1. ADVENT'in su üstü platform rolü için resmî kaynak ve beklenen sayfa
 2. İz yönetimi sorgusu için ilgili CMS terimleri
 3. Taktik veri bağı sorgusunda Link 11 ve Link 16'nın birlikte korunması
 4. NATO birlikte çalışabilirlik sorgusunun `open_source` koleksiyonundan gelmesi
+5. ADVENT-AI operatör desteği
+6. MAIN bakım destek asistanı
+7. NATO sorumlu yapay zekâ ilkeleri
+8. ADVENT ROTA görevleri
 
 Her vaka; beklenen koleksiyon, belge/sayfa ve anahtar terimleri denetler.
 Sonuç `docs/retrieval_evaluation_report.json` dosyasına yazılır.
@@ -63,12 +72,15 @@ birlikte ayağa kalkabildiğini doğrular.
 
 ## Son doğrulama
 
-2026-07-26 tarihinde temiz kabul turunda:
+2026-07-30 tarihinde hazır bilgi tabanı kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `33/33` başarılı
-- Retrieval kabul seti: `4/4` başarılı
-- İndekslenen kanıt parçası: `59`
+- Otomatik testler: `38/38` başarılı
+- Retrieval kabul seti: `8/8` başarılı
+- Hazır PDF kaynağı: `4`
+- İndekslenen kanıt parçası: `75`
+- Önceden hesaplanmış embedding satırı: `75`
+- Snapshot yükleme: başarılı
 - Streamlit sağlık endpoint'i: `HTTP 200`
 - Ollama: erişilebilir
 - Varsayılan yerel üretim modeli: `qwen2.5:3b`

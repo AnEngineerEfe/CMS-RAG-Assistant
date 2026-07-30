@@ -32,12 +32,38 @@ CASES = [
         "id": "open_source_nato_interoperability",
         "query": "NATO interoperability nedir?",
         "scope": "open_source",
-        "expected_terms": ["interoperability", "data-centric"],
+        "expected_terms": ["birlikte çalışabilirlik", "veri-merkezli"],
+    },
+    {
+        "id": "official_advent_ai_operator_support",
+        "query": "ADVENT-AI operatöre nasıl destek olur?",
+        "scope": "official",
+        "expected_terms": ["bilişsel yük", "örüntüleri"],
+    },
+    {
+        "id": "official_main_maintenance_assistant",
+        "query": "MAIN bakım asistanı hangi işleri yapar?",
+        "scope": "official",
+        "expected_terms": ["bakım adımlarını", "kapalı ağlarda"],
+    },
+    {
+        "id": "open_source_responsible_ai",
+        "query": "NATO sorumlu yapay zekâ ilkeleri nelerdir?",
+        "scope": "open_source",
+        "expected_terms": ["hukuka uygunluk", "açıklanabilirlik"],
+    },
+    {
+        "id": "official_advent_rota",
+        "query": "ADVENT ROTA hangi görevleri destekler?",
+        "scope": "official",
+        "expected_terms": ["insansız", "keşif"],
     },
 ]
 
 
 def evaluate() -> dict:
+    """Hazır snapshot üzerinde sabit sorguların beklenen kanıt terimlerini ölçer."""
+
     engine = CMSRAGEngine(Path("data"))
     indexed_chunks = engine.rebuild()
     results = []
@@ -64,6 +90,7 @@ def evaluate() -> dict:
         })
     return {
         "indexed_chunks": indexed_chunks,
+        "snapshot_loaded": engine.snapshot_loaded,
         "passed": sum(item["passed"] for item in results),
         "total": len(results),
         "results": results,

@@ -1,7 +1,8 @@
 {
-  "indexed_chunks": 59,
-  "passed": 4,
-  "total": 4,
+  "indexed_chunks": 75,
+  "snapshot_loaded": true,
+  "passed": 8,
+  "total": 8,
   "results": [
     {
       "id": "official_advent_surface_platform",
@@ -20,37 +21,37 @@
           "document": "advent_cms.pdf",
           "page": 18,
           "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         },
         {
-          "document": "havelsan-advent-web.md",
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
           "page": 1,
           "collection": "official",
-          "authority": "HAVELSAN official website"
+          "authority": "HAVELSAN public official sources — curated"
         },
         {
           "document": "advent_cms.pdf",
           "page": 4,
           "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         },
         {
           "document": "advent_cms.pdf",
           "page": 3,
           "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         },
         {
           "document": "advent_cms.pdf",
           "page": 5,
           "collection": "official",
-          "authority": "uploaded_official"
-        },
-        {
-          "document": "advent_cms.pdf",
-          "page": 8,
-          "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         }
       ]
     },
@@ -68,40 +69,40 @@
       ],
       "sources": [
         {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
           "document": "advent_cms.pdf",
           "page": 9,
           "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         },
         {
           "document": "advent_cms.pdf",
           "page": 26,
           "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         },
         {
           "document": "advent_cms.pdf",
           "page": 3,
           "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         },
         {
           "document": "advent_cms.pdf",
-          "page": 2,
+          "page": 11,
           "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         },
         {
           "document": "advent_cms.pdf",
-          "page": 6,
+          "page": 29,
           "collection": "official",
-          "authority": "uploaded_official"
-        },
-        {
-          "document": "advent_cms.pdf",
-          "page": 22,
-          "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         }
       ]
     },
@@ -119,40 +120,40 @@
       ],
       "sources": [
         {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
           "document": "advent_cms.pdf",
           "page": 12,
           "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         },
         {
           "document": "advent_cms.pdf",
           "page": 28,
           "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
         },
         {
           "document": "advent_cms.pdf",
           "page": 26,
           "collection": "official",
-          "authority": "uploaded_official"
-        },
-        {
-          "document": "advent_cms.pdf",
-          "page": 32,
-          "collection": "official",
-          "authority": "uploaded_official"
-        },
-        {
-          "document": "havelsan-advent-web.md",
-          "page": 1,
-          "collection": "official",
-          "authority": "HAVELSAN official website"
-        },
-        {
-          "document": "advent_cms.pdf",
-          "page": 22,
-          "collection": "official",
-          "authority": "uploaded_official"
+          "authority": "HAVELSAN public official brochure"
         }
       ]
     },
@@ -161,19 +162,199 @@
       "scope": "open_source",
       "passed": true,
       "matched_terms": [
-        "interoperability",
-        "data-centric"
+        "birlikte çalışabilirlik",
+        "veri-merkezli"
       ],
       "expected_terms": [
-        "interoperability",
-        "data-centric"
+        "birlikte çalışabilirlik",
+        "veri-merkezli"
       ],
       "sources": [
         {
-          "document": "nato-interoperability.md",
+          "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
           "page": 1,
           "collection": "open_source",
-          "authority": "NATO official public reference"
+          "authority": "NATO and U.S. Navy public official sources — curated"
+        },
+        {
+          "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          "page": 2,
+          "collection": "open_source",
+          "authority": "NATO and U.S. Navy public official sources — curated"
+        }
+      ]
+    },
+    {
+      "id": "official_advent_ai_operator_support",
+      "scope": "official",
+      "passed": true,
+      "matched_terms": [
+        "bilişsel yük",
+        "örüntüleri"
+      ],
+      "expected_terms": [
+        "bilişsel yük",
+        "örüntüleri"
+      ],
+      "sources": [
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 3,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        }
+      ]
+    },
+    {
+      "id": "official_main_maintenance_assistant",
+      "scope": "official",
+      "passed": true,
+      "matched_terms": [
+        "bakım adımlarını",
+        "kapalı ağlarda"
+      ],
+      "expected_terms": [
+        "bakım adımlarını",
+        "kapalı ağlarda"
+      ],
+      "sources": [
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 20,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 2,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        }
+      ]
+    },
+    {
+      "id": "open_source_responsible_ai",
+      "scope": "open_source",
+      "passed": true,
+      "matched_terms": [
+        "hukuka uygunluk",
+        "açıklanabilirlik"
+      ],
+      "expected_terms": [
+        "hukuka uygunluk",
+        "açıklanabilirlik"
+      ],
+      "sources": [
+        {
+          "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          "page": 1,
+          "collection": "open_source",
+          "authority": "NATO and U.S. Navy public official sources — curated"
+        },
+        {
+          "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          "page": 2,
+          "collection": "open_source",
+          "authority": "NATO and U.S. Navy public official sources — curated"
+        }
+      ]
+    },
+    {
+      "id": "official_advent_rota",
+      "scope": "official",
+      "passed": true,
+      "matched_terms": [
+        "insansız",
+        "keşif"
+      ],
+      "expected_terms": [
+        "insansız",
+        "keşif"
+      ],
+      "sources": [
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 24,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 4,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 17,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 25,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
         }
       ]
     }

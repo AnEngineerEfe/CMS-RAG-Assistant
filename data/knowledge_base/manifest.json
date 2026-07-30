@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "knowledge_cutoff": "2026-07-30",
+  "runtime_web_access": false,
+  "data_boundary": "Yalnız kamuya açık kaynaklar; şirket içi, tasnifli veya kişisel veri yok.",
+  "sources": [
+    {
+      "path": "documents/ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
+      "collection": "official",
+      "authority": "HAVELSAN public official brochure",
+      "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
+    },
+    {
+      "path": "knowledge_base/sources/advent_cms_kamuya_acik_arastirma.pdf",
+      "collection": "official",
+      "authority": "HAVELSAN public official sources — curated",
+      "source_url": "https://www.havelsan.com/en/solutions/advent-combat-management-system"
+    },
+    {
+      "path": "knowledge_base/sources/advent_ai_kamuya_acik_arastirma.pdf",
+      "collection": "official",
+      "authority": "HAVELSAN public official sources — curated",
+      "source_url": "https://www.havelsan.com/en/news/havelsan-showcase-advent-ai-and-barkan-3-first-time-saha-expo-2026"
+    },
+    {
+      "path": "knowledge_base/sources/deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "NATO and U.S. Navy public official sources — curated",
+      "source_url": "https://www.nato.int/en/about-us/official-texts-and-resources/official-texts/2024/07/10/summary-of-natos-revised-artificial-intelligence-ai-strategy"
+    }
+  ]
+}

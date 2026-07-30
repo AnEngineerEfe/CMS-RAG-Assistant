@@ -10,12 +10,16 @@ birbirine karıştırmamaktır.
 Sistem bir operasyonel komuta-kontrol bileşeni değildir; kamuya açık bilgi keşfi,
 eğitim, araştırma ve sunum hazırlığı için tasarlanmıştır.
 
+Araştırma ve kaynak kurasyonu geliştirme aşamasında yapılır. Normal soru-cevap
+çalışması internet kullanmaz; önceden üretilmiş yerel PDF paketi ve embedding
+snapshot'ı yüklenir.
+
 ## 2. Güven sınırı ve veri sınıfları
 
 | Koleksiyon | İçerik | Otorite | Kullanım |
 |---|---|---|---|
-| `official` | Yüklenen resmî PDF ve HAVELSAN seçilmiş içeriği | Üretici/resmî | Ürün özellikleri ve ADVENT iddiaları |
-| `open_source` | NATO gibi kamuya açık referanslar | Açık/kamu | Genel C2 ve birlikte çalışabilirlik bağlamı |
+| `official` | Hazır ADVENT broşürü ve HAVELSAN kamu içeriği | Üretici/resmî | Ürün özellikleri ve ADVENT iddiaları |
+| `open_source` | NATO ve U.S. Navy kamu referansları | Açık/kamu | Genel C2, veri ve sorumlu yapay zekâ bağlamı |
 | `all` | İki koleksiyonun birleşik görünümü | Kaynak bazında korunur | Geniş araştırma |
 
 Her parça; belge adı, sayfa, kaynak yolu, koleksiyon, otorite ve kaynak URL'sini
@@ -59,6 +63,8 @@ Streamlit UI
   |
   v
 RAGEngine
+  +-- KnowledgeManifest -- hazır PDF kaynakları, otorite ve SHA-256
+  +-- PreparedSnapshot -- önceden hesaplanmış chunk + embedding
   +-- DocumentStore ------ SHA-256, manifest, tekrar engelleme, silme
   +-- PDFIngestor -------- PDF imzası, sayfa metni, parçalama
   +-- MarkdownIngestor --- front matter, koleksiyon ve otorite
@@ -89,14 +95,16 @@ Semantik arama anlam yakınlığını, BM25 ise ürün adı, kısaltma ve teknik
 eşleşmesini yakalar. RRF skor ölçeklerini doğrudan karşılaştırmadan iki sıralamayı
 birleştirir. Cross-encoder son adayları soru-parça çifti olarak yeniden sıralar.
 
-## 6. Belge yaşam döngüsü
+## 6. Hazır bilgi tabanı ve belge yaşam döngüsü
 
-1. Dosya PDF imzası ve boyut sınırıyla doğrulanır.
-2. İçerik SHA-256 ile kimliklendirilir.
-3. Aynı hash manifestte varsa tekrar saklanmaz.
-4. Özgün görünen ad, boyut, kaynak tipi ve zaman manifestte tutulur.
-5. İndeks, mevcut belgeler ve seçilmiş referanslardan yeniden kurulabilir.
-6. Silme, doğrulanmış manifest kaydı ile dosyayı kaldırır ve indeksi yeniler.
+1. Kamuya açık birincil kaynaklar geliştirme aşamasında doğrulanır.
+2. Küratörlü içerik, kapsam ve kaynakça taşıyan PDF paketlerine dönüştürülür.
+3. PDF'ler sayfa bazında parçalanır; embeddingler önceden hesaplanıp snapshot'a yazılır.
+4. Uygulama açılışında snapshot yüklenir; çekirdek PDF'ler yeniden embeddinglenmez.
+5. İsteğe bağlı ek dosya PDF imzası ve boyut sınırıyla doğrulanır.
+6. Ek içerik SHA-256 ile kimliklendirilir; aynı hash yeniden saklanmaz.
+7. Yalnız yeni ek belgenin chunk ve embeddingleri hazır indekse eklenir.
+8. Çekirdek kaynaklar arayüzden silinemez; ek belgeler manifest üzerinden yönetilir.
 
 Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanır.
 
@@ -113,15 +121,16 @@ Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanı
   kaydından deterministik olarak cevaplanır.
 - Üretim istemi yalnızca verilen bağlamı kullanmaya ve desteklenmeyen iddia
   üretmemeye yönlendirir.
-- Ollama istemcisi 120 saniye zaman aşımı, 96 token cevap sınırı ve 30 dakika
-  sıcak tutma süresiyle sınırlandırılmıştır.
+- Ollama istemcisi 120 saniye zaman aşımı, 64 token cevap sınırı, 2.048 token bağlam
+  sınırı ve 30 dakika sıcak tutma süresiyle sınırlandırılmıştır.
 - CPU tabanlı etkileşimli kullanımda varsayılan model `qwen2.5:3b`dir;
   `CMS_RAG_MODEL` ile daha büyük bir yerel model seçilebilir.
 
 ## 8. Güvenlik ve gizlilik
 
 - Doküman içeriği yerel Ollama dışında bir üretim servisine gönderilmez.
-- Rastgele web taraması yoktur; kaynaklar kontrollü biçimde seçilip depoya alınır.
+- Çalışma anında web taraması veya HTTP kaynak çağrısı yoktur; araştırma yalnız
+  sürümlü kurasyon hattında yapılır.
 - HTML kaynak alıntıları arayüzde kaçışlanır.
 - Dosya adı depolama yolu olarak kullanılmaz; içerik hash'i kullanılır.
 - Kamuya açık resmî başlangıç broşürü dışında, yüklenen çalışma verisi sürüm
@@ -133,9 +142,10 @@ iş akışı ve ağ çıkış politikası.
 
 ## 9. İşletim ve gözlemlenebilirlik
 
-Arayüz; yüklü belge sayısı, indeks parça sayısı, aktif model, arama yöntemi ve her
-yanıtın kanıt paketini gösterir. Yeniden indeksleme deterministik bir kurtarma
-yoludur. Retrieval kabul raporu makinece okunabilir JSON olarak üretilir.
+Arayüz; hazır kaynak sayısı, toplam aktif belge, snapshot durumu, çalışma-anı web
+erişiminin kapalı olduğu, indeks parça sayısı, aktif model, arama yöntemi ve her
+yanıtın kanıt paketini gösterir. Retrieval kabul raporu makinece okunabilir JSON
+olarak üretilir.
 
 ## 10. Kod açıklama standardı
 
@@ -151,9 +161,9 @@ yoludur. Retrieval kabul raporu makinece okunabilir JSON olarak üretilir.
 ## 11. Bilinen sınırlar
 
 - Görüntü tabanlı taranmış PDF'ler için OCR katmanı yoktur.
-- Kaynak yenileme otomatik değildir; seçilmiş referanslar gözden geçirilerek
-  güncellenir.
+- Kaynak yenileme otomatik değildir; birincil kaynaklar gözden geçirilip PDF ve
+  snapshot hazırlama hattı yeniden çalıştırılır.
 - Yerel model kalitesi donanım ve seçilen Ollama modeline bağlıdır.
-- FAISS indeksi süreç başlangıcında yeniden kurulur; çok büyük koleksiyonlar için
-  kalıcı vektör deposu gerekir.
+- FAISS bellekte hazır embeddinglerden kurulur. Çok büyük/çok kullanıcılı
+  koleksiyonlar için kalıcı ve sunucu tabanlı vektör deposu gerekir.
 - Bu sürüm tek kullanıcılı yerel çalışma istasyonu hedefler.

@@ -16,11 +16,11 @@ def run() -> None:
     engine = get_engine()
     st.session_state.setdefault("messages", [])
 
-    scope = render_sidebar(engine)
     initialize_index(engine)
+    scope = render_sidebar(engine)
 
-    documents = engine.store.pdfs()
     chunk_count = len(engine.retriever.chunks) if engine.retriever else 0
-    render_header(len(documents), chunk_count)
-    render_empty_state(bool(documents), bool(st.session_state.messages))
+    document_count = engine.active_document_count()
+    render_header(document_count, chunk_count)
+    render_empty_state(bool(engine.retriever), bool(st.session_state.messages))
     render_chat(engine, scope)

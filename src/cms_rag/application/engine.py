@@ -12,6 +12,10 @@ from ..domain.evidence import EvidenceResponder
 from ..domain.models import SearchHit
 from ..domain.query import CMSQueryProcessor
 from ..infrastructure.ingest import MarkdownIngestor, PDFIngestor
+from ..infrastructure.knowledge import (
+    load_curated_chunks,
+    supplemental_document_paths,
+)
 from ..infrastructure.retrieval import HybridRetriever
 from ..infrastructure.storage import DocumentStore
 
@@ -31,16 +35,76 @@ class CMSRAGEngine:
         self._ollama = Client(timeout=120.0)
         self.retriever: HybridRetriever | None = None
         self.history: list[dict[str, str]] = []
+        self.snapshot_loaded = False
 
     def rebuild(self) -> int:
         """PDF ve Markdown kaynaklarını okuyup hibrit indeksi baştan kurar."""
 
         # Resmî yüklemeler ile açık referanslar aynı modelde, ayrı koleksiyonlarda tutulur.
-        chunks = PDFIngestor().load(self.store.pdfs(), collection="official", authority="uploaded_official")
-        chunks.extend(MarkdownIngestor().load_directory(self.data_dir / "references"))
-        self.retriever = HybridRetriever(chunks) if chunks else None
+        snapshot_dir = self.data_dir / "knowledge_base" / "snapshot"
+        if (snapshot_dir / "snapshot.json").exists():
+            supplemental = PDFIngestor().load(
+                supplemental_document_paths(self.data_dir, snapshot_dir),
+                collection="official",
+                authority="user_uploaded_public_document",
+            )
+            self.retriever = HybridRetriever.from_snapshot(
+                snapshot_dir,
+                supplemental_chunks=supplemental,
+            )
+            self.snapshot_loaded = True
+        else:
+            chunks = []
+            if (self.data_dir / "knowledge_base" / "manifest.json").exists():
+                chunks.extend(load_curated_chunks(self.data_dir))
+            else:
+                chunks.extend(
+                    PDFIngestor().load(
+                        self.store.pdfs(),
+                        collection="official",
+                        authority="uploaded_official",
+                    )
+                )
+                chunks.extend(
+                    MarkdownIngestor().load_directory(
+                        self.data_dir / "references"
+                    )
+                )
+            self.retriever = HybridRetriever(chunks) if chunks else None
+            self.snapshot_loaded = False
         self.history.clear()
-        return len(chunks)
+        return len(self.retriever.chunks) if self.retriever else 0
+
+    def prepared_document_count(self) -> int:
+        """Önceden hazırlanmış bilgi tabanındaki benzersiz belge sayısını döndürür."""
+
+        if not self.retriever:
+            return 0
+        return len(
+            {
+                chunk.document
+                for chunk in self.retriever.chunks
+                if chunk.authority != "user_uploaded_public_document"
+            }
+        )
+
+    def active_document_count(self) -> int:
+        """Hazır ve sonradan eklenmiş tüm aktif benzersiz belge sayısını döndürür."""
+
+        if not self.retriever:
+            return 0
+        return len({chunk.document for chunk in self.retriever.chunks})
+
+    def supplemental_records(self) -> list[dict]:
+        """Hazır snapshot dışında kalan, kullanıcı tarafından yönetilebilir kayıtları döndürür."""
+
+        snapshot_dir = self.data_dir / "knowledge_base" / "snapshot"
+        included = HybridRetriever.snapshot_source_hashes(snapshot_dir)
+        return [
+            record
+            for record in self.store.records()
+            if record.get("sha256") not in included
+        ]
 
     def ask(self, question: str, scope: str = "all") -> tuple[str, list[SearchHit]]:
         """Akışlı yanıtı tüketerek klasik metin ve kaynak listesi arayüzü sağlar."""
@@ -96,9 +160,14 @@ class CMSRAGEngine:
     def _prompt(self, question: str, hits: list[SearchHit], scope: str = "all") -> str:
         """Kaynakları numaralandırıp modeli yalnızca bu bağlamdan cevap vermeye zorlar."""
 
+        # Uzun ve aynı sayfadan birleşmiş kanıt kartlarının tamamını modele göndermek yerel
+        # donanımda ilk token süresini büyütür. En güçlü üç kanıtın sınırlı bir bölümünü
+        # kullanmak kaynak kapsamını korurken üretimi belirgin biçimde hızlandırır.
+        prompt_hits = hits[:3]
         context = "\n\n".join(
-            f"[SOURCE {number}: {hit.chunk.document}, page {hit.chunk.page}]\n{hit.chunk.text}"
-            for number, hit in enumerate(hits, start=1)
+            f"[SOURCE {number}: {hit.chunk.document}, page {hit.chunk.page}]\n"
+            f"{self._evidence_excerpt(hit.chunk.text)}"
+            for number, hit in enumerate(prompt_hits, start=1)
         )
         return f"""You are a careful CMS documentation assistant. Answer only from CONTEXT.
 Write fluent Turkish in one concise paragraph of at most 55 words.
@@ -118,6 +187,17 @@ CONTEXT
 QUESTION
 {question}
 """
+
+    @staticmethod
+    def _evidence_excerpt(text: str, limit: int = 900) -> str:
+        """Model bağlamını yakın cümle sınırından keserek yerel üretim gecikmesini sınırlar."""
+
+        if len(text) <= limit:
+            return text
+        boundary = text.rfind(". ", 0, limit)
+        if boundary >= limit // 2:
+            return text[: boundary + 1]
+        return text[:limit].rstrip()
 
     def _completed(self, question: str, answer: str, scope: str = "all") -> Iterator[str]:
         """Hazır cevabı kelime kelime yayınlayan ve sonunda belleğe alan akış kurar."""
@@ -148,7 +228,7 @@ QUESTION
                     model=self.model,
                     messages=[{"role": "user", "content": prompt}],
                     stream=True,
-                    options={"temperature": 0.1, "num_predict": 96},
+                    options={"temperature": 0.1, "num_predict": 64, "num_ctx": 2048},
                     keep_alive="30m",
                 ):
                     token = response["message"]["content"]
