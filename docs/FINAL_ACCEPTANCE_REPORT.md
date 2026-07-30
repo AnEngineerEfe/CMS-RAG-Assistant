@@ -18,11 +18,13 @@ veri kullanılmamıştır.
 
 | Kontrol | Sonuç |
 |---|---:|
-| Otomatik test | 38/38 başarılı |
+| Otomatik test | 41/41 başarılı |
 | Retrieval kabul vakası | 8/8 başarılı |
+| Gerçek yanıt kabul vakası | 7/7 başarılı |
 | Hazır PDF kaynağı | 4 |
-| İndekslenen chunk | 75 |
-| Önceden hesaplanmış embedding | 75 |
+| İndekslenen anlamlı chunk | 67 |
+| Önceden hesaplanmış embedding | 67 |
+| 80 karakter altı gürültü chunk | 0 |
 | PDF sayfası | 40/40 metinli |
 | PDF metin karakteri | 44.398 |
 | Snapshot yükleme | Başarılı |
@@ -70,6 +72,10 @@ embedding edilmesi yoktur.
 - ADVENT-AI operatör desteği, MAIN bakım destek asistanı, NATO sorumlu yapay zekâ
   ilkeleri ve ADVENT ROTA sorguları doğru hazırlanmış kaynaklara yönelmiştir.
 - Tüm sekiz kabul vakasında beklenen belge/koleksiyon ve anahtar içerik bulunmuştur.
+- Yedi gerçek uygulama yanıtında beklenen kavram, kaynak kararı ve atıf birlikte
+  karşılaştırılmış; takip soruları ve desteklenmeyen menzil sorusu doğru sınıflanmıştır.
+- Güçlü kanıt bulunduğunda modelin yanlış güvenli-ret üretmesi, soru-odaklı kanıt
+  özeti ve kaynaklı çıkarımsal yedekle engellenir.
 - Başarılı cevaplarda metin içi `[SOURCE n]` etiketi ve açılabilir kaynak kartı
   korunur.
 - Sohbet geçmişi takip sorularını destekler; önceki mesajların kaynakları ekranda

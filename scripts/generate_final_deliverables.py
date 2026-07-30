@@ -316,7 +316,7 @@ def build_word_document() -> None:
             ["Tarih", TODAY.strftime("%d.%m.%Y")],
             ["Doğrulanmış dal", COMMIT],
             ["Mimari", "Hazır PDF paketi + önceden hesaplanmış embedding snapshot'ı"],
-            ["Durum", "Nihai kabul — 38/38 test, 8/8 retrieval"],
+            ["Durum", "Nihai kabul — 41/41 test, 8/8 retrieval, 7/7 yanıt"],
         ],
         [5.0, 11.5],
     )
@@ -342,7 +342,7 @@ def build_word_document() -> None:
             ["Kaynaklar", "Dört önceden hazırlanmış kamuya açık PDF; şirket verisi kullanılmaz"],
             ["Çalışma modeli", "Yerel Ollama qwen2.5:3b; güçlü donanımda qwen2.5:7b"],
             ["Arayüz", "Streamlit tabanlı, kaynak kartlı ve akışlı sohbet"],
-            ["Son kabul", "38/38 otomatik test, 8/8 retrieval ve 75/75 snapshot doğrulaması"],
+            ["Son kabul", "41/41 test, 8/8 retrieval, 7/7 yanıt ve 67/67 snapshot"],
         ],
         [4.2, 12.3],
     )
@@ -382,7 +382,7 @@ def build_word_document() -> None:
     add_word_body(
         document,
         "Araştırma ve kaynak toplama normal kullanımdan önce tamamlanır. Dört metin "
-        "çıkarılabilir PDF, 75 anlamlı parça ve bunların önceden hesaplanmış embeddingleri "
+        "çıkarılabilir PDF, 67 anlamlı parça ve bunların önceden hesaplanmış embeddingleri "
         "sürümlenmiş bir snapshot olarak hazırlanır. Streamlit açıldığında bu hazır paket "
         "yüklenir; çalışma anında web taraması veya çekirdek belgeleri yeniden embedding "
         "etme işlemi yapılmaz. Yerel Ollama yalnız getirilen kanıt üzerinden cevap üretir."
@@ -391,9 +391,10 @@ def build_word_document() -> None:
         document,
         ["Kabul göstergesi", "Sonuç", "Yorum"],
         [
-            ["Otomatik test", "38 / 38", "Birim, entegrasyon, UI ve mimari sınır testleri"],
+            ["Otomatik test", "41 / 41", "Birim, entegrasyon, UI ve mimari sınır testleri"],
             ["Retrieval kabulü", "8 / 8", "Hazır kamuya açık bilgi paketinde doğru kanıt erişimi"],
-            ["İndekslenen kanıt", "75", "Dört PDF ve önceden hesaplanmış 75 embedding"],
+            ["Yanıt kabulü", "7 / 7", "Kavram, atıf, kaynak ve doğru ret kararı"],
+            ["İndekslenen kanıt", "67", "Dört PDF ve önceden hesaplanmış 67 embedding"],
             ["PDF bütünlüğü", "40 / 40 sayfa", "44.398 çıkarılmış metin karakteri"],
             ["Canlı servis", "HTTP 200", "Ana sayfa ve health endpoint"],
             ["Git yeniden üretim", "Başarılı", "Temiz git archive içinde aynı sonuçlar"],
@@ -440,7 +441,7 @@ def build_word_document() -> None:
             ["Tekrarlı PDF", "İkinci kayıt oluşmamalı", "SHA-256 ile engellendi"],
             ["Takip sorusu", "Son bağlamı anlamalı", "3 turluk kapsam izole bellek"],
             ["Hata davranışı", "İlgisiz kaynak göstermemeli", "UI ve motor testleriyle doğrulandı"],
-            ["Yeniden üretim", "Hazır paket ve snapshot", "38/38, 8/8 ve 75/75"],
+            ["Yeniden üretim", "Hazır paket ve snapshot", "41/41, 8/8, 7/7 ve 67/67"],
         ],
         [5.0, 5.8, 5.7],
     )
@@ -851,9 +852,10 @@ def build_word_document() -> None:
         document,
         ["Gösterge", "Değer"],
         [
-            ["Otomatik test", "38/38"],
+            ["Otomatik test", "41/41"],
             ["Retrieval kabulü", "8/8"],
-            ["İndekslenen parça", "75"],
+            ["Yanıt kabulü", "7/7"],
+            ["İndekslenen parça", "67"],
             ["PDF sayfası", "40/40 metinli"],
             ["Boş parça / eksik kaynak yolu", "0 / 0"],
             ["Canlı Streamlit", "HTTP 200"],
@@ -978,7 +980,7 @@ def build_word_document() -> None:
             ["3 dk", "Mimari", "Katmanlar, hibrit retrieval ve kanıt zinciri"],
             ["2 dk", "Güvenilirlik", "Hash, güvenli ret, kapsam izolasyonu ve yerel model"],
             ["3 dk", "Canlı demo", "ADVENT → takip sorusu → NATO kapsamı → kaynaksız ret"],
-            ["1 dk", "Test", "38/38, 8/8 ve 75/75 snapshot"],
+            ["1 dk", "Test", "41/41, 8/8, 7/7 ve 67/67 snapshot"],
             ["1 dk", "Yol haritası", "OCR, kalıcı indeks, RBAC ve audit"],
         ],
         [2.5, 4.5, 9.6],
@@ -1296,9 +1298,9 @@ def build_powerpoint() -> None:
     set_slide_background(slide)
     add_slide_frame(slide, 2, "Yönetici Özeti")
     add_slide_title(slide, "Tek cümlede proje", "Önceden hazırlanmış kamu bilgisini çevrimdışı, yerel ve kaynaklı cevaba dönüştürür.")
-    add_metric_card(slide, 0.7, 2.1, 2.7, "38 / 38", "OTOMATİK TEST")
+    add_metric_card(slide, 0.7, 2.1, 2.7, "41 / 41", "OTOMATİK TEST")
     add_metric_card(slide, 3.55, 2.1, 2.7, "8 / 8", "RETRIEVAL KABULÜ", GREEN)
-    add_metric_card(slide, 6.4, 2.1, 2.7, "75", "KANIT PARÇASI", ORANGE)
+    add_metric_card(slide, 6.4, 2.1, 2.7, "67", "KANIT PARÇASI", ORANGE)
     add_metric_card(slide, 9.25, 2.1, 2.7, "HTTP 200", "CANLI SERVİS", BLUE)
     add_ppt_box(slide, 0.7, 3.75, 11.95, 2.2, fill=NAVY, line=NAVY)
     add_ppt_text(slide, "Çözüm değeri", 1.05, 4.08, 2.3, 0.35, size=11, color=CYAN, bold=True)
@@ -1663,7 +1665,7 @@ def build_powerpoint() -> None:
         ("LOCAL", "Veri gizliliği"),
         ("HYBRID", "Yüksek retrieval kapsaması"),
         ("GROUNDED", "Belge ve sayfa kanıtı"),
-        ("TESTED", "38/38 + 8/8"),
+        ("TESTED", "41/41 + 8/8 + 7/7"),
     ]
     for index, (tag, body) in enumerate(closing):
         y = 1.85 + index * 0.78

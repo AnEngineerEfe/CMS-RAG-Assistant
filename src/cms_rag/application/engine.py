@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -135,7 +136,7 @@ class CMSRAGEngine:
 
         retrieval_query = CMSQueryProcessor.expand(self.build_retrieval_query(question, scope))
         hits = self.retriever.search(retrieval_query, scope=scope)
-        if not hits:
+        if not self.retriever.is_answerable(retrieval_query, hits):
             return self._completed(question, NO_ANSWER, scope), []
         prompt = self._prompt(question, hits, scope)
         return self._ollama_stream(question, prompt, hits, scope), hits
@@ -164,9 +165,10 @@ class CMSRAGEngine:
         # donanımda ilk token süresini büyütür. En güçlü üç kanıtın sınırlı bir bölümünü
         # kullanmak kaynak kapsamını korurken üretimi belirgin biçimde hızlandırır.
         prompt_hits = hits[:3]
+        expanded_question = CMSQueryProcessor.expand(question)
         context = "\n\n".join(
             f"[SOURCE {number}: {hit.chunk.document}, page {hit.chunk.page}]\n"
-            f"{self._evidence_excerpt(hit.chunk.text)}"
+            f"{self._evidence_excerpt(expanded_question, hit.chunk.text)}"
             for number, hit in enumerate(prompt_hits, start=1)
         )
         return f"""You are a careful CMS documentation assistant. Answer only from CONTEXT.
@@ -189,15 +191,56 @@ QUESTION
 """
 
     @staticmethod
-    def _evidence_excerpt(text: str, limit: int = 900) -> str:
-        """Model bağlamını yakın cümle sınırından keserek yerel üretim gecikmesini sınırlar."""
+    def _evidence_excerpt(query: str, text: str, limit: int = 900) -> str:
+        """Uzun chunk içinden soruyla en fazla örtüşen cümleleri bağlam bütçesine sığdırır."""
 
         if len(text) <= limit:
             return text
-        boundary = text.rfind(". ", 0, limit)
-        if boundary >= limit // 2:
-            return text[: boundary + 1]
-        return text[:limit].rstrip()
+        ignored = {
+            "advent", "cms", "sistem", "system", "nedir", "nelerdir", "nasil",
+            "nasıl", "yapar", "hakkinda", "hakkında", "icin", "için", "bir",
+            "the", "what", "how", "does", "and", "ve",
+        }
+        query_terms = {
+            token
+            for token in HybridRetriever._tokenise(CMSQueryProcessor.normalise(query))
+            if token not in ignored and len(token) > 2
+        }
+        sentences = [
+            sentence.strip()
+            for sentence in re.split(r"(?<=[.!?])\s+", text)
+            if sentence.strip()
+        ]
+        ranked = sorted(
+            enumerate(sentences),
+            key=lambda item: (
+                len(
+                    query_terms
+                    & set(
+                        HybridRetriever._tokenise(
+                            CMSQueryProcessor.normalise(item[1])
+                        )
+                    )
+                ),
+                -item[0],
+            ),
+            reverse=True,
+        )
+        selected_indexes = sorted(index for index, _ in ranked[:4])
+        excerpt = " ".join(sentences[index] for index in selected_indexes)
+        if not excerpt:
+            excerpt = text
+        return excerpt[:limit].rstrip()
+
+    def _grounded_fallback(self, question: str, hits: list[SearchHit]) -> str:
+        """Model yanlış ret verirse en güçlü kanıttan izlenebilir bir çıkarımsal yedek üretir."""
+
+        excerpt = self._evidence_excerpt(
+            CMSQueryProcessor.expand(question),
+            hits[0].chunk.text,
+            limit=450,
+        )
+        return f"Kaynakta soruyla ilgili şu bilgi yer alıyor: {excerpt} [SOURCE 1]"
 
     def _completed(self, question: str, answer: str, scope: str = "all") -> Iterator[str]:
         """Hazır cevabı kelime kelime yayınlayan ve sonunda belleğe alan akış kurar."""
@@ -223,6 +266,8 @@ QUESTION
             """Model tokenlarını iletir ve tamamlanan yanıtı kapsamıyla kaydeder."""
 
             parts: list[str] = []
+            pending: list[str] = []
+            released = False
             try:
                 for response in self._ollama.chat(
                     model=self.model,
@@ -234,8 +279,23 @@ QUESTION
                     token = response["message"]["content"]
                     if token:
                         parts.append(token)
-                        yield token
+                        if released:
+                            yield token
+                            continue
+                        pending.append(token)
+                        candidate = "".join(pending).strip()
+                        # Tam güvenli-ret cümlesi oluşana kadar kısa başlangıcı tamponlarız.
+                        # Model başka bir yanıta saparsa tampon anında akışa bırakılır.
+                        if not NO_ANSWER.startswith(candidate):
+                            released = True
+                            yield "".join(pending)
+                            pending.clear()
                 answer = "".join(parts).strip() or NO_ANSWER
+                if answer == NO_ANSWER and hits:
+                    answer = self._grounded_fallback(question, hits)
+                    yield answer
+                elif pending:
+                    yield "".join(pending)
                 # Model etiketi atlarsa retrieval'ın ilk kanıtını deterministik biçimde ekleriz.
                 if hits and "[SOURCE" not in answer.upper() and answer != NO_ANSWER:
                     citation = " [SOURCE 1]"

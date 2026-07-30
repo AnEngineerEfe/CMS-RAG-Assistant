@@ -23,6 +23,16 @@ class PDFIngestorTests(unittest.TestCase):
         self.assertEqual([hit.chunk.page for hit in deduplicated], [2, 3])
         self.assertIn("second", deduplicated[0].chunk.text)
 
+    def test_answerability_gate_separates_strong_and_weak_evidence(self):
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever._reranker = object()
+        strong = [SearchHit(Chunk("relevant", "doc.pdf", 1, "doc.pdf"), 0.62)]
+        weak = [SearchHit(Chunk("unrelated", "doc.pdf", 1, "doc.pdf"), 0.005)]
+        self.assertTrue(retriever.is_answerable("MAIN nedir?", strong))
+        self.assertFalse(
+            retriever.is_answerable("Füze menzili kaç kilometredir?", weak)
+        )
+
     def test_invalid_pdf_is_skipped_without_stopping_ingestion(self):
         from tempfile import TemporaryDirectory
         with TemporaryDirectory() as directory:

@@ -2,31 +2,13 @@
   "schema_version": 1,
   "embedding_model": "BAAI/bge-small-en-v1.5",
   "source_sha256": [
-    "0237d37771b232bbdd492dd3178c3f194a6f6a173e15606ccd6b665cd308ffd8",
-    "468bab4ee9124a616b3f96bf15136c596d49017ff032476396ca5f5435c19166",
-    "659a309881eb3f7170c2c7b9e61df804336c7cad1ab8767561f0dccb6517faf3",
+    "0dea235f316d8518c7cfc4fd6eb5dd0f3320334097e7e1c0950669f691794a3e",
+    "12972ba2c0858dd73a086f4329e1ba31462500b203cc02aa551d6db2dcefcffc",
+    "9deaf45094136d3a2d77f5685bbc5f5799c4565219d775d79ed7e472309ed71f",
     "ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934"
   ],
-  "chunk_count": 75,
+  "chunk_count": 67,
   "chunks": [
-    {
-      "text": "1 REVOLUTIONIZE NAVAL OPERATIONS WITH THE PINNACLE OF TACTICAL EXCELLENCE",
-      "document": "advent_cms.pdf",
-      "page": 1,
-      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\documents\\ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
-      "collection": "official",
-      "authority": "HAVELSAN public official brochure",
-      "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
-    },
-    {
-      "text": "ADVENT COMBAT MANAGEMENT SYSTEM 1",
-      "document": "advent_cms.pdf",
-      "page": 2,
-      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\documents\\ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
-      "collection": "official",
-      "authority": "HAVELSAN public official brochure",
-      "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
-    },
     {
       "text": "Introducing combat-proven ADVENT, the pinnacle of Combat Management Systems, poised to revolutionize naval operations worldwide with its commitment to tactical excellence. Developed in cooperation with the Turkish Naval Forces Research Center Command (ARMERKOM) to meet all command & control requirements of the naval forces, with a strong presence in the Turkish Navy and recognized globally as the preferred choice for numerous navies, ADVENT redefines situational awareness, decision-making capabilities, and operational efficiency. Its core features epitomize sophistication and precision, offering a blend of cutting-edge technology and strategic design. At the heart of ADVENT lies its advanced capabilities, including Network Enabled Capability (NEC), which optimizes operational effectiveness through centralized control and distributed execution.",
       "document": "advent_cms.pdf",
@@ -193,15 +175,6 @@
       "text": "nal software, hardware, or link data processor units. These capabilities are provided as standard features without the burden of additional licensing. ADVLink, leveraging commercial hardware, remains independent of any specific supplier or brand/model. This flexibility allows ADVLink to extend tactical data link capability to platforms lacking inherent link capabilities, utilizing existing communication infrastructures and compatible data modems. ADVENT CMS has built in support for following Tactical Data Links: TACTICAL DATA LINKS (TDL) CAPABILITY • NATO Links : Link 11, Link 16 and Link 22 (JREAP , SIMPLE, VMF) • Non-NATO Links : Link Y and Link Green • ADVENT Native Link : Link H (Fully customizable Native Link Capability) ADVENT COMBAT MANAGEMENT SYSTEM 11",
       "document": "advent_cms.pdf",
       "page": 12,
-      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\documents\\ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
-      "collection": "official",
-      "authority": "HAVELSAN public official brochure",
-      "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
-    },
-    {
-      "text": "FULLY INTEROPERABLE TDL 12 havelsan.com.tr",
-      "document": "advent_cms.pdf",
-      "page": 13,
       "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\documents\\ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
       "collection": "official",
       "authority": "HAVELSAN public official brochure",
@@ -397,15 +370,6 @@
       "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
     },
     {
-      "text": "havelsan.com.tr26",
-      "document": "advent_cms.pdf",
-      "page": 27,
-      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\documents\\ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
-      "collection": "official",
-      "authority": "HAVELSAN public official brochure",
-      "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
-    },
-    {
       "text": "ADVENT MÜREN is new-generation Command and Control System for Underwater Platforms which combines the capabilities of ADVENT Combat System and MÜREN System developed for Preveze Class Submarines. ADVENT MÜREN revolutionizes submarine operations. Designed to process, display, and act upon data from existing submarine sensors, ADVENT MÜREN serves as the ultimate decision support tool, empowering users with unprecedented control. Benefiting from HAVELSAN’s renowned expertise in command and control, ADVENT MÜREN enhances the efficiency of users, decision- makers, and operations by infusing platforms with advanced intelligence. Tailored for coastal, open sea, and complex underwater environments, ADVENT MÜREN encompasses specialized analysis systems essential for underwater surveillance and navigation.",
       "document": "advent_cms.pdf",
       "page": 28,
@@ -415,16 +379,7 @@
       "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
     },
     {
-      "text": " sea, and complex underwater environments, ADVENT MÜREN encompasses specialized analysis systems essential for underwater surveillance and navigation. Seamlessly integrated with sonar, sensors, and other subsystems, it optimizes the performance of each component, ensuring maximum effectiveness. With ADVENT MÜREN, submarines gain a complete understanding of their surroundings, enabling precise tactical assessment and swift decision-making. The system processes sonar and sensor data rapidly and accurately, presenting a unified and comprehensive underwater tactical picture. Streamlining submarine management and enhancing operational efficiency, ADVENT MÜREN facilitates seamless integration with other forces through Tactical Data Link integration. This enables real-time data collection and synchronization, elevating situational awareness to unparalleled levels.",
-      "document": "advent_cms.pdf",
-      "page": 28,
-      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\documents\\ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
-      "collection": "official",
-      "authority": "HAVELSAN public official brochure",
-      "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
-    },
-    {
-      "text": "gh Tactical Data Link integration. This enables real-time data collection and synchronization, elevating situational awareness to unparalleled levels. ADVENT MÜREN ADVENT COMBAT MANAGEMENT SYSTEM 27",
+      "text": " sea, and complex underwater environments, ADVENT MÜREN encompasses specialized analysis systems essential for underwater surveillance and navigation. Seamlessly integrated with sonar, sensors, and other subsystems, it optimizes the performance of each component, ensuring maximum effectiveness. With ADVENT MÜREN, submarines gain a complete understanding of their surroundings, enabling precise tactical assessment and swift decision-making. The system processes sonar and sensor data rapidly and accurately, presenting a unified and comprehensive underwater tactical picture. Streamlining submarine management and enhancing operational efficiency, ADVENT MÜREN facilitates seamless integration with other forces through Tactical Data Link integration. This enables real-time data collection and synchronization, elevating situational awareness to unparalleled levels. ADVENT MÜREN ADVENT COMBAT MANAGEMENT SYSTEM 27",
       "document": "advent_cms.pdf",
       "page": 28,
       "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\documents\\ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
@@ -481,24 +436,6 @@
       "text": "es • Cost-effectiveness due to the integration of sensor and weapon systems from various OEMs (Europe, China, and USA) • Lifetime software maintenance and hardware support • Inclusion of training and technology transfer • AI Supported features • Unmanned vehicle (UxV) direct control ADVENT CMS PINNACLE OF COMBAT MANAGEMENT SYSTEMS ADVENT COMBAT MANAGEMENT SYSTEM 31",
       "document": "advent_cms.pdf",
       "page": 32,
-      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\documents\\ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
-      "collection": "official",
-      "authority": "HAVELSAN public official brochure",
-      "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
-    },
-    {
-      "text": "havelsan.com.tr32",
-      "document": "advent_cms.pdf",
-      "page": 33,
-      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\documents\\ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
-      "collection": "official",
-      "authority": "HAVELSAN public official brochure",
-      "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
-    },
-    {
-      "text": "33 www.havelsan.com.tr HAVELSAN Inc. Coding the Trusted Future",
-      "document": "advent_cms.pdf",
-      "page": 34,
       "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\documents\\ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934_advent_cms.pdf",
       "collection": "official",
       "authority": "HAVELSAN public official brochure",
@@ -613,16 +550,7 @@
       "source_url": "https://www.havelsan.com/en/news/havelsan-showcase-advent-ai-and-barkan-3-first-time-saha-expo-2026"
     },
     {
-      "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 2 ret vermelidir. Modelin serbest internet araştırması yapması, kullanıcı sorusunu dış servise göndermesi veya kaynakta olmayan operasyonel öneri üretmesi kapsam dışıdır. İnsan denetimi korunmalıdır. Özellikle savunma alanında yapay zekâ çıktısı operasyonel emir, hedef seçimi veya otonom angajman kararı olarak ele alınmamalıdır. Bu prototip doküman keşfi ve araştırma sunumu içindir. Kaynaklar 1. HAVELSAN, “HAVELSAN Integrates National Artificial Intelligence into ADVENT Combat Management System”, 10 Ağustos 2025. https://www.havelsan.com/en/news/havelsan-integrates-natio nal-artificial-intelligence-advent-combat-management-system 2. HAVELSAN, “HAVELSAN to Showcase ADVENT-AI and BARKAN 3 for the First Time at SAHA EXPO 2026”, 3 Mayıs 2026.",
-      "document": "advent_ai_kamuya_acik_arastirma.pdf",
-      "page": 2,
-      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\advent_ai_kamuya_acik_arastirma.pdf",
-      "collection": "official",
-      "authority": "HAVELSAN public official sources — curated",
-      "source_url": "https://www.havelsan.com/en/news/havelsan-showcase-advent-ai-and-barkan-3-first-time-saha-expo-2026"
-    },
-    {
-      "text": "ligence-advent-combat-management-system 2. HAVELSAN, “HAVELSAN to Showcase ADVENT-AI and BARKAN 3 for the First Time at SAHA EXPO 2026”, 3 Mayıs 2026. https://www.havels an.com/en/news/havelsan-showcase-advent-ai-and-barkan-3-first-time-saha-expo-2026",
+      "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 2 ret vermelidir. Modelin serbest internet araştırması yapması, kullanıcı sorusunu dış servise göndermesi veya kaynakta olmayan operasyonel öneri üretmesi kapsam dışıdır. İnsan denetimi korunmalıdır. Özellikle savunma alanında yapay zekâ çıktısı operasyonel emir, hedef seçimi veya otonom angajman kararı olarak ele alınmamalıdır. Bu prototip doküman keşfi ve araştırma sunumu içindir. Kaynaklar 1. HAVELSAN, “HAVELSAN Integrates National Artificial Intelligence into ADVENT Combat Management System”, 10 Ağustos 2025. https://www.havelsan.com/en/news/havelsan-integrates-natio nal-artificial-intelligence-advent-combat-management-system 2. HAVELSAN, “HAVELSAN to Showcase ADVENT-AI and BARKAN 3 for the First Time at SAHA EXPO 2026”, 3 Mayıs 2026. https://www.havels an.com/en/news/havelsan-showcase-advent-ai-and-barkan-3-first-time-saha-expo-2026",
       "document": "advent_ai_kamuya_acik_arastirma.pdf",
       "page": 2,
       "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\advent_ai_kamuya_acik_arastirma.pdf",

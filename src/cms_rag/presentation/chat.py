@@ -48,7 +48,8 @@ def _render_answer(
     """Motor akışını ekrana yazar ve yalnızca desteklenen cevapların kanıtlarını döndürür."""
 
     with st.chat_message("assistant"):
-        st.markdown(
+        answer_label = st.empty()
+        answer_label.markdown(
             "<div class='answer-label'>YANIT ÜRETİMİ</div>",
             unsafe_allow_html=True,
         )
@@ -75,6 +76,11 @@ def _render_answer(
             "Yanıt kaynaklarla birlikte tamamlandı"
             if sources
             else "Bu soru için belge desteği bulunamadı"
+        )
+        final_label = "KAYNAKLI YANIT" if sources else "GÜVENLİ YANIT"
+        answer_label.markdown(
+            f"<div class='answer-label'>{final_label}</div>",
+            unsafe_allow_html=True,
         )
         status.update(label=final_status, state="complete", expanded=False)
         show_sources(sources)

@@ -35,7 +35,7 @@ anında web taraması gerekmez.
 - Üç turluk kontrollü sohbet bağlamı
 - Ollama üzerinden yerel ve akışlı yanıt üretimi
 - Her mesajla kalıcı kanıt kartları ve kaynak sayfası
-- Dört PDF kaynağı ve 75 chunk içeren sürümlenmiş başlangıç snapshot'ı
+- Dört PDF kaynağı ve gürültüden arındırılmış 67 chunk içeren sürümlenmiş snapshot
 - Normal kullanımda belge embeddinglerini yeniden hesaplamayan hızlı açılış
 - Çalışma anında kapalı web erişimi ve yalnız yerel üretim
 - Belge silme, yeniden indeksleme ve güvenli boş-bilgi-tabani davranışı

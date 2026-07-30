@@ -62,8 +62,14 @@ class PreparedKnowledgeBaseTests(unittest.TestCase):
 
         engine = CMSRAGEngine(DATA_DIR)
         count = engine.rebuild()
+        metadata = json.loads(
+            (KNOWLEDGE_ROOT / "snapshot" / "snapshot.json").read_text(
+                encoding="utf-8"
+            )
+        )
         self.assertTrue(engine.snapshot_loaded)
-        self.assertEqual(count, 75)
+        self.assertEqual(count, metadata["chunk_count"])
+        self.assertGreaterEqual(count, 60)
         self.assertEqual(engine.prepared_document_count(), 4)
         self.assertEqual(engine.supplemental_records(), [])
         common_questions = {

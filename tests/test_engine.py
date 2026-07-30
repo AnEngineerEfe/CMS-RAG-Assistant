@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from src.cms_rag.application import CMSRAGEngine
+from src.cms_rag.application.engine import NO_ANSWER
 from src.cms_rag.domain import (
     CMSQueryProcessor,
     Chunk,
@@ -26,6 +27,43 @@ class CMSRAGEngineTests(unittest.TestCase):
             hit = SearchHit(Chunk("kanıt", "official.pdf", 1, "official.pdf"), 1.0)
             answer = "".join(engine._ollama_stream("Soru", "İstem", [hit]))
             self.assertEqual(answer, "Kaynaklı kısa yanıt. [SOURCE 1]")
+
+    def test_model_false_refusal_is_replaced_with_grounded_evidence(self):
+        class RefusingOllama:
+            @staticmethod
+            def chat(**kwargs):
+                del kwargs
+                for token in NO_ANSWER.split():
+                    yield {"message": {"content": f"{token} "}}
+
+        with TemporaryDirectory() as directory:
+            engine = CMSRAGEngine(Path(directory))
+            engine._ollama = RefusingOllama()
+            hit = SearchHit(
+                Chunk(
+                    "Track management manages the lifecycle of tracks and performs data fusion.",
+                    "advent.pdf",
+                    9,
+                    "advent.pdf",
+                ),
+                0.9,
+            )
+            answer = "".join(
+                engine._ollama_stream("İz yönetimi ne yapar?", "İstem", [hit])
+            )
+            self.assertNotEqual(answer.strip(), NO_ANSWER)
+            self.assertIn("lifecycle of tracks", answer)
+            self.assertIn("[SOURCE 1]", answer)
+
+    def test_query_focused_excerpt_selects_relevant_late_sentence(self):
+        filler = "Genel platform bilgisi ve ürün ailesi anlatımı. " * 30
+        relevant = "Track management manages the lifecycle of tracks and track fusion."
+        excerpt = CMSRAGEngine._evidence_excerpt(
+            "İz yönetimi track management track fusion",
+            filler + relevant,
+            limit=300,
+        )
+        self.assertIn("lifecycle of tracks", excerpt)
 
     def test_model_can_be_selected_from_environment(self):
         with TemporaryDirectory() as directory:

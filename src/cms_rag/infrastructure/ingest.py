@@ -56,11 +56,30 @@ class PDFIngestor:
     ) -> list[Chunk]:
         """Metni mümkünse cümle sınırından ve kontrollü örtüşmeyle parçalara ayırır."""
 
-        if not text:
+        minimum_page_text = min(80, self.chunk_size)
+        if not text or len(text) < minimum_page_text:
             return []
         result: list[Chunk] = []
         start = 0
+        previous_end = 0
         while start < len(text):
+            minimum_new_text = min(120, max(10, self.chunk_size // 4))
+            if result and len(text) - start <= self.overlap + minimum_new_text:
+                # Son parça çoğunlukla overlap ve birkaç yeni karakterden ibaretse yeni
+                # bir vektör üretmek yerine yalnız yeni kuyruğu önceki chunk'a ekleriz.
+                tail = text[previous_end:].strip()
+                if tail:
+                    previous = result[-1]
+                    result[-1] = Chunk(
+                        text=f"{previous.text} {tail}",
+                        document=previous.document,
+                        page=previous.page,
+                        source_path=previous.source_path,
+                        collection=previous.collection,
+                        authority=previous.authority,
+                        source_url=previous.source_url,
+                    )
+                break
             end = min(len(text), start + self.chunk_size)
             # Sert karakter kesimi yerine yakın bir cümle sonunu tercih ederiz.
             if end < len(text):
@@ -74,6 +93,7 @@ class PDFIngestor:
             ))
             if end >= len(text):
                 break
+            previous_end = end
             start = max(end - self.overlap, start + 1)
         return result
 

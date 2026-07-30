@@ -7,6 +7,7 @@ Bu belge yalnızca tekrar çalıştırılabilir otomasyon sonuçlarını kaydede
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 .\.venv\Scripts\python.exe -m scripts.evaluate_retrieval
+.\.venv\Scripts\python.exe -m scripts.evaluate_answers
 ```
 
 ## Otomatik test kapsamı
@@ -53,6 +54,20 @@ Bu belge yalnızca tekrar çalıştırılabilir otomasyon sonuçlarını kaydede
 Her vaka; beklenen koleksiyon, belge/sayfa ve anahtar terimleri denetler.
 Sonuç `docs/retrieval_evaluation_report.json` dosyasına yazılır.
 
+## Gerçek yanıt kabul seti
+
+`scripts.evaluate_answers`, uygulamanın kullanıcıya verdiği gerçek yanıtı yedi
+senaryoda şu dört ölçütle kıyaslar:
+
+1. Soru cevaplanabilir mi, yoksa güvenli ret mi verilmelidir?
+2. Beklenen kavramların tamamı cevapta bulunuyor mu?
+3. Cevap `[SOURCE n]` atfı taşıyor mu?
+4. Gösterilen belge ve sayfa kaynakları cevap kararıyla tutarlı mı?
+
+Set; ADVENT tanımı, iki ardışık takip sorusu, ADVENT-AI, MAIN, sorumlu yapay zekâ
+ve belgede bulunmayan füze menzili sorusunu kapsar. Sonuç
+`docs/answer_evaluation_report.json` dosyasına yazılır.
+
 ## Arayüz kabul senaryosu
 
 Streamlit `AppTest` ile aynı oturumda şu akış otomatikleştirilmiştir:
@@ -75,11 +90,13 @@ birlikte ayağa kalkabildiğini doğrular.
 2026-07-30 tarihinde hazır bilgi tabanı kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `38/38` başarılı
+- Otomatik testler: `41/41` başarılı
 - Retrieval kabul seti: `8/8` başarılı
+- Gerçek yanıt kabul seti: `7/7` başarılı
 - Hazır PDF kaynağı: `4`
-- İndekslenen kanıt parçası: `75`
-- Önceden hesaplanmış embedding satırı: `75`
+- İndekslenen anlamlı kanıt parçası: `67`
+- Önceden hesaplanmış embedding satırı: `67`
+- 80 karakter altı gürültü chunk: `0`
 - Snapshot yükleme: başarılı
 - Streamlit sağlık endpoint'i: `HTTP 200`
 - Ollama: erişilebilir

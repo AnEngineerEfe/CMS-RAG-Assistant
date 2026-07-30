@@ -21,6 +21,7 @@ from reportlab.platypus import (
     SimpleDocTemplate,
     Spacer,
 )
+from pypdf import PdfReader
 
 from src.cms_rag.infrastructure.knowledge import load_curated_chunks
 from src.cms_rag.infrastructure.retrieval import HybridRetriever
@@ -187,8 +188,9 @@ def _render_pdf(markdown_path: Path, output_path: Path, title: str) -> None:
     """Bir küratörlü araştırma metnini metin çıkarımı yapılabilir PDF'e dönüştürür."""
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path = output_path.with_suffix(".tmp.pdf")
     document = SimpleDocTemplate(
-        str(output_path),
+        str(temporary_path),
         pagesize=A4,
         rightMargin=20 * mm,
         leftMargin=20 * mm,
@@ -223,6 +225,19 @@ def _render_pdf(markdown_path: Path, output_path: Path, title: str) -> None:
         onFirstPage=decorate,
         onLaterPages=decorate,
     )
+    if output_path.exists():
+        current_text = "\n".join(
+            page.extract_text() or ""
+            for page in PdfReader(str(output_path)).pages
+        )
+        generated_text = "\n".join(
+            page.extract_text() or ""
+            for page in PdfReader(str(temporary_path)).pages
+        )
+        if current_text == generated_text:
+            temporary_path.unlink()
+            return
+    temporary_path.replace(output_path)
 
 
 def _write_manifest() -> list[Path]:

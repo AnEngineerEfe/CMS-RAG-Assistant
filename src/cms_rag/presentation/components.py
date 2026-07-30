@@ -54,8 +54,13 @@ def render_message(message: dict[str, Any]) -> None:
 
     with st.chat_message(message["role"]):
         if message["role"] == "assistant":
+            label = (
+                "KAYNAKLI YANIT"
+                if message.get("sources")
+                else "GÜVENLİ YANIT"
+            )
             st.markdown(
-                "<div class='answer-label'>KAYNAKLI YANIT</div>",
+                f"<div class='answer-label'>{label}</div>",
                 unsafe_allow_html=True,
             )
         st.markdown(message["content"])

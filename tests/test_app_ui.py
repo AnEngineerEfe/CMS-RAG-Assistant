@@ -73,5 +73,6 @@ class StreamlitJourneyTests(unittest.TestCase):
         app.chat_input[0].set_value("Ben kimim?").run()
         page = "\n".join(item.value for item in app.markdown)
         self.assertIn("yeterli kaynak bulunamad\u0131", page)
+        self.assertIn("G\u00dcVENL\u0130 YANIT", page)
         self.assertEqual(len(app.expander), prior_evidence_count)
         self.assertFalse(app.exception)

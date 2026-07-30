@@ -214,6 +214,37 @@ class HybridRetriever:
             limit,
         )
 
+    def is_answerable(
+        self,
+        query: str,
+        hits: list[SearchHit],
+        *,
+        reranker_threshold: float = 0.05,
+    ) -> bool:
+        """En güçlü kanıtın soruyu gerçekten destekleyip desteklemediğini tutarlı biçimde ölçer."""
+
+        if not hits:
+            return False
+        if self._reranker is not None:
+            return hits[0].score >= reranker_threshold
+
+        # Reranker yerelde bulunamazsa yalnız RRF puanına güvenilmez. Sorgunun ayırt
+        # edici terimlerinin kanıt metninde yeterli oranda bulunması güvenli yedektir.
+        ignored = {
+            "advent", "cms", "sistem", "system", "nedir", "nelerdir", "nasil",
+            "nasıl", "yapar", "hakkinda", "hakkında", "icin", "için", "bir",
+            "the", "what", "how", "does", "and", "ve",
+        }
+        query_terms = {
+            token for token in self._tokenise(query)
+            if token not in ignored and len(token) > 2
+        }
+        if not query_terms:
+            return False
+        evidence_terms = set(self._tokenise(" ".join(hit.chunk.text for hit in hits[:2])))
+        overlap = query_terms & evidence_terms
+        return len(overlap) >= 2 or len(overlap) / len(query_terms) >= 0.5
+
     @staticmethod
     def _deduplicate_by_page(
         hits: list[SearchHit],

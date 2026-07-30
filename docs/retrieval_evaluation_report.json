@@ -1,5 +1,5 @@
 {
-  "indexed_chunks": 75,
+  "indexed_chunks": 67,
   "snapshot_loaded": true,
   "passed": 8,
   "total": 8,
@@ -93,14 +93,14 @@
           "authority": "HAVELSAN public official brochure"
         },
         {
-          "document": "advent_cms.pdf",
-          "page": 11,
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
           "collection": "official",
-          "authority": "HAVELSAN public official brochure"
+          "authority": "HAVELSAN public official sources — curated"
         },
         {
           "document": "advent_cms.pdf",
-          "page": 29,
+          "page": 11,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
         }
@@ -138,12 +138,6 @@
           "authority": "HAVELSAN public official brochure"
         },
         {
-          "document": "advent_cms.pdf",
-          "page": 28,
-          "collection": "official",
-          "authority": "HAVELSAN public official brochure"
-        },
-        {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
           "page": 1,
           "collection": "official",
@@ -152,6 +146,12 @@
         {
           "document": "advent_cms.pdf",
           "page": 26,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 28,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
         }
@@ -216,16 +216,16 @@
           "authority": "HAVELSAN public official sources — curated"
         },
         {
-          "document": "advent_ai_kamuya_acik_arastirma.pdf",
-          "page": 2,
-          "collection": "official",
-          "authority": "HAVELSAN public official sources — curated"
-        },
-        {
           "document": "advent_cms.pdf",
           "page": 3,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
         }
       ]
     },
@@ -262,19 +262,19 @@
         },
         {
           "document": "advent_cms.pdf",
-          "page": 1,
-          "collection": "official",
-          "authority": "HAVELSAN public official brochure"
-        },
-        {
-          "document": "advent_cms.pdf",
           "page": 20,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
         },
         {
           "document": "advent_cms.pdf",
-          "page": 2,
+          "page": 3,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 10,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
         }

@@ -1,0 +1,192 @@
+{
+  "indexed_chunks": 67,
+  "snapshot_loaded": true,
+  "passed": 7,
+  "total": 7,
+  "results": [
+    {
+      "id": "advent_definition",
+      "question": "ADVENT tam olarak nedir?",
+      "answerable_expected": true,
+      "answer": "ADVENT, farklı operasyonel ortamların gereksinimlerine uyarlanabilen bir Savaş Yönetim Sistemi (CMS) ürün ailesidir. Doküman, bu ailenin komuta ve kontrol, görev yönetimi ve CMS işlevlerini kapsadığını belirtir [SOURCE 1].",
+      "expected_terms": [
+        "savaş yönetim sistemi",
+        "ürün ailesi"
+      ],
+      "matched_terms": [
+        "savas yonetim sistemi",
+        "urun ailesi"
+      ],
+      "decision_ok": true,
+      "citation_ok": true,
+      "concepts_ok": true,
+      "elapsed_ms": 1.26,
+      "sources": [
+        {
+          "document": "advent_cms.pdf",
+          "page": 3,
+          "score": 1.0
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "platform_follow_up",
+      "question": "Başka hangi platformlarda kullanılır?",
+      "answerable_expected": true,
+      "answer": "Doküman, ADVENT ailesinin yüzey platformlarında ADVENT KALYON, su altı platformlarında ADVENT MÜREN, deniz hava platformlarında ADVENT MARTI, kara tesislerinde ADVENT UFUK ve insansız platformlarda ADVENT ROTA ile kullanıldığını belirtir [SOURCE 1].",
+      "expected_terms": [
+        "advent müren",
+        "advent marti",
+        "advent rota"
+      ],
+      "matched_terms": [
+        "advent muren",
+        "advent marti",
+        "advent rota"
+      ],
+      "decision_ok": true,
+      "citation_ok": true,
+      "concepts_ok": true,
+      "elapsed_ms": 1.17,
+      "sources": [
+        {
+          "document": "advent_cms.pdf",
+          "page": 4,
+          "score": 1.0
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "variant_duty_follow_up",
+      "question": "Bunların görevleri nelerdir?",
+      "answerable_expected": true,
+      "answer": "ADVENT MARTI, özel görev uçakları ve helikopterler için hava komuta ve kontrol desteği sağlar [SOURCE 1]. ADVENT UFUK, deniz güvenliği ve durumsal farkındalık için komuta-kontrol ve bilgi yönetimi işlevi sunar [SOURCE 2]. ADVENT MÜREN ise su altı platformları için yeni nesil komuta ve kontrol sistemidir [SOURCE 3].",
+      "expected_terms": [
+        "advent marti",
+        "advent ufuk",
+        "advent müren"
+      ],
+      "matched_terms": [
+        "advent marti",
+        "advent ufuk",
+        "advent muren"
+      ],
+      "decision_ok": true,
+      "citation_ok": true,
+      "concepts_ok": true,
+      "elapsed_ms": 1.24,
+      "sources": [
+        {
+          "document": "advent_cms.pdf",
+          "page": 22,
+          "score": 1.0
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 26,
+          "score": 1.0
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 28,
+          "score": 1.0
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "advent_ai_paraphrase",
+      "question": "ADVENT-AI karar verirken operatöre ne kazandırıyor?",
+      "answerable_expected": true,
+      "answer": "ADVENT-AI; operatörün bilişsel yükünü azaltmayı, karar süreçlerini hızlandırmayı ve büyük veri içindeki anlamlı örüntüleri görünür kılmayı amaçlayan yapay zekâ destekli yetenekler bütünüdür [SOURCE 1].",
+      "expected_terms": [
+        "bilişsel yük",
+        "karar süreçlerini"
+      ],
+      "matched_terms": [
+        "bilissel yuk",
+        "karar sureclerini"
+      ],
+      "decision_ok": true,
+      "citation_ok": true,
+      "concepts_ok": true,
+      "elapsed_ms": 0.55,
+      "sources": [
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 1.0
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "main_paraphrase",
+      "question": "MAIN personelin bakım işine nasıl yardım ediyor?",
+      "answerable_expected": true,
+      "answer": "MAIN, bakım personelinin bakım adımlarını belirlemesine ve talimatlara erişmesine yardımcı olan doğal dil tabanlı bir destek asistanıdır. Kamuya açık açıklamaya göre kapalı ağlarda ve yerel modellerle çalışacak şekilde tasarlanmıştır [SOURCE 1].",
+      "expected_terms": [
+        "bakım adımlarını",
+        "kapalı ağlarda"
+      ],
+      "matched_terms": [
+        "bakım adımlarını",
+        "kapalı aglarda"
+      ],
+      "decision_ok": true,
+      "citation_ok": true,
+      "concepts_ok": true,
+      "elapsed_ms": 1.02,
+      "sources": [
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 1.0
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "responsible_ai_paraphrase",
+      "question": "Sorumlu yapay zekâ için hangi ilkeler esas alınıyor?",
+      "answerable_expected": true,
+      "answer": "NATO'nun sorumlu yapay zekâ ilkeleri; hukuka uygunluk, sorumluluk ve hesap verebilirlik, açıklanabilirlik ve izlenebilirlik, güvenilirlik, yönetilebilirlik ve önyargıyı azaltma başlıklarını kapsar [SOURCE 1].",
+      "expected_terms": [
+        "hukuka uygunluk",
+        "açıklanabilirlik"
+      ],
+      "matched_terms": [
+        "hukuka uygunluk",
+        "acıklanabilirlik"
+      ],
+      "decision_ok": true,
+      "citation_ok": true,
+      "concepts_ok": true,
+      "elapsed_ms": 1.11,
+      "sources": [
+        {
+          "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          "page": 1,
+          "score": 1.0
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "unsupported_range",
+      "question": "ADVENT hava savunma füzesinin menzili kaç kilometredir?",
+      "answerable_expected": false,
+      "answer": "Bu soruyu destekleyecek yeterli kaynak bulunamadı.",
+      "expected_terms": [],
+      "matched_terms": [],
+      "decision_ok": true,
+      "citation_ok": true,
+      "concepts_ok": true,
+      "elapsed_ms": 3017.21,
+      "sources": [],
+      "passed": true
+    }
+  ]
+}
