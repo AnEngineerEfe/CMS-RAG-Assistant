@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "knowledge_cutoff": "2026-07-30",
+  "topics": [
+    {"topic": "CMS ve ADVENT genel tanımı", "status": "strong", "documents": ["advent_cms.pdf", "advent_cms_kamuya_acik_arastirma.pdf"], "pages": ["3-6", "1-2"], "gold_cases": 2, "gap": ""},
+    {"topic": "Ağ destekli yetenek ve komuta-kontrol", "status": "strong", "documents": ["advent_cms.pdf"], "pages": ["3", "6", "8", "10-11"], "gold_cases": 2, "gap": ""},
+    {"topic": "İz yönetimi ve füzyon", "status": "strong", "documents": ["advent_cms.pdf", "advent_cms_kamuya_acik_arastirma.pdf"], "pages": ["9", "1"], "gold_cases": 2, "gap": ""},
+    {"topic": "Silah ve sensör kaynak yönetimi", "status": "strong", "documents": ["advent_cms.pdf"], "pages": ["9"], "gold_cases": 1, "gap": ""},
+    {"topic": "Taktik veri bağları", "status": "strong", "documents": ["advent_cms.pdf", "advent_cms_kamuya_acik_arastirma.pdf"], "pages": ["12", "1"], "gold_cases": 1, "gap": ""},
+    {"topic": "Platform entegrasyonu", "status": "strong", "documents": ["advent_cms.pdf"], "pages": ["17-18"], "gold_cases": 2, "gap": ""},
+    {"topic": "Mayın harbi görev yönetimi", "status": "strong", "documents": ["advent_cms.pdf"], "pages": ["20-21"], "gold_cases": 1, "gap": ""},
+    {"topic": "ADVENT ürün ailesi varyantları", "status": "strong", "documents": ["advent_cms.pdf", "advent_cms_kamuya_acik_arastirma.pdf"], "pages": ["22-29", "2"], "gold_cases": 4, "gap": ""},
+    {"topic": "Eğitim ve akıllı operatör asistanı", "status": "strong", "documents": ["advent_cms.pdf"], "pages": ["30-31"], "gold_cases": 1, "gap": ""},
+    {"topic": "ADVENT-AI ve MAIN", "status": "strong", "documents": ["advent_ai_kamuya_acik_arastirma.pdf"], "pages": ["1-2"], "gold_cases": 4, "gap": ""},
+    {"topic": "Sorumlu yapay zekâ yönetişimi", "status": "strong", "documents": ["deniz_c2_veri_ai_yonetisim_arastirma.pdf"], "pages": ["1"], "gold_cases": 1, "gap": ""},
+    {"topic": "NATO veri birlikte çalışabilirliği", "status": "strong", "documents": ["deniz_c2_veri_ai_yonetisim_arastirma.pdf"], "pages": ["1"], "gold_cases": 1, "gap": ""},
+    {"topic": "Denizaltı harbi karar desteği", "status": "partial", "documents": ["deniz_c2_veri_ai_yonetisim_arastirma.pdf"], "pages": ["2"], "gold_cases": 1, "gap": "Tek kamu özeti; daha fazla birincil teknik kaynak gerekli."},
+    {"topic": "Siber güvenlik ve güvenli yazılım yaşam döngüsü", "status": "partial", "documents": ["advent_ai_kamuya_acik_arastirma.pdf"], "pages": ["2"], "gold_cases": 0, "gap": "Ürün-spesifik olmayan kamu standartlarıyla genişletilmeli."},
+    {"topic": "Tedarik, fiyat, garanti ve lisans", "status": "out_of_scope", "documents": [], "pages": [], "gold_cases": 3, "gap": "Kamu bilgi paketinde bilinçli olarak yok."},
+    {"topic": "Tasnifli operasyonel konfigürasyon", "status": "out_of_scope", "documents": [], "pages": [], "gold_cases": 3, "gap": "Şirket içi ve tasnifli veri kapsam dışıdır."}
+  ]
+}

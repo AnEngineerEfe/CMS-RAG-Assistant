@@ -20,7 +20,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.26,
+      "elapsed_ms": 1.25,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -48,7 +48,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.17,
+      "elapsed_ms": 1.19,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -76,7 +76,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.24,
+      "elapsed_ms": 1.25,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -112,7 +112,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 0.55,
+      "elapsed_ms": 0.57,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -132,13 +132,13 @@
         "kapalı ağlarda"
       ],
       "matched_terms": [
-        "bakım adımlarını",
-        "kapalı aglarda"
+        "bakim adimlarini",
+        "kapali aglarda"
       ],
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.02,
+      "elapsed_ms": 0.78,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -159,12 +159,12 @@
       ],
       "matched_terms": [
         "hukuka uygunluk",
-        "acıklanabilirlik"
+        "aciklanabilirlik"
       ],
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.11,
+      "elapsed_ms": 1.05,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -184,7 +184,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 3017.21,
+      "elapsed_ms": 3920.28,
       "sources": [],
       "passed": true
     }

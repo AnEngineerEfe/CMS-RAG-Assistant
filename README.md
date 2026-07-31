@@ -153,6 +153,11 @@ Ayrıntılı tasarım için [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), dal ve
 sürüm politikası için [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md), test
 kanıtları için [docs/TEST_EVIDENCE.md](docs/TEST_EVIDENCE.md) dosyasına bakın.
 
+Bilgi kapsamı [docs/COVERAGE_MATRIX.md](docs/COVERAGE_MATRIX.md), 33 vakalık
+bilimsel kabul hattı ise
+[docs/BENCHMARK_METHODOLOGY.md](docs/BENCHMARK_METHODOLOGY.md) içinde
+açıklanmıştır.
+
 ## Nihai sunum teslimatları
 
 - [Nihai Teknik Dokümantasyon](deliverables/CMS-RAG_Nihai_Teknik_Dokumantasyon.docx)
@@ -171,11 +176,16 @@ Her iki Office dosyası aşağıdaki komutla aynı proje verilerinden yeniden
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 .\.venv\Scripts\python.exe -m scripts.evaluate_retrieval
+.\.venv\Scripts\python.exe -m scripts.run_benchmark
 ```
 
 İkinci komut, sabit kabul sorularının beklenen sayfa/koleksiyon/terimleri getirip
 getirmediğini denetler ve raporu `docs/retrieval_evaluation_report.json`
 dosyasına yazar.
+
+Üçüncü komut; 23 pozitif ve 10 negatif altın vakada TP/TN/FP/FN,
+precision/recall/specificity/F1, Hit@6, MRR ve gecikme metriklerini üretir.
+Ayrıntılı rapor `evaluation/results/latest/benchmark_report.json` dosyasındadır.
 
 ## Veri ve güvenlik sınırı
 

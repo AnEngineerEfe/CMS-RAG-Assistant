@@ -94,7 +94,12 @@ class PDFIngestor:
             if end >= len(text):
                 break
             previous_end = end
-            start = max(end - self.overlap, start + 1)
+            next_start = max(end - self.overlap, start + 1)
+            # Karakter bazlı overlap bir kelimenin ortasına denk gelebilir. Başlangıcı
+            # yakındaki ilk boşluğun sonrasına taşıyarak chunk'ın "bilities" gibi kopuk
+            # bir sözcükle başlamasını engelleriz.
+            word_boundary = text.find(" ", next_start, min(end, next_start + 40))
+            start = word_boundary + 1 if word_boundary >= 0 else next_start
         return result
 
 

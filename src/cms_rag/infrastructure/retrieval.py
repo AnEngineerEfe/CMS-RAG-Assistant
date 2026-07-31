@@ -199,13 +199,22 @@ class HybridRetriever:
                 key=lambda pair: float(pair[0]),
                 reverse=True,
             )
-            return self._deduplicate_by_page(
+            reranked = self._deduplicate_by_page(
                 [
                     SearchHit(self.chunks[item_id], float(score))
                     for score, item_id in ordered
                 ],
                 limit,
             )
+            score_by_id = {
+                item_id: float(score) for score, item_id in zip(scores, candidate_ids)
+            }
+            lexical_guards = [
+                SearchHit(self.chunks[item_id], score_by_id[item_id])
+                for item_id in lexical_ids[:2]
+                if lexical_scores[item_id] > 0 and item_id in score_by_id
+            ]
+            return self._preserve_lexical_pages(reranked, lexical_guards, limit)
         return self._deduplicate_by_page(
             [
                 SearchHit(self.chunks[item_id], fused[item_id])
@@ -219,19 +228,39 @@ class HybridRetriever:
         query: str,
         hits: list[SearchHit],
         *,
-        reranker_threshold: float = 0.05,
+        reranker_threshold: float = 0.03,
     ) -> bool:
         """En güçlü kanıtın soruyu gerçekten destekleyip desteklemediğini tutarlı biçimde ölçer."""
 
         if not hits:
             return False
+        from ..domain.query import CMSQueryProcessor
+
+        if CMSQueryProcessor.requests_restricted_information(query):
+            return False
         if self._reranker is not None:
-            return hits[0].score >= reranker_threshold
+            if hits[0].score < reranker_threshold:
+                return False
+
+            # Cross-encoder alan benzerliğini iyi ölçer; ancak kaynakta bulunmayan bir
+            # nitelik (işletim sistemi, frekans vb.) sorulduğunda yalnızca yüksek alan
+            # benzerliği yanlış pozitif üretebilir. Bu nedenle karar, ayırt edici sorgu
+            # terimlerinden en az birinin kanıtta gerçekten görülmesini de gerektirir.
+            query_terms = self._content_terms(query)
+            evidence_terms = set(
+                self._tokenise(" ".join(hit.chunk.text for hit in hits[:2]))
+            )
+            required_terms = CMSQueryProcessor.required_attribute_terms(query)
+            if required_terms and not any(
+                term in evidence_terms for term in required_terms
+            ):
+                return False
+            return bool(query_terms & evidence_terms)
 
         # Reranker yerelde bulunamazsa yalnız RRF puanına güvenilmez. Sorgunun ayırt
         # edici terimlerinin kanıt metninde yeterli oranda bulunması güvenli yedektir.
         ignored = {
-            "advent", "cms", "sistem", "system", "nedir", "nelerdir", "nasil",
+            "advent", "cms", "sistem", "sistemi", "system", "nedir", "nelerdir", "nasil",
             "nasıl", "yapar", "hakkinda", "hakkında", "icin", "için", "bir",
             "the", "what", "how", "does", "and", "ve",
         }
@@ -244,6 +273,22 @@ class HybridRetriever:
         evidence_terms = set(self._tokenise(" ".join(hit.chunk.text for hit in hits[:2])))
         overlap = query_terms & evidence_terms
         return len(overlap) >= 2 or len(overlap) / len(query_terms) >= 0.5
+
+    @classmethod
+    def _content_terms(cls, query: str) -> set[str]:
+        """Cevaplanabilirlik kararında alan adından daha ayırt edici terimleri çıkarır."""
+
+        ignored = {
+            "advent", "cms", "sistem", "system", "nedir", "nelerdir", "nasil",
+            "nasıl", "hangi", "kullanir", "kullanır", "yapar", "saglar", "sağlar",
+            "hakkinda", "hakkında", "icin", "için", "bir", "the", "what", "how",
+            "does", "and", "ve", "ile", "olarak", "yonetilir", "yönetilir",
+        }
+        return {
+            token
+            for token in cls._tokenise(query)
+            if token not in ignored and len(token) > 2
+        }
 
     @staticmethod
     def _deduplicate_by_page(
@@ -277,6 +322,31 @@ class HybridRetriever:
                     max(current.score, hit.score),
                 )
         return unique[:limit]
+
+    @staticmethod
+    def _preserve_lexical_pages(
+        reranked: list[SearchHit],
+        lexical_guards: list[SearchHit],
+        limit: int,
+    ) -> list[SearchHit]:
+        """Reranker'ın kısa ama tam terim eşleşmeli kanıt sayfalarını silmesini önler."""
+
+        selected = list(reranked[:limit])
+        selected_pages = {
+            (hit.chunk.source_path, hit.chunk.page) for hit in selected
+        }
+        for guard in lexical_guards:
+            key = (guard.chunk.source_path, guard.chunk.page)
+            if key in selected_pages:
+                continue
+            if len(selected) >= limit:
+                removed = selected.pop()
+                selected_pages.discard(
+                    (removed.chunk.source_path, removed.chunk.page)
+                )
+            selected.append(guard)
+            selected_pages.add(key)
+        return selected
 
     @staticmethod
     def _tokenise(text: str) -> list[str]:

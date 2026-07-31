@@ -8,6 +8,7 @@ Bu belge yalnızca tekrar çalıştırılabilir otomasyon sonuçlarını kaydede
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 .\.venv\Scripts\python.exe -m scripts.evaluate_retrieval
 .\.venv\Scripts\python.exe -m scripts.evaluate_answers
+.\.venv\Scripts\python.exe -m scripts.run_benchmark
 ```
 
 ## Otomatik test kapsamı
@@ -37,6 +38,11 @@ Bu belge yalnızca tekrar çalıştırılabilir otomasyon sonuçlarını kaydede
 - Snapshot chunk/embedding sayılarının bire bir eşleşmesi
 - Hazır resmî broşürün ek belge yönetiminden silinememesi
 - Motorun belge embeddinglerini yeniden üretmeden snapshot yüklemesi
+
+- Altın veri setindeki belge, sayfa ve kanıt terimlerinin snapshot'ta bulunması
+- TP/TN/FP/FN, Hit@6, MRR ve retrieval gecikmesinin gerçek üretim hattında ölçülmesi
+- Reranker'ın kısa fakat tam terim eşleşmeli kanıt sayfalarını düşürmemesi
+- Kaynakta bulunmayan teknik nitelikler ve gizli yapılandırma taleplerinin reddi
 
 ## Retrieval kabul seti
 
@@ -90,9 +96,12 @@ birlikte ayağa kalkabildiğini doğrular.
 2026-07-30 tarihinde hazır bilgi tabanı kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `41/41` başarılı
+- Otomatik testler: `52/52` başarılı
 - Retrieval kabul seti: `8/8` başarılı
 - Gerçek yanıt kabul seti: `7/7` başarılı
+- Altın benchmark: `33/33` başarılı (`23 TP / 10 TN / 0 FP / 0 FN`)
+- Altın benchmark Hit@6: `%100`
+- Altın benchmark MRR: `0,6268`
 - Hazır PDF kaynağı: `4`
 - İndekslenen anlamlı kanıt parçası: `67`
 - Önceden hesaplanmış embedding satırı: `67`

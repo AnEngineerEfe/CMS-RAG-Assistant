@@ -7,13 +7,19 @@ from src.cms_rag.infrastructure import HybridRetriever, MarkdownIngestor, PDFIng
 
 class PDFIngestorTests(unittest.TestCase):
     def test_chunker_preserves_document_and_page_metadata(self):
+        text = "A sentence. Another sentence. Third sentence."
         chunks = PDFIngestor(chunk_size=20, overlap=5)._split(
-            "A sentence. Another sentence. Third sentence.", Path("official.pdf"), 4
+            text, Path("official.pdf"), 4
         )
         self.assertTrue(chunks)
         self.assertTrue(all(chunk.document == "official.pdf" for chunk in chunks))
         self.assertTrue(all(chunk.page == 4 for chunk in chunks))
         self.assertTrue(all(chunk.source_path.endswith("official.pdf") for chunk in chunks))
+        original_words = {word.strip(".") for word in text.split()}
+        self.assertTrue(all(
+            chunk.text.split()[0].strip(".") in original_words
+            for chunk in chunks
+        ))
 
     def test_evidence_deduplicates_multiple_chunks_from_one_page(self):
         first = SearchHit(Chunk("first", "doc.pdf", 2, "doc.pdf"), 0.9)
@@ -23,14 +29,64 @@ class PDFIngestorTests(unittest.TestCase):
         self.assertEqual([hit.chunk.page for hit in deduplicated], [2, 3])
         self.assertIn("second", deduplicated[0].chunk.text)
 
+    def test_lexical_guard_preserves_exact_match_page(self):
+        reranked = [
+            SearchHit(Chunk(f"semantic {page}", "doc.pdf", page, "doc.pdf"), 0.9)
+            for page in range(1, 4)
+        ]
+        lexical = [
+            SearchHit(
+                Chunk("Target Motion Analysis", "doc.pdf", 9, "doc.pdf"),
+                0.01,
+            )
+        ]
+        selected = HybridRetriever._preserve_lexical_pages(
+            reranked,
+            lexical,
+            limit=3,
+        )
+        self.assertEqual([hit.chunk.page for hit in selected], [1, 2, 9])
+
     def test_answerability_gate_separates_strong_and_weak_evidence(self):
         retriever = HybridRetriever.__new__(HybridRetriever)
         retriever._reranker = object()
-        strong = [SearchHit(Chunk("relevant", "doc.pdf", 1, "doc.pdf"), 0.62)]
+        strong = [SearchHit(Chunk("MAIN maintenance assistant", "doc.pdf", 1, "doc.pdf"), 0.62)]
         weak = [SearchHit(Chunk("unrelated", "doc.pdf", 1, "doc.pdf"), 0.005)]
         self.assertTrue(retriever.is_answerable("MAIN nedir?", strong))
         self.assertFalse(
             retriever.is_answerable("Füze menzili kaç kilometredir?", weak)
+        )
+
+    def test_answerability_requires_distinctive_evidence_even_with_high_score(self):
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever._reranker = object()
+        misleading = [
+            SearchHit(
+                Chunk("ADVENT is a combat management system.", "doc.pdf", 1, "doc.pdf"),
+                0.91,
+            )
+        ]
+        self.assertFalse(
+            retriever.is_answerable(
+                "ADVENT operating system kernel nedir?",
+                misleading,
+            )
+        )
+
+    def test_answerability_rejects_restricted_configuration_requests(self):
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever._reranker = object()
+        evidence = [
+            SearchHit(
+                Chunk("Sensor configuration for a surface platform.", "doc.pdf", 1, "doc.pdf"),
+                0.91,
+            )
+        ]
+        self.assertFalse(
+            retriever.is_answerable(
+                "Görevdeki bir geminin gizli sensör konfigürasyonu nedir?",
+                evidence,
+            )
         )
 
     def test_invalid_pdf_is_skipped_without_stopping_ingestion(self):

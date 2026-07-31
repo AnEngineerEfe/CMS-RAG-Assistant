@@ -204,3 +204,25 @@ class CMSRAGEngineTests(unittest.TestCase):
     def test_turkish_cms_terminology_is_expanded_for_retrieval(self):
         expanded = CMSQueryProcessor.expand("Taktik veri baglantisi nedir?")
         self.assertIn("tactical data link", expanded)
+
+    def test_paraphrased_track_question_is_expanded_with_brochure_terms(self):
+        expanded = CMSQueryProcessor.expand(
+            "Farklı sensörlerden gelen izler nasıl ortak bir taktik resme dönüştürülüyor?"
+        )
+        self.assertIn("track data fusion", expanded)
+        self.assertIn("track management", expanded)
+
+    def test_dotless_turkish_i_is_normalised_for_glossary_matching(self):
+        expanded = CMSQueryProcessor.expand(
+            "Mayın harbi ve akıllı operatör asistanı ne sağlar?"
+        )
+        self.assertIn("mine warfare", expanded)
+        self.assertIn("smart operator assistant", expanded)
+
+    def test_unsupported_detail_requires_explicit_attribute_evidence(self):
+        self.assertEqual(
+            CMSQueryProcessor.required_attribute_terms(
+                "Radarın çalışma frekansı nedir?"
+            ),
+            ("frequency",),
+        )
