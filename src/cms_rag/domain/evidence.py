@@ -84,11 +84,32 @@ class EvidenceResponder:
                 [SearchHit(responsible_ai_source, 1.0)],
             )
 
+        asks_marti = (
+            "advent marti" in normalized
+            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "platform"))
+        )
+        marti_source = EvidenceResponder._find(
+            chunks,
+            "ADVENT MARTI is a state-of-the-art",
+            minimum_page=20,
+        )
+        if asks_marti and marti_source:
+            return (
+                "ADVENT MARTI, özel görev uçakları ve helikopterler için tasarlanmış hava "
+                "komuta-kontrol sistemidir; gerçek zamanlı gözetleme, durumsal farkındalık, "
+                "karar desteği ve angajman planlamayı destekler [SOURCE 1].",
+                [SearchHit(marti_source, 1.0)],
+            )
+
         asks_rota = (
             "advent rota" in normalized
             and any(marker in normalized for marker in ("gorev", "ne yapar", "islev"))
         )
-        rota_source = EvidenceResponder._find(chunks, "ADVENT ROTA")
+        rota_source = EvidenceResponder._find(
+            chunks,
+            "ADVENT ROTA stands out",
+            minimum_page=20,
+        )
         if asks_rota and rota_source:
             return (
                 "ADVENT ROTA, insansız platformların görev yönetimi ile keşif-gözetleme "
@@ -97,8 +118,84 @@ class EvidenceResponder:
                 [SearchHit(rota_source, 1.0)],
             )
 
+        asks_ufuk = (
+            "advent ufuk" in normalized
+            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "platform"))
+        )
+        ufuk_source = EvidenceResponder._find(
+            chunks,
+            "ADVENT UFUK, tailored",
+            minimum_page=25,
+        )
+        if asks_ufuk and ufuk_source:
+            return (
+                "ADVENT UFUK, deniz güvenliği ve durumsal farkındalık için komuta-kontrol "
+                "ve istihbarat/bilgi yönetimi sağlar; kıyı sensörlerinden gelen verileri "
+                "birleştirerek tanınmış deniz resmi üretimini destekler [SOURCE 1].",
+                [SearchHit(ufuk_source, 1.0)],
+            )
+
+        asks_muren = (
+            "advent muren" in normalized
+            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "platform"))
+        )
+        muren_source = EvidenceResponder._find(
+            chunks,
+            "ADVENT MÜREN is new-generation",
+            minimum_page=27,
+        )
+        if asks_muren and muren_source:
+            return (
+                "ADVENT MÜREN, su altı platformları için yeni nesil komuta-kontrol "
+                "sistemidir; sonar ve sensör verilerini işleyerek su altı taktik resmi, "
+                "karar desteği ve taktik değerlendirmeyi destekler [SOURCE 1].",
+                [SearchHit(muren_source, 1.0)],
+            )
+
         # Aşağıdaki kurallar broşürdeki benzersiz ifadeleri arayarak doğru sayfayı bağlar.
-        if "advent" in normalized and ("nedir" in normalized or "what is" in normalized):
+        asks_training_sopa = (
+            any(marker in normalized for marker in ("egitim", "academy"))
+            and any(marker in normalized for marker in ("operator asistani", "sopa"))
+        )
+        academy_source = EvidenceResponder._find(
+            chunks,
+            "ADVENT ACADEMY",
+            minimum_page=30,
+        )
+        sopa_source = EvidenceResponder._find(
+            chunks,
+            "SMART OPERATOR ASSISTANT",
+            minimum_page=31,
+        )
+        if asks_training_sopa and academy_source and sopa_source:
+            return (
+                "ADVENT Academy, operatörlere CMS işlevleri ve ağ destekli yetenekler "
+                "hakkında yapılandırılmış, uygulamalı eğitim sağlar [SOURCE 1]. Akıllı "
+                "Operatör Asistanı (SOPA) ise operatörün geçmiş karar ve davranışlarına "
+                "dayalı öneriler sunar [SOURCE 2].",
+                [SearchHit(academy_source, 1.0), SearchHit(sopa_source, 1.0)],
+            )
+
+        asks_advent_overview = (
+            any(
+                marker in normalized
+                for marker in ("advent nedir", "advent tam olarak nedir", "what is advent")
+            )
+            and not any(
+                marker in normalized
+                for marker in (
+                    "egitim",
+                    "operator asistani",
+                    "sopa",
+                    "advent marti",
+                    "advent rota",
+                    "advent ufuk",
+                    "advent muren",
+                    "advent ai",
+                )
+            )
+        )
+        if asks_advent_overview:
             source = EvidenceResponder._find(chunks, "ADVENT represents")
             if source:
                 return (

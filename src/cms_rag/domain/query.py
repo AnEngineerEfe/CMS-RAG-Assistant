@@ -80,7 +80,7 @@ class CMSQueryProcessor:
 
         normalized = cls.normalise(query)
         requirements = {
-            "isletim sistemi": ("operating", "kernel"),
+            "isletim sistemi": ("kernel",),
             "cekirdek": ("kernel",),
             "frekans": ("frequency",),
             "fiyat": ("price", "cost"),

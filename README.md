@@ -157,6 +157,9 @@ Bilgi kapsamı [docs/COVERAGE_MATRIX.md](docs/COVERAGE_MATRIX.md), 33 vakalık
 bilimsel kabul hattı ise
 [docs/BENCHMARK_METHODOLOGY.md](docs/BENCHMARK_METHODOLOGY.md) içinde
 açıklanmıştır.
+Bağımsız LLM hakemi, chunk boyutu, retrieval bileşenleri ve gerçek pgvector
+karşılaştırması [docs/ADVANCED_EVALUATION.md](docs/ADVANCED_EVALUATION.md)
+belgesinde raporlanır.
 
 ## Nihai sunum teslimatları
 
@@ -177,6 +180,7 @@ Her iki Office dosyası aşağıdaki komutla aynı proje verilerinden yeniden
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 .\.venv\Scripts\python.exe -m scripts.evaluate_retrieval
 .\.venv\Scripts\python.exe -m scripts.run_benchmark
+.\.venv\Scripts\python.exe -m scripts.run_quality_evaluation
 ```
 
 İkinci komut, sabit kabul sorularının beklenen sayfa/koleksiyon/terimleri getirip

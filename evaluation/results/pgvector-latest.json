@@ -1,0 +1,1312 @@
+{
+  "schema_version": 1,
+  "method": {
+    "distance": "exact_cosine",
+    "same_precomputed_embeddings": true,
+    "limit": 6,
+    "case_count": 23
+  },
+  "faiss": {
+    "evaluated": 23,
+    "hit_at_k": 0.913,
+    "mrr": 0.808,
+    "latency_mean_ms": 0.839,
+    "latency_p50_ms": 0.557,
+    "latency_p95_ms": 2.406
+  },
+  "pgvector": {
+    "evaluated": 23,
+    "hit_at_k": 0.913,
+    "mrr": 0.808,
+    "latency_mean_ms": 3.015,
+    "latency_p50_ms": 2.524,
+    "latency_p95_ms": 4.351
+  },
+  "identical_top_k_rate": 1.0,
+  "cases": [
+    {
+      "case_id": "overview_definition",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          4
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_cms.pdf",
+          22
+        ],
+        [
+          "advent_cms.pdf",
+          30
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          4
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_cms.pdf",
+          22
+        ],
+        [
+          "advent_cms.pdf",
+          30
+        ]
+      ],
+      "pgvector_latency_ms": 4.351,
+      "faiss_latency_ms": 4.45
+    },
+    {
+      "case_id": "network_enabled_capability",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_cms.pdf",
+          12
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ],
+        [
+          "advent_cms.pdf",
+          4
+        ],
+        [
+          "advent_cms.pdf",
+          17
+        ],
+        [
+          "advent_cms.pdf",
+          5
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_cms.pdf",
+          12
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ],
+        [
+          "advent_cms.pdf",
+          4
+        ],
+        [
+          "advent_cms.pdf",
+          17
+        ],
+        [
+          "advent_cms.pdf",
+          5
+        ]
+      ],
+      "pgvector_latency_ms": 2.612,
+      "faiss_latency_ms": 0.63
+    },
+    {
+      "case_id": "track_management",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          9
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          29
+        ],
+        [
+          "advent_cms.pdf",
+          12
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          9
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          29
+        ],
+        [
+          "advent_cms.pdf",
+          12
+        ]
+      ],
+      "pgvector_latency_ms": 2.387,
+      "faiss_latency_ms": 0.574
+    },
+    {
+      "case_id": "track_management_paraphrase",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          9
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          29
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          15
+        ],
+        [
+          "advent_cms.pdf",
+          32
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          9
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          29
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          15
+        ],
+        [
+          "advent_cms.pdf",
+          32
+        ]
+      ],
+      "pgvector_latency_ms": 2.524,
+      "faiss_latency_ms": 1.904
+    },
+    {
+      "case_id": "weapon_sensor_management",
+      "faiss_gold_rank": null,
+      "pgvector_gold_rank": null,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          8
+        ],
+        [
+          "advent_cms.pdf",
+          29
+        ],
+        [
+          "advent_cms.pdf",
+          11
+        ],
+        [
+          "advent_cms.pdf",
+          15
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          8
+        ],
+        [
+          "advent_cms.pdf",
+          29
+        ],
+        [
+          "advent_cms.pdf",
+          11
+        ],
+        [
+          "advent_cms.pdf",
+          15
+        ]
+      ],
+      "pgvector_latency_ms": 2.555,
+      "faiss_latency_ms": 2.406
+    },
+    {
+      "case_id": "common_engagement",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          11
+        ],
+        [
+          "advent_cms.pdf",
+          10
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          4
+        ],
+        [
+          "advent_cms.pdf",
+          16
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          11
+        ],
+        [
+          "advent_cms.pdf",
+          10
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          4
+        ],
+        [
+          "advent_cms.pdf",
+          16
+        ]
+      ],
+      "pgvector_latency_ms": 11.491,
+      "faiss_latency_ms": 0.601
+    },
+    {
+      "case_id": "tactical_data_links",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          12
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          22
+        ],
+        [
+          "advent_cms.pdf",
+          26
+        ],
+        [
+          "advent_cms.pdf",
+          32
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          12
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          22
+        ],
+        [
+          "advent_cms.pdf",
+          26
+        ],
+        [
+          "advent_cms.pdf",
+          32
+        ]
+      ],
+      "pgvector_latency_ms": 2.36,
+      "faiss_latency_ms": 0.718
+    },
+    {
+      "case_id": "ai_anomaly_detection",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          14
+        ],
+        [
+          "advent_cms.pdf",
+          15
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          31
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          14
+        ],
+        [
+          "advent_cms.pdf",
+          15
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          31
+        ]
+      ],
+      "pgvector_latency_ms": 2.54,
+      "faiss_latency_ms": 0.53
+    },
+    {
+      "case_id": "platform_integration",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          17
+        ],
+        [
+          "advent_cms.pdf",
+          12
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          5
+        ],
+        [
+          "advent_cms.pdf",
+          4
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          17
+        ],
+        [
+          "advent_cms.pdf",
+          12
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          5
+        ],
+        [
+          "advent_cms.pdf",
+          4
+        ]
+      ],
+      "pgvector_latency_ms": 2.876,
+      "faiss_latency_ms": 0.532
+    },
+    {
+      "case_id": "surface_platform_role",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          18
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_cms.pdf",
+          4
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          18
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_cms.pdf",
+          4
+        ]
+      ],
+      "pgvector_latency_ms": 4.274,
+      "faiss_latency_ms": 0.868
+    },
+    {
+      "case_id": "mine_warfare",
+      "faiss_gold_rank": null,
+      "pgvector_gold_rank": null,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          8
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          8
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ]
+      ],
+      "pgvector_latency_ms": 3.813,
+      "faiss_latency_ms": 0.529
+    },
+    {
+      "case_id": "advent_marti",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          22
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ],
+        [
+          "advent_cms.pdf",
+          12
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          22
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ],
+        [
+          "advent_cms.pdf",
+          12
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ]
+      ],
+      "pgvector_latency_ms": 2.299,
+      "faiss_latency_ms": 0.582
+    },
+    {
+      "case_id": "advent_rota",
+      "faiss_gold_rank": 3,
+      "pgvector_gold_rank": 3,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          17
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          24
+        ],
+        [
+          "advent_cms.pdf",
+          22
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          25
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          17
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          24
+        ],
+        [
+          "advent_cms.pdf",
+          22
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          25
+        ]
+      ],
+      "pgvector_latency_ms": 2.017,
+      "faiss_latency_ms": 0.557
+    },
+    {
+      "case_id": "advent_ufuk",
+      "faiss_gold_rank": 2,
+      "pgvector_gold_rank": 2,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          26
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          26
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ]
+      ],
+      "pgvector_latency_ms": 2.488,
+      "faiss_latency_ms": 0.839
+    },
+    {
+      "case_id": "advent_muren",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_cms.pdf",
+          28
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          4
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          17
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_cms.pdf",
+          28
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          4
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          17
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ]
+      ],
+      "pgvector_latency_ms": 2.274,
+      "faiss_latency_ms": 0.494
+    },
+    {
+      "case_id": "training_sopa",
+      "faiss_gold_rank": 4,
+      "pgvector_gold_rank": 4,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          30
+        ],
+        [
+          "advent_cms.pdf",
+          31
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          30
+        ],
+        [
+          "advent_cms.pdf",
+          31
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ]
+      ],
+      "pgvector_latency_ms": 3.464,
+      "faiss_latency_ms": 0.486
+    },
+    {
+      "case_id": "advent_ai_operator",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms.pdf",
+          3
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          18
+        ]
+      ],
+      "pgvector_latency_ms": 2.039,
+      "faiss_latency_ms": 0.661
+    },
+    {
+      "case_id": "advent_ai_operator_paraphrase",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          14
+        ],
+        [
+          "advent_cms.pdf",
+          31
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          14
+        ],
+        [
+          "advent_cms.pdf",
+          31
+        ]
+      ],
+      "pgvector_latency_ms": 2.623,
+      "faiss_latency_ms": 0.512
+    },
+    {
+      "case_id": "main_maintenance",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          11
+        ],
+        [
+          "advent_cms.pdf",
+          29
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          11
+        ],
+        [
+          "advent_cms.pdf",
+          29
+        ]
+      ],
+      "pgvector_latency_ms": 2.791,
+      "faiss_latency_ms": 0.488
+    },
+    {
+      "case_id": "main_maintenance_paraphrase",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          31
+        ],
+        [
+          "advent_cms.pdf",
+          29
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          1
+        ],
+        [
+          "advent_cms_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_ai_kamuya_acik_arastirma.pdf",
+          2
+        ],
+        [
+          "advent_cms.pdf",
+          31
+        ],
+        [
+          "advent_cms.pdf",
+          29
+        ]
+      ],
+      "pgvector_latency_ms": 1.973,
+      "faiss_latency_ms": 0.491
+    },
+    {
+      "case_id": "responsible_ai",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          1
+        ],
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          2
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          1
+        ],
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          2
+        ]
+      ],
+      "pgvector_latency_ms": 1.615,
+      "faiss_latency_ms": 0.152
+    },
+    {
+      "case_id": "nato_interoperability",
+      "faiss_gold_rank": 1,
+      "pgvector_gold_rank": 1,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          1
+        ],
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          2
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          1
+        ],
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          2
+        ]
+      ],
+      "pgvector_latency_ms": 1.775,
+      "faiss_latency_ms": 0.14
+    },
+    {
+      "case_id": "undersea_decision_support",
+      "faiss_gold_rank": 2,
+      "pgvector_gold_rank": 2,
+      "top_k_identical": true,
+      "faiss_pages": [
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          1
+        ],
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          2
+        ]
+      ],
+      "pgvector_pages": [
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          1
+        ],
+        [
+          "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
+          2
+        ]
+      ],
+      "pgvector_latency_ms": 2.193,
+      "faiss_latency_ms": 0.147
+    }
+  ]
+}

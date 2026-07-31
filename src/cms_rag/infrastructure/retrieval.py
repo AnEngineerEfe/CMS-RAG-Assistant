@@ -49,10 +49,14 @@ class HybridRetriever:
         *,
         initial_vectors: np.ndarray | None = None,
         enable_reranker: bool = True,
+        reranker_mode: str = "gate",
     ) -> None:
         """Hazır vektörleri kullanır ve yalnız eksik chunk embeddinglerini hesaplar."""
 
+        if reranker_mode not in {"rank", "gate"}:
+            raise ValueError("Reranker modu 'rank' veya 'gate' olmalıdır.")
         self.chunks = chunks
+        self.reranker_mode = reranker_mode
         offline = os.getenv("CMS_RAG_OFFLINE", "1").strip().lower() in {
             "1",
             "true",
@@ -90,6 +94,8 @@ class HybridRetriever:
         snapshot_dir: Path,
         *,
         supplemental_chunks: list[Chunk] | None = None,
+        enable_reranker: bool = True,
+        reranker_mode: str = "gate",
     ) -> "HybridRetriever":
         """Önceden hazırlanmış chunk/embeddingleri yükleyip yalnız ek belgeleri işler."""
 
@@ -103,7 +109,12 @@ class HybridRetriever:
         chunks = [Chunk(**item) for item in metadata["chunks"]]
         vectors = np.load(snapshot_dir / "embeddings.npy", allow_pickle=False)
         chunks.extend(supplemental_chunks or [])
-        return cls(chunks, initial_vectors=vectors)
+        return cls(
+            chunks,
+            initial_vectors=vectors,
+            enable_reranker=enable_reranker,
+            reranker_mode=reranker_mode,
+        )
 
     def save_snapshot(
         self,
@@ -191,6 +202,27 @@ class HybridRetriever:
                 fused[item_id] = fused.get(item_id, 0.0) + 1 / (60 + rank)
         candidate_ids = sorted(fused, key=fused.get, reverse=True)[:candidate_count]
         if self._reranker:
+            if self.reranker_mode == "gate":
+                base_hits = self._deduplicate_by_page(
+                    [
+                        SearchHit(self.chunks[item_id], fused[item_id])
+                        for item_id in candidate_ids
+                    ],
+                    limit,
+                )
+                gate_count = min(2, len(base_hits))
+                gate_scores = self._reranker.predict(
+                    [
+                        (query, hit.chunk.text)
+                        for hit in base_hits[:gate_count]
+                    ]
+                )
+                return [
+                    SearchHit(hit.chunk, float(gate_scores[position]))
+                    if position < gate_count
+                    else hit
+                    for position, hit in enumerate(base_hits)
+                ]
             scores = self._reranker.predict(
                 [(query, self.chunks[item_id].text) for item_id in candidate_ids]
             )
@@ -223,6 +255,55 @@ class HybridRetriever:
             limit,
         )
 
+    def dense_search(
+        self,
+        query: str,
+        limit: int = 4,
+        scope: str = "all",
+    ) -> list[SearchHit]:
+        """FAISS cosine benzerliğini tek başına ölçmek için sayfa-tekilleştirilmiş sonuç döndürür."""
+
+        allowed = {
+            item_id
+            for item_id, chunk in enumerate(self.chunks)
+            if scope == "all" or chunk.collection == scope
+        }
+        if not allowed:
+            return []
+        query_vector = self._embedder.encode([query], normalize_embeddings=True)
+        scores, identifiers = self._index.search(
+            np.asarray(query_vector, dtype=np.float32),
+            len(self.chunks),
+        )
+        hits = [
+            SearchHit(self.chunks[item_id], float(score))
+            for score, item_id in zip(scores[0], identifiers[0])
+            if item_id in allowed
+        ]
+        return self._deduplicate_by_page(hits, limit)
+
+    def lexical_search(
+        self,
+        query: str,
+        limit: int = 4,
+        scope: str = "all",
+    ) -> list[SearchHit]:
+        """BM25 sözcüksel aramayı diğer bileşenlerden bağımsız karşılaştırır."""
+
+        allowed_ids = [
+            item_id
+            for item_id, chunk in enumerate(self.chunks)
+            if scope == "all" or chunk.collection == scope
+        ]
+        scores = self._bm25.get_scores(self._tokenise(query))
+        ordered = sorted(allowed_ids, key=lambda item_id: scores[item_id], reverse=True)
+        hits = [
+            SearchHit(self.chunks[item_id], float(scores[item_id]))
+            for item_id in ordered
+            if scores[item_id] > 0
+        ]
+        return self._deduplicate_by_page(hits, limit)
+
     def is_answerable(
         self,
         query: str,
@@ -238,23 +319,30 @@ class HybridRetriever:
 
         if CMSQueryProcessor.requests_restricted_information(query):
             return False
+        query_terms = self._content_terms(query)
+        evidence_terms = set(
+            self._tokenise(" ".join(hit.chunk.text for hit in hits))
+        )
+        required_terms = CMSQueryProcessor.required_attribute_terms(query)
+        if required_terms and not any(
+            term in evidence_terms for term in required_terms
+        ):
+            return False
         if self._reranker is not None:
-            if hits[0].score < reranker_threshold:
-                return False
+            if max(hit.score for hit in hits[:2]) < reranker_threshold:
+                if self.reranker_mode != "gate":
+                    return False
+                overlap = query_terms & evidence_terms
+                return (
+                    len(overlap) >= 2
+                    or bool(query_terms)
+                    and len(overlap) / len(query_terms) >= 0.5
+                )
 
             # Cross-encoder alan benzerliğini iyi ölçer; ancak kaynakta bulunmayan bir
             # nitelik (işletim sistemi, frekans vb.) sorulduğunda yalnızca yüksek alan
             # benzerliği yanlış pozitif üretebilir. Bu nedenle karar, ayırt edici sorgu
             # terimlerinden en az birinin kanıtta gerçekten görülmesini de gerektirir.
-            query_terms = self._content_terms(query)
-            evidence_terms = set(
-                self._tokenise(" ".join(hit.chunk.text for hit in hits[:2]))
-            )
-            required_terms = CMSQueryProcessor.required_attribute_terms(query)
-            if required_terms and not any(
-                term in evidence_terms for term in required_terms
-            ):
-                return False
             return bool(query_terms & evidence_terms)
 
         # Reranker yerelde bulunamazsa yalnız RRF puanına güvenilmez. Sorgunun ayırt

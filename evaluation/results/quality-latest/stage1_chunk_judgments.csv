@@ -1,0 +1,68 @@
+﻿chunk_id,coherence,self_containment,boundary_quality,size_fitness,acceptable,rationale,status
+advent_cms.pdf:p3:c1,4,4,4,4,True,"clearly defined topic, sufficient context provided, no broken thoughts or words, and appropriate length.",completed
+advent_cms.pdf:p3:c2,5,4,5,5,True,"clearly defined topic with supporting details, no unnecessary context or extraneous information",completed
+advent_cms.pdf:p3:c3,4,4,5,5,True,"clear and focused topic, sufficient local context, no broken words or severed thoughts, appropriate length for retrieval context",completed
+advent_cms.pdf:p4:c1,5,5,5,5,True,"clear and focused topic, sufficient context provided, no broken thoughts or words, and appropriate length.",completed
+advent_cms.pdf:p4:c2,4,4,5,5,True,clear and concise explanation of various platform types and their corresponding ADVENT software versions.,completed
+advent_cms.pdf:p5:c1,5,4,5,5,True,"clear and concise language, logical structure, sufficient context provided",completed
+advent_cms.pdf:p5:c2,3,3,3,3,True,"clear and focused topic, sufficient context provided.",completed
+advent_cms.pdf:p6:c1,4,3,4,4,True,"clear and focused topic, some minor contextual issues with page references",completed
+advent_cms.pdf:p7:c1,4,3,3,3,True,"clear topic, some context needed for full understanding",completed
+advent_cms.pdf:p8:c1,4,3,5,4,True,"clear and focused topic, with a clear introduction to the different capabilities of a system.",completed
+advent_cms.pdf:p8:c2,4,3,3,3,True,"clear topic introduction and explanation of capabilities, some context needed for full understanding",completed
+advent_cms.pdf:p9:c1,4,3,4,4,True,clearly defined topic with some minor contextual issues,completed
+advent_cms.pdf:p9:c2,4,4,4,4,True,"clearly defined topic, sufficient context, no broken thoughts, and appropriate length",completed
+advent_cms.pdf:p9:c3,4,4,4,4,True,"clear topic, sufficient context, no broken thoughts, appropriate length.",completed
+advent_cms.pdf:p10:c1,4,3,5,4,True,"clear and focused topic with relevant context, no abrupt transitions or unclear boundaries",completed
+advent_cms.pdf:p10:c2,4,3,5,4,True,"clear and focused topic, sufficient context provided, no broken thoughts or words, and appropriate length.",completed
+advent_cms.pdf:p11:c1,4,3,5,4,True,"clear and concise language, coherent topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context",completed
+advent_cms.pdf:p12:c1,4,3,5,4,True,"clear and focused topic, sufficient context provided, no broken sentences or abrupt transitions.",completed
+advent_cms.pdf:p12:c2,4,3,4,4,True,"clear and focused topic, some minor contextual issues with page number mention",completed
+advent_cms.pdf:p14:c1,4,3,3,3,True,"clear and focused topic, sufficient local context provided.",completed
+advent_cms.pdf:p15:c1,4,3,4,4,True,"clear topic, sufficient context, no broken thoughts, appropriate length",completed
+advent_cms.pdf:p16:c1,4,4,4,4,True,clearly organized topic with supporting details,completed
+advent_cms.pdf:p16:c2,4,3,3,3,True,"clear topic, some context needed for specific details",completed
+advent_cms.pdf:p17:c1,4,3,5,4,True,clear and concise explanation of ADVENT's features and benefits,completed
+advent_cms.pdf:p17:c2,4,3,4,4,True,"clear explanation of the CMS's capabilities and its integration with various systems, although a bit lengthy",completed
+advent_cms.pdf:p17:c3,4,3,5,4,True,clear explanation of technical concept and its application,completed
+advent_cms.pdf:p17:c4,4,4,4,4,True,"clearly organized topic with supporting details, minimal context needed for understanding.",completed
+advent_cms.pdf:p18:c1,4,3,5,4,True,"clearly defined topic, sufficient context provided, no broken thoughts or words, and appropriate length.",completed
+advent_cms.pdf:p18:c2,4,3,5,4,True,"clear and focused topic, sufficient context provided, no broken sentences or unclear transitions.",completed
+advent_cms.pdf:p19:c1,4,3,3,3,True,"clear and focused topic, with relevant details provided.",completed
+advent_cms.pdf:p20:c1,4,3,5,4,True,"clear and focused topic, sufficient context provided, no broken thoughts or words, and appropriate length.",completed
+advent_cms.pdf:p21:c1,4,3,4,4,True,"clear topic, sufficient context, no broken thoughts, appropriate length",completed
+advent_cms.pdf:p22:c1,4,3,4,4,True,clear explanation of system capabilities and features,completed
+advent_cms.pdf:p22:c2,4,3,3,3,True,"clear and focused topic, sufficient context provided, no broken sentences or abrupt transitions.",completed
+advent_cms.pdf:p23:c1,4,3,3,3,True,clear topic and sufficient context provided,completed
+advent_cms.pdf:p24:c1,4,3,3,3,True,"clear and focused topic, sufficient context provided, no broken sentences or abrupt transitions.",completed
+advent_cms.pdf:p25:c1,4,3,4,4,True,clear topic introduction with supporting details,completed
+advent_cms.pdf:p25:c2,4,3,4,4,True,"clearly defined technical concept with supporting details, some minor contextual adjustments needed.",completed
+advent_cms.pdf:p26:c1,4,3,5,4,True,"clear and focused topic, sufficient context provided, no broken thoughts or words, and appropriate length.",completed
+advent_cms.pdf:p26:c2,4,3,4,4,True,"clear and focused topic, sufficient context provided",completed
+advent_cms.pdf:p28:c1,4,4,4,4,True,"clearly defined topic, sufficient context, no broken thoughts, appropriate length",completed
+advent_cms.pdf:p28:c2,5,4,5,5,True,"clear and concise explanation of the system's capabilities and benefits, with no apparent errors or inconsistencies.",completed
+advent_cms.pdf:p29:c1,4,3,4,4,True,"clear topic, sufficient context, no broken thoughts, appropriate length",completed
+advent_cms.pdf:p30:c1,4,4,4,4,True,"clear connection to ADVENT CMS, relevant context provided",completed
+advent_cms.pdf:p30:c2,5,4,5,5,True,"clear and concise language, well-structured text, adequate context provided for the topic of ADVENT CMS training.",completed
+advent_cms.pdf:p31:c1,4,3,5,4,True,"clear and focused topic, sufficient context provided, no broken sentences or unclear ideas, adequate length for the topic.",completed
+advent_cms.pdf:p32:c1,4,3,5,4,True,"clear topic, sufficient context, no broken thoughts, and appropriate length.",completed
+advent_cms.pdf:p32:c2,4,3,3,3,True,"clear topic, some context needed for specific features",completed
+advent_cms_kamuya_acik_arastirma.pdf:p1:c1,4,4,4,4,True,Kamuya açık araştırma ve RAG gösterimi amacı taşır.,completed
+advent_cms_kamuya_acik_arastirma.pdf:p1:c2,4,4,4,4,True,"veri ve NATO standartlarıyla uyumluluk hedeflegtirmesi, taktik veri bağlantılarını destekleme, farklı platformlardan gelen verilerin paylaşılması ve koordineli görev icrası için altyapı sunması",completed
+advent_cms_kamuya_acik_arastirma.pdf:p1:c3,4,4,5,5,True,"Koordineli görev için altyapı sunar, temel işlev grupları desteği ve taktik resim oluşturmayı amaçlar.",completed
+advent_cms_kamuya_acik_arastirma.pdf:p2:c1,4,3,3,3,True,"Kamuya açık broşürde hedef hareket analizi, iz ve hedef yönetimi, taktik planlama, seyrüsefer, hedef angajmanı ve farklı silahların ateşlenmesi ile güdümü gibi işlevler listelenir. Bu, bir coherent topic.",completed
+advent_cms_kamuya_acik_arastirma.pdf:p2:c2,4,3,3,3,True,"coherent topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context",completed
+advent_cms_kamuya_acik_arastirma.pdf:p2:c3,4,4,4,4,True,verifiable information about ADVENT Network Supported Data Integrated Combat Management System,completed
+advent_cms_kamuya_acik_arastirma.pdf:p2:c4,5,5,5,5,True,"clear and focused topic, sufficient local context, no broken thoughts or words, appropriate length for retrieval context",completed
+advent_ai_kamuya_acik_arastirma.pdf:p1:c1,4,3,3,3,True,"Kamuya açık araştırma özeti, kapsam ve veri sınırı net bir şekilde belirtilmiştir.",completed
+advent_ai_kamuya_acik_arastirma.pdf:p1:c2,4,3,3,3,True,"Kamuya açık kullanım alanları ve RAG projesi ile ilgili açıklamalar, coherent ve self-contained bir şekilde sunulmaktadır. boundary quality ve size fitness scores, tek bir thought'un intactnessini koruduğunu ve fragment veya bloated olmadığını göstermektedir.",completed
+advent_ai_kamuya_acik_arastirma.pdf:p1:c3,4,4,4,4,True,"coherent topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context",completed
+advent_ai_kamuya_acik_arastirma.pdf:p1:c4,4,3,4,4,True,"coherent topic with some minor contextual issues, clear boundaries between ideas, suitable length for the context",completed
+advent_ai_kamuya_acik_arastirma.pdf:p1:c5,4,4,4,4,True,"coherent topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context",completed
+advent_ai_kamuya_acik_arastirma.pdf:p2:c1,4,4,4,4,True,"Coherent topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context, neither too short nor too long.",completed
+deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c1,4,3,3,3,True,"Genel bir topic, local context limited but sufficient, no broken words or severed thoughts, appropriate retrieval context",completed
+deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c2,4,4,4,4,True,"verinin bulunabilirliği, erişilebilirliği, kalitesi ve yeni teknolojilere uyumu veri-merkezli referans mimarisinin temel hedefleridir.",completed
+deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c3,5,4,5,5,True,"veri paylaşımını destekleyen bir deniz komuta-kontrol sistemi açıklanırken, tüm işlevler belirtilir ve sistem description coherent ve self-contained.",completed
+deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c4,5,5,5,5,True,"veri verimi ve verinin uygun being used for AI applications, clear explanation of AI concepts and their usage.",completed
+deniz_c2_veri_ai_yonetisim_arastirma.pdf:p2:c1,5,5,5,5,True,"Genel bir tema ve konuların bir araya gelmesi, RAG prototipine uygun ilkeler sunması ve kaynaklar listelenmesiyle coherent ve self-contained bir metin oluşturulmuştur.",completed
+deniz_c2_veri_ai_yonetisim_arastirma.pdf:p2:c2,4,3,5,4,True,"clear and focused topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context",completed

@@ -20,7 +20,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.25,
+      "elapsed_ms": 3.27,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -48,7 +48,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.19,
+      "elapsed_ms": 2.49,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -76,7 +76,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.25,
+      "elapsed_ms": 2.75,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -112,7 +112,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 0.57,
+      "elapsed_ms": 1.27,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -138,7 +138,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 0.78,
+      "elapsed_ms": 1.63,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -164,7 +164,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.05,
+      "elapsed_ms": 2.35,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -184,7 +184,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 3920.28,
+      "elapsed_ms": 1405.22,
       "sources": [],
       "passed": true
     }

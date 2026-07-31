@@ -179,6 +179,54 @@ class CMSRAGEngineTests(unittest.TestCase):
         self.assertIn("ADVENT ROTA", answer)
         self.assertEqual(sources[0].chunk.page, 4)
 
+    def test_direct_variant_questions_use_the_detailed_product_pages(self):
+        chunks = [
+            Chunk(
+                "Surface platforms benefit from ADVENT. ADVENT MARTI and ADVENT ROTA are variants.",
+                "official.pdf", 4, "official.pdf",
+            ),
+            Chunk(
+                "ADVENT MARTI is a state-of-the-art Airborne Command and Control System.",
+                "official.pdf", 22, "official.pdf",
+            ),
+            Chunk(
+                "ADVENT ROTA stands out as a robust mission management system for reconnaissance.",
+                "official.pdf", 24, "official.pdf",
+            ),
+        ]
+        marti = EvidenceResponder.answer(
+            "ADVENT MARTI hangi platformlar ve görevler içindir?",
+            [],
+            chunks,
+        )
+        rota = EvidenceResponder.answer(
+            "ADVENT ROTA hangi görevleri destekler?",
+            [],
+            chunks,
+        )
+        self.assertEqual(marti[1][0].chunk.page, 22)
+        self.assertEqual(rota[1][0].chunk.page, 24)
+
+    def test_training_and_sopa_question_does_not_fall_into_general_definition(self):
+        chunks = [
+            Chunk("ADVENT represents a CMS family.", "official.pdf", 3, "official.pdf"),
+            Chunk(
+                "ADVENT ACADEMY provides comprehensive training.",
+                "official.pdf", 30, "official.pdf",
+            ),
+            Chunk(
+                "THE SMART OPERATOR ASSISTANT offers recommendations.",
+                "official.pdf", 31, "official.pdf",
+            ),
+        ]
+        answer, sources = EvidenceResponder.answer(
+            "ADVENT eğitim yetenekleri ve akıllı operatör asistanı nedir?",
+            [],
+            chunks,
+        )
+        self.assertIn("SOPA", answer)
+        self.assertEqual([source.chunk.page for source in sources], [30, 31])
+
     def test_naval_question_overrides_variant_duty_follow_up(self):
         chunks = [
             Chunk("ADVENT CMS serves as the central component within naval combat systems for surface platforms.", "official.pdf", 18, "official.pdf"),

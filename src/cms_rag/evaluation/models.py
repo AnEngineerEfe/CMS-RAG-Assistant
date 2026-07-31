@@ -22,6 +22,43 @@ class EvaluationCase:
     expected_evidence_terms: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class ChunkJudgeResult:
+    """Bağımsız yerel LLM'in tek chunk için verdiği açıklanabilir kalite puanıdır."""
+
+    chunk_id: str
+    coherence: int
+    self_containment: int
+    boundary_quality: int
+    size_fitness: int
+    acceptable: bool
+    rationale: str
+    status: str = "completed"
+
+    def as_dict(self) -> dict[str, Any]:
+        """Chunk değerlendirmesini JSON/CSV için sözlüğe dönüştürür."""
+
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class AnswerJudgeResult:
+    """Üretilen cevabın altın kanıta bağlılık ve yeterlilik puanlarını taşır."""
+
+    case_id: str
+    faithfulness: int
+    answer_relevance: int
+    completeness: int
+    correct: bool
+    rationale: str
+    status: str = "completed"
+
+    def as_dict(self) -> dict[str, Any]:
+        """Cevap değerlendirmesini JSON/CSV için sözlüğe dönüştürür."""
+
+        return asdict(self)
+
+
 @dataclass
 class ConfusionMatrix:
     """Bilgi mevcudiyeti ile cevaplanabilirlik kararını TP/TN/FP/FN olarak sayar."""

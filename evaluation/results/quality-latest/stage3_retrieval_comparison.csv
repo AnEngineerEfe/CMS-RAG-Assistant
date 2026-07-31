@@ -1,0 +1,12 @@
+﻿approach,chunk_size,overlap,chunk_count,build_seconds,mean_term_coverage,evaluated,hit_at_k,mrr,latency_mean_ms,latency_p50_ms,latency_p95_ms,status
+bm25,450,75,136,43.086,0.9565,23,1.0,0.9348,2.27,2.265,3.405,completed
+faiss_dense,450,75,136,43.086,0.913,23,0.913,0.692,53.032,52.677,73.157,completed
+hybrid_rrf,450,75,136,43.086,0.9565,23,1.0,0.8565,47.088,45.195,65.936,completed
+bm25,900,150,67,16.035,1.0,23,1.0,0.8986,1.411,1.356,2.122,completed
+faiss_dense,900,150,67,16.035,0.9348,23,0.913,0.808,49.484,47.678,72.272,completed
+hybrid_rrf,900,150,67,16.035,1.0,23,1.0,0.8841,48.923,45.571,73.689,completed
+hybrid_rrf_reranker,900,150,67,16.035,1.0,23,1.0,0.6268,5569.205,4901.636,9773.362,completed
+hybrid_rrf_evidence_gate,900,150,67,16.035,1.0,23,1.0,0.8841,1759.573,1714.06,2359.12,completed
+bm25,1350,225,48,18.334,1.0,23,1.0,0.8261,4.887,1.044,5.014,completed
+faiss_dense,1350,225,48,18.334,0.9348,23,0.9565,0.7681,55.54,39.329,89.032,completed
+hybrid_rrf,1350,225,48,18.334,0.9565,23,0.9565,0.8913,33.756,34.449,39.583,completed

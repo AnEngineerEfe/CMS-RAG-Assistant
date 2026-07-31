@@ -3,7 +3,13 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from src.cms_rag.evaluation import ConfusionMatrix, RetrievalMetrics, load_cases
+from src.cms_rag.domain import Chunk
+from src.cms_rag.evaluation import (
+    ConfusionMatrix,
+    OllamaJudge,
+    RetrievalMetrics,
+    load_cases,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -96,6 +102,96 @@ class EvaluationMetricTests(unittest.TestCase):
         self.assertEqual(result["hit_at_k"], 0.6667)
         self.assertEqual(result["mrr"], 0.5)
         self.assertEqual(result["latency_p50_ms"], 20.0)
+
+
+class LocalJudgeTests(unittest.TestCase):
+    def test_chunk_acceptance_is_derived_from_all_rubric_scores(self):
+        judge = OllamaJudge("independent-test-model")
+        judge._client = _FakeOllamaClient(
+            {
+                "items": [
+                    {
+                        "id": "chunk-1",
+                        "coherence": 5,
+                        "self_containment": 4,
+                        "boundary_quality": 2,
+                        "size_fitness": 4,
+                        "acceptable": False,
+                        "rationale": "The ending is severed.",
+                    }
+                ]
+            }
+        )
+        result = judge.judge_chunks(
+            [("chunk-1", Chunk("Complete text.", "doc.pdf", 1, "doc.pdf"))]
+        )[0]
+        self.assertFalse(result.acceptable)
+        self.assertEqual(result.status, "completed")
+
+    def test_missing_judge_item_is_not_reported_as_success(self):
+        judge = OllamaJudge("independent-test-model")
+        judge._client = _FakeOllamaClient({"items": []})
+        result = judge.judge_answers(
+            [
+                {
+                    "id": "case-1",
+                    "question": "Question",
+                    "answer": "Answer",
+                    "gold_evidence": "Evidence",
+                }
+            ]
+        )[0]
+        self.assertEqual(result.status, "invalid_judge_output")
+        self.assertFalse(result.correct)
+
+    def test_malformed_json_is_retried_once(self):
+        judge = OllamaJudge("independent-test-model")
+        judge._client = _SequenceOllamaClient(
+            [
+                "{",
+                json.dumps(
+                    {
+                        "items": [
+                            {
+                                "id": "case-1",
+                                "faithfulness": 4,
+                                "answer_relevance": 4,
+                                "completeness": 4,
+                                "rationale": "Supported.",
+                            }
+                        ]
+                    }
+                ),
+            ]
+        )
+        result = judge.judge_answers(
+            [
+                {
+                    "id": "case-1",
+                    "question": "Question",
+                    "answer": "Answer",
+                    "gold_evidence": "Evidence",
+                }
+            ]
+        )[0]
+        self.assertEqual(result.status, "completed")
+        self.assertTrue(result.correct)
+
+
+class _FakeOllamaClient:
+    def __init__(self, payload):
+        self.payload = payload
+
+    def chat(self, **_kwargs):
+        return {"message": {"content": json.dumps(self.payload)}}
+
+
+class _SequenceOllamaClient:
+    def __init__(self, contents):
+        self.contents = iter(contents)
+
+    def chat(self, **_kwargs):
+        return {"message": {"content": next(self.contents)}}
 
 
 if __name__ == "__main__":
