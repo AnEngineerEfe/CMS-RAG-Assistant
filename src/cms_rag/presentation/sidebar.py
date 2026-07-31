@@ -10,8 +10,11 @@ def render_sidebar(engine: CMSRAGEngine) -> str:
     """Kenar panelini çizer, işlemleri uygular ve seçili kaynak kapsamını döndürür."""
 
     with st.sidebar:
-        st.markdown("### ◆ Knowledge Operations")
-        st.caption("Önceden hazırlanmış, çevrimdışı CMS bilgi katmanı")
+        st.markdown(
+            "<div class='sidebar-brand'><strong>◆ CMS Knowledge Ops</strong>"
+            "<span>Yerel · kaynak kontrollü · çevrimdışı</span></div>",
+            unsafe_allow_html=True,
+        )
         st.divider()
         scope = st.selectbox(
             "Sorgu kapsamı",

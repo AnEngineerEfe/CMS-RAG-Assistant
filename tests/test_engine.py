@@ -14,6 +14,42 @@ from src.cms_rag.domain import (
 
 
 class CMSRAGEngineTests(unittest.TestCase):
+    def test_length_limited_response_is_completed_before_citation(self):
+        test_case = self
+
+        class LengthLimitedOllama:
+            calls = 0
+
+            @classmethod
+            def chat(cls, **kwargs):
+                cls.calls += 1
+                if cls.calls == 1:
+                    test_case.assertEqual(kwargs["options"]["num_predict"], 160)
+                    yield {
+                        "message": {"content": "Bu bilgi kamuya açık bir ön"},
+                        "done": True,
+                        "done_reason": "length",
+                    }
+                    return
+                test_case.assertEqual(kwargs["options"]["num_predict"], 96)
+                yield {
+                    "message": {"content": "çalışma niteliğindedir."},
+                    "done": True,
+                    "done_reason": "stop",
+                }
+
+        with TemporaryDirectory() as directory:
+            engine = CMSRAGEngine(Path(directory))
+            engine._ollama = LengthLimitedOllama()
+            hit = SearchHit(Chunk("kanıt", "official.pdf", 1, "official.pdf"), 1.0)
+            answer = "".join(engine._ollama_stream("Soru", "İstem", [hit]))
+
+        self.assertEqual(LengthLimitedOllama.calls, 2)
+        self.assertEqual(
+            answer,
+            "Bu bilgi kamuya açık bir ön çalışma niteliğindedir. [SOURCE 1]",
+        )
+
     def test_stream_appends_a_missing_source_marker(self):
         class FakeOllama:
             @staticmethod
@@ -226,6 +262,25 @@ class CMSRAGEngineTests(unittest.TestCase):
         )
         self.assertIn("SOPA", answer)
         self.assertEqual([source.chunk.page for source in sources], [30, 31])
+
+    def test_combat_system_relation_does_not_confuse_product_with_study_scope(self):
+        chunks = [Chunk(
+            "Bu bilgi paketi bir ön çalışmadır. ADVENT, HAVELSAN tarafından Ağ "
+            "Destekli Veri Entegre Savaş Yönetim Sistemi olarak tanımlanır.",
+            "public-research.pdf",
+            1,
+            "public-research.pdf",
+        )]
+
+        answer, sources = EvidenceResponder.answer(
+            "Savaş sistemleriyle ADVENT ilişkisi nedir?",
+            [],
+            chunks,
+        )
+
+        self.assertIn("bir Savaş Yönetim Sistemidir", answer)
+        self.assertNotIn("ADVENT bir ön çalışmadır", answer)
+        self.assertEqual(sources[0].chunk.page, 1)
 
     def test_naval_question_overrides_variant_duty_follow_up(self):
         chunks = [

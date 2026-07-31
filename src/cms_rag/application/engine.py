@@ -22,6 +22,8 @@ from ..infrastructure.storage import DocumentStore
 
 
 NO_ANSWER = "Bu soruyu destekleyecek yeterli kaynak bulunamad\u0131."
+DEFAULT_MAX_NEW_TOKENS = 160
+CONTINUATION_MAX_NEW_TOKENS = 96
 
 
 class CMSRAGEngine:
@@ -174,6 +176,8 @@ class CMSRAGEngine:
         return f"""You are a careful CMS documentation assistant. Answer only from CONTEXT.
 Write fluent Turkish in one concise paragraph of at most 55 words.
 Do not invent examples, systems, capabilities, or facts.
+Treat statements describing this research package as a public preliminary study
+as scope metadata; never describe ADVENT itself as a preliminary study.
 If the user asks for an example and the context does not contain one, say that
 the documents do not provide a concrete example; never create a fictional case.
 If evidence is insufficient, answer exactly: {NO_ANSWER}
@@ -268,14 +272,22 @@ QUESTION
             parts: list[str] = []
             pending: list[str] = []
             released = False
+            stop_reason = ""
             try:
                 for response in self._ollama.chat(
                     model=self.model,
                     messages=[{"role": "user", "content": prompt}],
                     stream=True,
-                    options={"temperature": 0.1, "num_predict": 64, "num_ctx": 2048},
+                    # 64 token, Türkçe cevaplarda cümlenin ortasında kesilmeye yol açıyordu.
+                    # 160 token; istemdeki 55 kelimelik üst sınırı güvenli biçimde tamamlar.
+                    options={
+                        "temperature": 0.1,
+                        "num_predict": DEFAULT_MAX_NEW_TOKENS,
+                        "num_ctx": 2048,
+                    },
                     keep_alive="30m",
                 ):
+                    stop_reason = str(response.get("done_reason", stop_reason))
                     token = response["message"]["content"]
                     if token:
                         parts.append(token)
@@ -290,6 +302,49 @@ QUESTION
                             released = True
                             yield "".join(pending)
                             pending.clear()
+
+                # Model token bütçesinde durmuşsa eksik cümleyi aynı kanıt bağlamıyla
+                # tek kez tamamlatırız; ikinci çağrı yeni paragraf veya iddia üretemez.
+                if stop_reason == "length" and parts:
+                    draft = "".join(parts).strip()
+                    continuation_started = False
+                    for response in self._ollama.chat(
+                        model=self.model,
+                        messages=[
+                            {"role": "user", "content": prompt},
+                            {"role": "assistant", "content": draft},
+                            {
+                                "role": "user",
+                                "content": (
+                                    "Yanıt token sınırında kesildi. Yalnızca yarım kalan "
+                                    "Türkçe cümleyi mevcut CONTEXT'e dayanarak tamamla; "
+                                    "yeni paragraf veya yeni iddia ekleme."
+                                ),
+                            },
+                        ],
+                        stream=True,
+                        options={
+                            "temperature": 0.0,
+                            "num_predict": CONTINUATION_MAX_NEW_TOKENS,
+                            "num_ctx": 2048,
+                        },
+                        keep_alive="30m",
+                    ):
+                        token = response["message"]["content"]
+                        if not token:
+                            continue
+                        if (
+                            not continuation_started
+                            and draft[-1:].isalnum()
+                            and token[:1].isalnum()
+                        ):
+                            token = f" {token}"
+                        continuation_started = True
+                        parts.append(token)
+                        if released:
+                            yield token
+                        else:
+                            pending.append(token)
                 answer = "".join(parts).strip() or NO_ANSWER
                 if answer == NO_ANSWER and hits:
                     answer = self._grounded_fallback(question, hits)

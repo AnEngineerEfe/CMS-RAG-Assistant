@@ -75,10 +75,10 @@ def render_header(document_count: int, chunk_count: int) -> None:
     with left:
         st.markdown(
             "<div class='hero'>"
-            "<div class='eyebrow'>CMS-RAG / EVIDENCE-FIRST ASSISTANT</div>"
+            "<div class='eyebrow'>CMS-RAG · KANIT ODAKLI ASİSTAN</div>"
             "<h1>Komuta Bilgi Keşfi</h1>"
-            "<p>Belge kanıtını, çoklu aramayı ve yerel üretimi "
-            "tek operasyonda birleştirir.</p></div>",
+            "<p>Hazırlanmış yerel bilgi tabanında hibrit arama yapar; "
+            "yanıtlarını belge ve sayfa kanıtlarıyla birlikte sunar.</p></div>",
             unsafe_allow_html=True,
         )
     with middle:
@@ -98,10 +98,11 @@ def render_empty_state(has_documents: bool, has_messages: bool) -> None:
             "için sol paneldeki yükleme alanını kullanabilirsiniz."
         )
         return
-    st.caption(
-        "Önerilen başlangıç soruları: “ADVENT nedir?”, "
-        "“Savaş gemisinde ADVENT ne yapar?”, "
-        "“Taktik veri bağlantısı nedir?”"
+    st.markdown(
+        "<div class='prompt-guide'>Örnek sorular · “ADVENT nedir?” &nbsp;·&nbsp; "
+        "“Savaş gemisinde ne yapar?” &nbsp;·&nbsp; "
+        "“Taktik veri bağlantısı nedir?”</div>",
+        unsafe_allow_html=True,
     )
 
 

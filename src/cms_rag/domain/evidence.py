@@ -176,6 +176,26 @@ class EvidenceResponder:
                 [SearchHit(academy_source, 1.0), SearchHit(sopa_source, 1.0)],
             )
 
+        asks_combat_system_relation = (
+            "advent" in normalized
+            and any(
+                marker in normalized
+                for marker in ("savas sistem", "savas yonetim", "muharebe sistem")
+            )
+        )
+        combat_system_source = EvidenceResponder._find(
+            chunks,
+            "Ağ Destekli Veri Entegre Savaş Yönetim Sistemi",
+        )
+        if asks_combat_system_relation and combat_system_source:
+            return (
+                "ADVENT, savaş sistemlerinden bağımsız bir yardımcı araç değil; sensör ve "
+                "silah entegrasyonu, iz yönetimi, taktik karar desteği, silah kontrolü ve "
+                "ortak taktik resim işlevlerini bir araya getiren ağ destekli, veri entegre "
+                "bir Savaş Yönetim Sistemidir [SOURCE 1].",
+                [SearchHit(combat_system_source, 1.0)],
+            )
+
         asks_advent_overview = (
             any(
                 marker in normalized

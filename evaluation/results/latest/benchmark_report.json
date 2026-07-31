@@ -21,9 +21,9 @@
     "evaluated": 23,
     "hit_at_k": 1.0,
     "mrr": 0.8841,
-    "latency_mean_ms": 1508.734,
-    "latency_p50_ms": 1502.257,
-    "latency_p95_ms": 2056.697
+    "latency_mean_ms": 1372.601,
+    "latency_p50_ms": 1327.059,
+    "latency_p95_ms": 1776.639
   },
   "breakdowns": {
     "category": {
@@ -187,7 +187,7 @@
         "command and control"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1627.961,
+      "latency_ms": 1289.735,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -240,7 +240,7 @@
         "distributed execution"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1399.485,
+      "latency_ms": 1311.265,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -293,7 +293,7 @@
         "lifecycle"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1381.257,
+      "latency_ms": 1283.631,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -346,7 +346,7 @@
         "track management"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1467.769,
+      "latency_ms": 1362.184,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -399,7 +399,7 @@
         "engagement planning"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1507.599,
+      "latency_ms": 1328.587,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -452,7 +452,7 @@
         "engagement"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1124.07,
+      "latency_ms": 1304.551,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -505,7 +505,7 @@
         "link 16"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1502.257,
+      "latency_ms": 1743.89,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -558,7 +558,7 @@
         "anomaly detection"
       ],
       "retrieval_passed": true,
-      "latency_ms": 631.253,
+      "latency_ms": 753.823,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -611,7 +611,7 @@
         "plug-and-play"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1605.493,
+      "latency_ms": 1146.986,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -664,7 +664,7 @@
         "central component"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1689.196,
+      "latency_ms": 1271.138,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -717,7 +717,7 @@
         "post-op analysis"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1493.593,
+      "latency_ms": 1327.059,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -770,7 +770,7 @@
         "special mission"
       ],
       "retrieval_passed": true,
-      "latency_ms": 887.78,
+      "latency_ms": 732.401,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -823,7 +823,7 @@
         "maritime security"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1173.372,
+      "latency_ms": 1127.664,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -876,7 +876,7 @@
         "situational awareness"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1458.189,
+      "latency_ms": 1345.409,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -929,7 +929,7 @@
         "target motion analysis"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1181.111,
+      "latency_ms": 1272.897,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -982,7 +982,7 @@
         "smart operator assistant"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1110.516,
+      "latency_ms": 1326.812,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -1035,7 +1035,7 @@
         "örüntüleri"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1634.1,
+      "latency_ms": 1686.288,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -1083,7 +1083,7 @@
         "karar"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1913.802,
+      "latency_ms": 1685.132,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -1136,7 +1136,7 @@
         "kapalı ağlarda"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1806.984,
+      "latency_ms": 1682.25,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -1189,7 +1189,7 @@
         "doğal dil"
       ],
       "retrieval_passed": true,
-      "latency_ms": 2121.715,
+      "latency_ms": 1871.981,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -1237,7 +1237,7 @@
         "açıklanabilirlik"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1877.627,
+      "latency_ms": 1776.639,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -1270,7 +1270,7 @@
         "birlikte çalışabilirlik"
       ],
       "retrieval_passed": true,
-      "latency_ms": 2049.053,
+      "latency_ms": 1558.923,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -1303,7 +1303,7 @@
         "decision support"
       ],
       "retrieval_passed": true,
-      "latency_ms": 2056.697,
+      "latency_ms": 1380.568,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -1330,7 +1330,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1584.58,
+      "latency_ms": 1313.411,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1377,7 +1377,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1598.803,
+      "latency_ms": 1411.025,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1424,7 +1424,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1592.458,
+      "latency_ms": 1668.201,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1471,7 +1471,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1304.204,
+      "latency_ms": 1211.003,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1518,7 +1518,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 644.67,
+      "latency_ms": 639.994,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1565,7 +1565,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1711.742,
+      "latency_ms": 1709.89,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -1612,7 +1612,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1533.869,
+      "latency_ms": 1217.427,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1659,7 +1659,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1757.297,
+      "latency_ms": 1724.681,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -1686,7 +1686,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1675.379,
+      "latency_ms": 1294.637,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1733,7 +1733,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 2162.501,
+      "latency_ms": 1255.608,
       "sources": [
         {
           "document": "advent_cms.pdf",

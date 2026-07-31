@@ -13,6 +13,6 @@
 | F1 | 100.00% |
 | Hit@6 | 100.00% |
 | MRR | 0.8841 |
-| Ortalama retrieval gecikmesi | 1508.7 ms |
+| Ortalama retrieval gecikmesi | 1372.6 ms |
 
 Tam vaka ayrıntıları `benchmark_report.json` dosyasındadır.
