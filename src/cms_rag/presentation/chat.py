@@ -21,8 +21,8 @@ def initialize_index(engine: CMSRAGEngine) -> None:
 def render_chat(engine: CMSRAGEngine, scope: str) -> None:
     """Geçmişi gösterir ve yeni soruyu akışlı, kaynak kontrollü cevaplar."""
 
-    for message in st.session_state.messages:
-        render_message(message)
+    for index, message in enumerate(st.session_state.messages):
+        render_message(message, key_prefix=f"history_{index}")
 
     question = st.chat_input(
         "CMS / ADVENT hakkında kanıta dayalı soru sorun...",
@@ -33,7 +33,7 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
 
     user_message: dict[str, Any] = {"role": "user", "content": question}
     st.session_state.messages.append(user_message)
-    render_message(user_message)
+    render_message(user_message, key_prefix=f"user_{len(st.session_state.messages)}")
     answer, sources = _render_answer(engine, question, scope)
     st.session_state.messages.append(
         {"role": "assistant", "content": answer, "sources": sources}
@@ -83,5 +83,5 @@ def _render_answer(
             unsafe_allow_html=True,
         )
         status.update(label=final_status, state="complete", expanded=False)
-        show_sources(sources)
+        show_sources(sources, key_prefix=f"live_{len(st.session_state.messages)}")
     return answer, sources

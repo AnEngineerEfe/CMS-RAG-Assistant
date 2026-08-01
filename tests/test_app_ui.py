@@ -15,6 +15,29 @@ class StreamlitJourneyTests(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual(app.selectbox[0].value, "all")
 
+    def test_evaluation_workspace_displays_verified_reports(self):
+        app = AppTest.from_file("app.py", default_timeout=180).run()
+        self.assertFalse(app.exception)
+        app.radio[0].set_value("evaluation").run()
+        page = "\n".join(item.value for item in app.markdown)
+        self.assertIn("Değerlendirme Merkezi", page)
+        self.assertIn("33/33", page)
+        self.assertIn("100.0%", page)
+        self.assertFalse(app.exception)
+
+    def test_source_button_opens_the_exact_pdf_evidence_page(self):
+        app = AppTest.from_file("app.py", default_timeout=180).run()
+        app.chat_input[0].set_value("Savaş Gemisi ADVENT'te ne yapar?").run()
+        preview = next(
+            button for button in app.button
+            if button.label == "Sayfa 18 · PDF önizle"
+        )
+        preview.click().run()
+        page = "\n".join(item.value for item in app.markdown)
+        self.assertIn("advent_cms.pdf", page)
+        self.assertIn("Sayfa 18", page)
+        self.assertFalse(app.exception)
+
     def test_open_source_scope_reaches_the_nato_collection(self):
         app = AppTest.from_file("app.py", default_timeout=180).run()
         self.assertFalse(app.exception)

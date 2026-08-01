@@ -6,8 +6,8 @@ from ..application import CMSRAGEngine
 from .config import SOURCE_SCOPE_LABELS, SOURCE_SCOPES
 
 
-def render_sidebar(engine: CMSRAGEngine) -> str:
-    """Kenar panelini çizer, işlemleri uygular ve seçili kaynak kapsamını döndürür."""
+def render_sidebar(engine: CMSRAGEngine) -> tuple[str, str]:
+    """Kenar panelini çizer; görünüm ile seçili kaynak kapsamını döndürür."""
 
     with st.sidebar:
         st.markdown(
@@ -16,6 +16,14 @@ def render_sidebar(engine: CMSRAGEngine) -> str:
             unsafe_allow_html=True,
         )
         st.divider()
+        page = st.radio(
+            "Çalışma alanı",
+            ("assistant", "evaluation"),
+            format_func={
+                "assistant": "Soru-cevap asistanı",
+                "evaluation": "Değerlendirme merkezi",
+            }.__getitem__,
+        )
         scope = st.selectbox(
             "Sorgu kapsamı",
             SOURCE_SCOPES,
@@ -30,7 +38,7 @@ def render_sidebar(engine: CMSRAGEngine) -> str:
         _render_session_actions(engine)
         _render_status(engine, scope)
         _render_document_management(engine)
-    return scope
+    return page, scope
 
 
 def _render_upload(engine: CMSRAGEngine) -> None:

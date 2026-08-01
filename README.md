@@ -35,6 +35,8 @@ anında web taraması gerekmez.
 - Üç turluk kontrollü sohbet bağlamı
 - Ollama üzerinden yerel ve akışlı yanıt üretimi
 - Her mesajla kalıcı kanıt kartları ve kaynak sayfası
+- Kanıt kartından ilgili yerel PDF sayfasının görsel önizlemesi ve güvenli indirme
+- Altın set, LLM hakemi ve FAISS/pgvector sonuçlarını gösteren değerlendirme merkezi
 - Dört PDF kaynağı ve gürültüden arındırılmış 67 chunk içeren sürümlenmiş snapshot
 - Normal kullanımda belge embeddinglerini yeniden hesaplamayan hızlı açılış
 - Çalışma anında kapalı web erişimi ve yalnız yerel üretim
@@ -89,6 +91,9 @@ streamlit run app.py
 3. ADVENT/CMS veya kamuya açıklanmış AI entegrasyonu hakkında sorunuzu yazın.
 4. Yanıtın altındaki kanıt paketinden belgeyi, sayfayı, otoriteyi ve varsa
    kaynak URL'sini denetleyin.
+5. `Sayfa … · PDF önizle` ile kullanılan sayfanın görüntüsünü doğrudan açın.
+6. Sol paneldeki `Değerlendirme merkezi` üzerinden kayıtlı kalite sonuçlarını
+   ve altyapı karşılaştırmalarını inceleyin.
 
 Ek PDF zorunlu değildir. Gerektiğinde `İsteğe bağlı ek belge` alanından yalnızca
 kamuya açık veya kullanım yetkiniz bulunan PDF eklenebilir. Aynı içerik ikinci
@@ -130,7 +135,7 @@ src/cms_rag/
   domain/                      Veri modelleri ve saf iş kuralları
   application/                 RAG kullanım senaryosu orkestrasyonu
   infrastructure/              PDF, manifest, FAISS, BM25 ve reranker
-  presentation/                Streamlit tema, bileşen, sidebar ve sohbet akışı
+  presentation/                Sohbet, PDF önizleme ve değerlendirme paneli
 data/
   documents/                   İçerik adresli PDF deposu
   knowledge_base/

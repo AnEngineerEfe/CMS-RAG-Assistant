@@ -96,7 +96,7 @@ birlikte ayağa kalkabildiğini doğrular.
 2026-07-31 tarihinde hazır bilgi tabanı kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `59/59` başarılı
+- Otomatik testler: `63/63` başarılı
 - Retrieval kabul seti: `8/8` başarılı
 - Gerçek yanıt kabul seti: `7/7` başarılı
 - Altın benchmark: `33/33` başarılı (`23 TP / 10 TN / 0 FP / 0 FN`)

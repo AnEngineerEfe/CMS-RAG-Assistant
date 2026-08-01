@@ -6,6 +6,7 @@ from typing import Any
 import streamlit as st
 
 from ..domain.models import SearchHit
+from .source_preview import show_source_preview
 
 
 def source_payload(hit: SearchHit) -> dict[str, Any]:
@@ -20,17 +21,18 @@ def source_payload(hit: SearchHit) -> dict[str, Any]:
         "collection": hit.chunk.collection,
         "authority": hit.chunk.authority,
         "source_url": hit.chunk.source_url,
+        "source_path": hit.chunk.source_path,
     }
 
 
-def show_sources(sources: list[dict[str, Any]]) -> None:
+def show_sources(sources: list[dict[str, Any]], *, key_prefix: str = "source") -> None:
     """Bir cevabın kanıtlarını XSS'e karşı kaçışlayarak açılır kartlarda gösterir."""
 
     if not sources:
         return
 
     with st.expander(f"Kanıt paketi · {len(sources)} kaynak", expanded=False):
-        for source in sources:
+        for index, source in enumerate(sources):
             url = str(source.get("source_url", ""))
             link = (
                 f" · <a href='{escape(url)}' target='_blank' rel='noopener noreferrer'>"
@@ -47,9 +49,14 @@ def show_sources(sources: list[dict[str, Any]]) -> None:
                 f"</div></div>",
                 unsafe_allow_html=True,
             )
+            if st.button(
+                f"Sayfa {source['page']} · PDF önizle",
+                key=f"{key_prefix}_preview_{index}",
+            ):
+                show_source_preview(source)
 
 
-def render_message(message: dict[str, Any]) -> None:
+def render_message(message: dict[str, Any], *, key_prefix: str = "message") -> None:
     """Oturum geçmişindeki kullanıcı veya asistan mesajını kaynaklarıyla çizer."""
 
     with st.chat_message(message["role"]):
@@ -65,7 +72,7 @@ def render_message(message: dict[str, Any]) -> None:
             )
         st.markdown(message["content"])
         if message["role"] == "assistant":
-            show_sources(message.get("sources", []))
+            show_sources(message.get("sources", []), key_prefix=key_prefix)
 
 
 def render_header(document_count: int, chunk_count: int) -> None:

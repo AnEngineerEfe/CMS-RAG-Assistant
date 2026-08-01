@@ -72,6 +72,8 @@ RAGEngine
   +-- HybridRetriever ---- FAISS + BM25 + RRF + cross-encoder
   +-- EvidenceResponder -- açık kanıta dayalı hızlı yanıt
   +-- Ollama ------------ yerel ve akışlı üretim
+  +-- SourcePreview ----- data/ sınır kontrollü PDF sayfa görüntüsü
+  +-- EvaluationPanel --- sürümlü benchmark ve LLM-hakem raporları
 ```
 
 ## 5. Sorgu hattı
@@ -121,8 +123,10 @@ Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanı
   kaydından deterministik olarak cevaplanır.
 - Üretim istemi yalnızca verilen bağlamı kullanmaya ve desteklenmeyen iddia
   üretmemeye yönlendirir.
-- Ollama istemcisi 120 saniye zaman aşımı, 64 token cevap sınırı, 2.048 token bağlam
-  sınırı ve 30 dakika sıcak tutma süresiyle sınırlandırılmıştır.
+- Ollama istemcisi 120 saniye zaman aşımı, 160 token cevap bütçesi, 2.048 token
+  bağlam sınırı ve 30 dakika sıcak tutma süresiyle sınırlandırılmıştır. Model
+  token bütçesinde durursa yalnız yarım kalan cümle, aynı kanıt bağlamıyla ve
+  96 tokenlık tek bir kontrollü devam çağrısıyla tamamlanır.
 - CPU tabanlı etkileşimli kullanımda varsayılan model `qwen2.5:3b`dir;
   `CMS_RAG_MODEL` ile daha büyük bir yerel model seçilebilir.
 
@@ -132,6 +136,8 @@ Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanı
 - Çalışma anında web taraması veya HTTP kaynak çağrısı yoktur; araştırma yalnız
   sürümlü kurasyon hattında yapılır.
 - HTML kaynak alıntıları arayüzde kaçışlanır.
+- PDF önizlemesi yalnız çözümlenmiş yolu proje `data/` dizini altında kalan
+  `.pdf` dosyalarını kabul eder; dizin geçişi ve dış dosya erişimi reddedilir.
 - Dosya adı depolama yolu olarak kullanılmaz; içerik hash'i kullanılır.
 - Kamuya açık resmî başlangıç broşürü dışında, yüklenen çalışma verisi sürüm
   kontrolü dışında tutulur.
@@ -144,8 +150,10 @@ iş akışı ve ağ çıkış politikası.
 
 Arayüz; hazır kaynak sayısı, toplam aktif belge, snapshot durumu, çalışma-anı web
 erişiminin kapalı olduğu, indeks parça sayısı, aktif model, arama yöntemi ve her
-yanıtın kanıt paketini gösterir. Retrieval kabul raporu makinece okunabilir JSON
-olarak üretilir.
+yanıtın kanıt paketini gösterir. Kanıt sayfası yerel PDF görüntüsü olarak
+denetlenebilir. Değerlendirme merkezi; confusion matrix, Hit@6, MRR, gecikme,
+chunk rubriği, cevap hakemi ve FAISS/pgvector karşılaştırmasını sürümlü JSON
+raporlarından okur.
 
 ## 10. Kod açıklama standardı
 
