@@ -18,9 +18,9 @@ ROOT = Path(__file__).resolve().parents[1]
 class EvaluationDatasetTests(unittest.TestCase):
     def test_gold_dataset_has_balanced_positive_and_negative_cases(self):
         cases = load_cases(ROOT / "evaluation" / "datasets" / "gold_cases.json")
-        self.assertEqual(len(cases), 33)
-        self.assertEqual(sum(case.data_available for case in cases), 23)
-        self.assertEqual(sum(not case.data_available for case in cases), 10)
+        self.assertEqual(len(cases), 45)
+        self.assertEqual(sum(case.data_available for case in cases), 30)
+        self.assertEqual(sum(not case.data_available for case in cases), 15)
 
     def test_every_positive_gold_reference_and_term_exists_in_snapshot(self):
         cases = load_cases(ROOT / "evaluation" / "datasets" / "gold_cases.json")

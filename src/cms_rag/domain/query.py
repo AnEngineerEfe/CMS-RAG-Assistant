@@ -35,6 +35,10 @@ class CMSQueryProcessor:
         "insansiz": "unmanned platform",
         "egitim": "training ADVENT Academy",
         "akilli operator asistani": "smart operator assistant",
+        "gecmis karar": "smart operator assistant recommendations past decisions behaviors",
+        "tavsiye veren": "smart operator assistant recommendations past decisions behaviors",
+        "ortak sanal": "common training shared virtual environment interactive virtual training",
+        "musterek egitim": "common training shared virtual environment interactive virtual training",
         "isletim sistemi cekirdegi": "operating system kernel",
         "calisma frekansi": "operating frequency",
         "muren": "ADVENT MUREN underwater platforms target motion analysis",
@@ -88,6 +92,11 @@ class CMSQueryProcessor:
             "personel sayisi": ("crew", "personnel"),
             "butce": ("budget",),
             "menzil": ("range",),
+            "sifreleme algoritmasi": ("encryption algorithm",),
+            "koordinat": ("coordinates",),
+            "ram": ("ram",),
+            "egitim suresi": ("duration", "hours"),
+            "parola": ("password",),
         }
         required: list[str] = []
         for marker, terms in requirements.items():

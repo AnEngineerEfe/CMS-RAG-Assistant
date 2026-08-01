@@ -315,12 +315,41 @@ class CMSRAGEngineTests(unittest.TestCase):
         self.assertIn("track data fusion", expanded)
         self.assertIn("track management", expanded)
 
+    def test_track_fusion_paraphrase_has_a_direct_grounded_answer(self):
+        chunks = [Chunk(
+            "TRACK MANAGEMENT manages the lifecycle of tracks and conducts track "
+            "data fusion. It processes correlation and merging algorithms.",
+            "advent_cms.pdf",
+            9,
+            "advent_cms.pdf",
+        )]
+
+        answer, sources = EvidenceResponder.answer(
+            "Farklı sensörlerden gelen izler nasıl ortak bir taktik resme dönüştürülüyor?",
+            [],
+            chunks,
+        )
+
+        self.assertIn("korelasyon", answer)
+        self.assertIn("track data fusion", answer)
+        self.assertEqual(sources[0].chunk.page, 9)
+
     def test_dotless_turkish_i_is_normalised_for_glossary_matching(self):
         expanded = CMSQueryProcessor.expand(
             "Mayın harbi ve akıllı operatör asistanı ne sağlar?"
         )
         self.assertIn("mine warfare", expanded)
         self.assertIn("smart operator assistant", expanded)
+
+    def test_behavioral_and_virtual_training_paraphrases_are_expanded(self):
+        behavioral = CMSQueryProcessor.expand(
+            "Operatörün geçmiş kararlarına bakıp tavsiye veren yetenek hangisidir?"
+        )
+        training = CMSQueryProcessor.expand(
+            "Ortak sanal ortamda müşterek eğitim nasıl yapılır?"
+        )
+        self.assertIn("smart operator assistant recommendations", behavioral)
+        self.assertIn("common training shared virtual environment", training)
 
     def test_unsupported_detail_requires_explicit_attribute_evidence(self):
         self.assertEqual(

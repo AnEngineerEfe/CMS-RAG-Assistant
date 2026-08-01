@@ -138,6 +138,8 @@ Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanı
 - HTML kaynak alıntıları arayüzde kaçışlanır.
 - PDF önizlemesi yalnız çözümlenmiş yolu proje `data/` dizini altında kalan
   `.pdf` dosyalarını kabul eder; dizin geçişi ve dış dosya erişimi reddedilir.
+- Yerel audit olayı ham soru, cevap veya belge metni saklamaz; sorguyu kısaltılmış
+  SHA-256 özetiyle, sonucu ise kapsam, gecikme ve belge/sayfa metadatasıyla kaydeder.
 - Dosya adı depolama yolu olarak kullanılmaz; içerik hash'i kullanılır.
 - Kamuya açık resmî başlangıç broşürü dışında, yüklenen çalışma verisi sürüm
   kontrolü dışında tutulur.
@@ -153,7 +155,8 @@ erişiminin kapalı olduğu, indeks parça sayısı, aktif model, arama yöntemi
 yanıtın kanıt paketini gösterir. Kanıt sayfası yerel PDF görüntüsü olarak
 denetlenebilir. Değerlendirme merkezi; confusion matrix, Hit@6, MRR, gecikme,
 chunk rubriği, cevap hakemi ve FAISS/pgvector karşılaştırmasını sürümlü JSON
-raporlarından okur.
+raporlarından okur. İşletim/audit sekmesi olay sayısı, kaynaklı yanıt, güvenli
+ret, gecikme ve son olay metadatasını ham kullanıcı içeriği olmadan sunar.
 
 ## 10. Kod açıklama standardı
 

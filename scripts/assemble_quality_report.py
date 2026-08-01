@@ -15,16 +15,16 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> int:
     """Tamamlanmış aşama raporlarını doğrulayıp quality-latest altında yayımlar."""
 
-    chunk_report = _read(
-        ROOT / "evaluation" / "results" / "chunk-judge-preflight"
+    base_report = _read(
+        ROOT / "evaluation" / "results" / "quality-latest"
         / "quality_evaluation_report.json"
     )
     answer_report = _read(
-        ROOT / "evaluation" / "results" / "answer-judge-preflight"
+        ROOT / "evaluation" / "results" / "expanded-answer-preflight"
         / "quality_evaluation_report.json"
     )
     component_report = _read(
-        ROOT / "evaluation" / "results" / "component-final"
+        ROOT / "evaluation" / "results" / "expanded-component-preflight"
         / "quality_evaluation_report.json"
     )
     pgvector_report = _read(
@@ -39,23 +39,27 @@ def main() -> int:
             "chunk_sizes": [450, 900, 1350],
             "runtime_web_access": False,
         },
-        "stage1": chunk_report["stage1"],
+        "stage1": base_report["stage1"],
         "stage2": answer_report["stage2"],
         "stage3": component_report["stage3"],
         "stage4_pgvector": pgvector_report,
         "runtime_seconds": round(
-            chunk_report.get("runtime_seconds", 0)
-            + answer_report.get("runtime_seconds", 0)
+            answer_report.get("runtime_seconds", 0)
             + component_report.get("runtime_seconds", 0),
             3,
         ),
     }
     if report["stage1"]["summary"]["judged_count"] != 67:
         raise ValueError("Chunk judge nüfusu tamamlanmadı.")
-    if report["stage2"]["summary"]["judge_completed"] != 23:
+    if report["stage2"]["summary"]["judge_completed"] != 30:
         raise ValueError("Cevap judge nüfusu tamamlanmadı.")
     if not report["stage3"]["comparisons"]:
         raise ValueError("Retrieval karşılaştırması tamamlanmadı.")
+    if any(
+        item.get("evaluated") != 30
+        for item in report["stage3"]["comparisons"]
+    ):
+        raise ValueError("Retrieval karşılaştırması genişletilmiş nüfusu kapsamıyor.")
     QualityReportWriter(
         ROOT / "evaluation" / "results" / "quality-latest"
     ).write(report)

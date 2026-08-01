@@ -84,6 +84,29 @@ class EvidenceResponder:
                 [SearchHit(responsible_ai_source, 1.0)],
             )
 
+        asks_track_fusion = any(
+            marker in normalized
+            for marker in (
+                "farkli sensorlerden gelen iz",
+                "ortak bir taktik res",
+                "izler nasil",
+                "track data fusion",
+            )
+        )
+        track_source = EvidenceResponder._find(
+            chunks,
+            "TRACK MANAGEMENT",
+            minimum_page=9,
+        )
+        if asks_track_fusion and track_source:
+            return (
+                "İz yönetimi, farklı kaynaklardan gelen iz verilerini korelasyon ve "
+                "birleştirme işlemleriyle eşleştirir; track data fusion sonucunda "
+                "birden çok gözlemi tek ve tutarlı bir taktik görünümde toplar. Aynı "
+                "katman izlerin yaşam döngüsünü de yönetir [SOURCE 1].",
+                [SearchHit(track_source, 1.0)],
+            )
+
         asks_marti = (
             "advent marti" in normalized
             and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "platform"))

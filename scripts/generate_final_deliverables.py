@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+import json
 from pathlib import Path
 from typing import Iterable
 
@@ -26,9 +27,18 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "deliverables"
 DOCX_PATH = OUTPUT_DIR / "CMS-RAG_Nihai_Teknik_Dokumantasyon.docx"
 PPTX_PATH = OUTPUT_DIR / "CMS-RAG_Nihai_Proje_Sunumu.pptx"
-TODAY = date(2026, 7, 30)
-VERSION = "1.1"
-COMMIT = "codex/offline-knowledge-base"
+TODAY = date(2026, 8, 2)
+VERSION = "1.2"
+COMMIT = "codex/evaluation-benchmark"
+BENCHMARK_REPORT = json.loads(
+    (ROOT / "evaluation" / "results" / "latest" / "benchmark_report.json")
+    .read_text(encoding="utf-8")
+)
+QUALITY_REPORT = json.loads(
+    (ROOT / "evaluation" / "results" / "quality-latest" / "quality_evaluation_report.json")
+    .read_text(encoding="utf-8")
+)
+AUTOMATED_TESTS = 69
 
 NAVY = "0B1F3A"
 BLUE = "1B5FA7"
@@ -689,7 +699,7 @@ def build_word_document() -> None:
             ["Varsayılan model", "qwen2.5:3b", "CPU üzerinde etkileşimli kullanım"],
             ["Kalite seçeneği", "qwen2.5:7b", "Güçlü donanımda daha yüksek üretim kalitesi"],
             ["Temperature", "0.1", "Düşük varyans ve daha kararlı cevap"],
-            ["num_predict", "96", "Kısa ve kontrollü çıktı"],
+            ["num_predict", "160 + gerekirse 96", "Kesik cümleyi tek kontrollü devamla tamamlama"],
             ["keep_alive", "30 dakika", "Ardışık sorgularda model yükleme gecikmesini azaltma"],
             ["Timeout", "120 saniye", "Yerel model tıkanmasına karşı sınır"],
         ],
@@ -709,6 +719,8 @@ def build_word_document() -> None:
             "Yetersiz kanıt ve servis hatasında retrieval sonuçları kanıt gibi gösterilmez.",
             "Alan dışı sorular güvenli ret alır.",
             "Kapsam etiketli konuşma belleği koleksiyonlar arası bilgi sızıntısını engeller.",
+            "Yerel audit ham soru/cevap saklamaz; sorgu SHA-256 özeti ve işletim metadatası tutulur.",
+            "PDF önizlemesi yalnız proje data dizini altındaki doğrulanmış dosyalara erişir.",
         ],
     )
     document.add_heading("9.1 Üretim ortamı için ek kontroller", level=2)
@@ -740,12 +752,13 @@ def build_word_document() -> None:
         document,
         ["Bölge", "İşlev"],
         [
-            ["Sol panel", "Kapsam seçimi, PDF yükleme, indeks yenileme, oturum temizleme"],
+            ["Sol panel", "Asistan/değerlendirme görünümü, kapsam, PDF, indeks ve oturum işlemleri"],
             ["Çalışma durumu", "Model, belge sayısı, koleksiyon ve arama yöntemi"],
             ["Üst gösterge", "Yüklü belge ve kanıt parçası sayıları"],
             ["Sohbet alanı", "Geçmiş kullanıcı/asistan mesajları ve akışlı yeni cevap"],
             ["Yanıt durumu", "Bağlam çözümleme, kanıt seçimi ve tamamlanma göstergesi"],
-            ["Kanıt paketi", "Belge, sayfa, otorite, alıntı ve varsa kaynak URL'si"],
+            ["Kanıt paketi", "Belge, sayfa, otorite, alıntı, URL ve gerçek PDF sayfa önizlemesi"],
+            ["Değerlendirme", "45-vaka benchmark, 30-vaka hakem, chunk, backend ve audit görünümü"],
             ["Belge yönetimi", "Manifest kaydı ve güvenli belge kaldırma"],
         ],
         [4.2, 12.4],
@@ -832,7 +845,8 @@ def build_word_document() -> None:
             ["Engine", "Takip, kaynak etiketi, ret, model seçimi, kapsam izolasyonu", "Başarılı"],
             ["UI", "Kapsam seçimi, konuşma yolculuğu, Ollama hatası, kaynak kalıcılığı", "Başarılı"],
             ["Architecture", "İnce app.py, bağımlılık yönü, Türkçe açıklama standardı", "Başarılı"],
-            ["Retrieval", "4 sabit koleksiyon/terim/sayfa kabul vakası", "4 / 4"],
+            ["Audit", "Ham içeriksiz SHA-256 özeti, gecikme, kapsam ve kaynak metadatası", "Başarılı"],
+            ["Retrieval", "45 altın belge/terim/sayfa ve güvenli-ret vakası", "45 / 45"],
         ],
         [4.0, 9.7, 2.9],
     )
@@ -852,9 +866,29 @@ def build_word_document() -> None:
         document,
         ["Gösterge", "Değer"],
         [
-            ["Otomatik test", "41/41"],
-            ["Retrieval kabulü", "8/8"],
-            ["Yanıt kabulü", "7/7"],
+            ["Otomatik test", f"{AUTOMATED_TESTS}/{AUTOMATED_TESTS}"],
+            ["Altın benchmark", f"{BENCHMARK_REPORT['passed']}/{BENCHMARK_REPORT['dataset_cases']}"],
+            [
+                "TP / TN / FP / FN",
+                "{true_positive} / {true_negative} / {false_positive} / {false_negative}".format(
+                    **BENCHMARK_REPORT["confusion_matrix"]
+                ),
+            ],
+            [
+                "Bağımsız cevap hakemi",
+                f"{QUALITY_REPORT['stage2']['summary']['strict_passed']}/"
+                f"{QUALITY_REPORT['stage2']['summary']['evaluated']} katı başarı",
+            ],
+            [
+                "Chunk hakemi",
+                f"{QUALITY_REPORT['stage1']['summary']['acceptable_count']}/"
+                f"{QUALITY_REPORT['stage1']['summary']['chunk_count']} geçerli",
+            ],
+            [
+                "Hit@6 / MRR",
+                f"{BENCHMARK_REPORT['retrieval']['hit_at_k']:.0%} / "
+                f"{BENCHMARK_REPORT['retrieval']['mrr']:.4f}".replace(".", ","),
+            ],
             ["İndekslenen parça", "67"],
             ["PDF sayfası", "40/40 metinli"],
             ["Boş parça / eksik kaynak yolu", "0 / 0"],
@@ -953,9 +987,9 @@ def build_word_document() -> None:
             ["Yakın", "OCR ve taranmış PDF desteği", "Görüntü tabanlı doküman kapsamı"],
             ["Yakın", "Otomatik kaynak yenilik kontrolü", "Resmî sayfa drift'ini erken yakalama"],
             ["Orta", "Kalıcı vektör deposu", "Büyük koleksiyonda hızlı başlangıç"],
-            ["Orta", "RAG değerlendirme paneli ve kullanıcı geri bildirimi", "Kalite eğilimi ve hata analizi"],
+            ["Orta", "Kullanıcı geri bildirimi ve kalite eğilim alarmı", "Hata analizi ve drift görünürlüğü"],
             ["Orta", "RBAC ve koleksiyon yetkilendirmesi", "Kurumsal çok kullanıcılı çalışma"],
-            ["Uzun", "Kaynak onay iş akışı ve audit entegrasyonu", "Yönetişim ve mevzuat uyumu"],
+            ["Uzun", "Merkezi audit aktarımı ve kaynak onay iş akışı", "Yönetişim ve mevzuat uyumu"],
             ["Uzun", "Çok modlu tablo/şema/görsel retrieval", "Teknik dokümanların zengin anlaşılması"],
         ],
         [3.0, 7.0, 6.6],
@@ -964,7 +998,8 @@ def build_word_document() -> None:
         document,
         "Öncelik önerisi",
         "Sunum sonrası ilk mühendislik paketi: OCR + kalıcı indeks + otomatik regression "
-        "pipeline. Kurumsal yaygınlaştırma öncesinde RBAC, audit ve disk şifreleme eklenmelidir.",
+        "pipeline. Yerel gizlilik-korumalı audit tamamlandı; kurumsal yaygınlaştırma "
+        "öncesinde RBAC, merkezi audit aktarımı ve disk şifreleme eklenmelidir.",
         ORANGE,
     )
     document.add_page_break()
@@ -1514,15 +1549,32 @@ def build_powerpoint() -> None:
     set_slide_background(slide)
     add_slide_frame(slide, 11, "Test ve Kabul")
     add_slide_title(slide, "“Çalışıyor” değil; ölçülmüş ve yeniden üretilmiş")
-    add_metric_card(slide, 0.72, 2.0, 2.5, "33 / 33", "TEST")
-    add_metric_card(slide, 3.38, 2.0, 2.5, "4 / 4", "RETRIEVAL", GREEN)
-    add_metric_card(slide, 6.04, 2.0, 2.5, "34 / 34", "PDF SAYFASI", ORANGE)
-    add_metric_card(slide, 8.7, 2.0, 2.5, "0", "EKSİK KAYNAK", BLUE)
+    add_metric_card(
+        slide, 0.72, 2.0, 2.5,
+        f"{AUTOMATED_TESTS} / {AUTOMATED_TESTS}", "OTOMATİK TEST",
+    )
+    add_metric_card(
+        slide, 3.38, 2.0, 2.5,
+        f"{BENCHMARK_REPORT['passed']} / {BENCHMARK_REPORT['dataset_cases']}",
+        "ALTIN SET", GREEN,
+    )
+    add_metric_card(
+        slide, 6.04, 2.0, 2.5,
+        f"{QUALITY_REPORT['stage2']['summary']['strict_passed']} / "
+        f"{QUALITY_REPORT['stage2']['summary']['evaluated']}",
+        "LLM HAKEM", ORANGE,
+    )
+    add_metric_card(
+        slide, 8.7, 2.0, 2.5,
+        f"{BENCHMARK_REPORT['confusion_matrix']['false_positive']} / "
+        f"{BENCHMARK_REPORT['confusion_matrix']['false_negative']}",
+        "FP / FN", BLUE,
+    )
     categories = [
-        ("Storage", 7, BLUE),
-        ("Engine", 14, CYAN),
-        ("UI", 4, GREEN),
-        ("Ingest", 4, ORANGE),
+        ("Storage", 8, BLUE),
+        ("Engine", 25, CYAN),
+        ("UI + PDF", 8, GREEN),
+        ("Eval + Audit", 11, ORANGE),
         ("Architecture", 3, NAVY),
     ]
     max_value = max(value for _, value, _ in categories)
@@ -1557,7 +1609,7 @@ def build_powerpoint() -> None:
         add_ppt_box(slide, x, y, 3.75, 1.4, fill="14345B", line=CYAN if index in (0, 2) else "31577F")
         add_label(slide, tag, x + 0.22, y + 0.22, 1.05, CYAN)
         add_ppt_text(slide, body, x + 0.22, y + 0.72, 3.2, 0.42, size=11.5, color=WHITE)
-    add_ppt_text(slide, "Üretime geçişte: RBAC · disk şifreleme · audit · zararlı dosya taraması", 1.2, 6.05, 10.95, 0.4, size=13, color=ORANGE, bold=True, align=PP_ALIGN.CENTER)
+    add_ppt_text(slide, "Yerel audit hazır · Üretime geçişte: RBAC · merkezi aktarım · disk şifreleme", 1.2, 6.05, 10.95, 0.4, size=13, color=ORANGE, bold=True, align=PP_ALIGN.CENTER)
 
     # 13 git
     slide = presentation.slides.add_slide(blank)
@@ -1620,8 +1672,8 @@ def build_powerpoint() -> None:
     add_slide_title(slide, "MVP tamamlandı; kurumsal ölçek için sıradaki adımlar")
     horizons = [
         ("YAKIN", "OCR\nKaynak drift kontrolü\nCI kabul pipeline", BLUE),
-        ("ORTA", "Kalıcı vektör deposu\nRAG kalite paneli\nRBAC", GREEN),
-        ("UZUN", "Audit entegrasyonu\nÇok modlu retrieval\nKaynak onay akışı", ORANGE),
+        ("ORTA", "Kalıcı vektör deposu\nKalite eğilim alarmı\nRBAC", GREEN),
+        ("UZUN", "Merkezi audit aktarımı\nÇok modlu retrieval\nKaynak onay akışı", ORANGE),
     ]
     for index, (label, body, accent) in enumerate(horizons):
         x = 0.75 + index * 4.1
@@ -1665,7 +1717,7 @@ def build_powerpoint() -> None:
         ("LOCAL", "Veri gizliliği"),
         ("HYBRID", "Yüksek retrieval kapsaması"),
         ("GROUNDED", "Belge ve sayfa kanıtı"),
-        ("TESTED", "41/41 + 8/8 + 7/7"),
+        ("TESTED", f"{AUTOMATED_TESTS}/{AUTOMATED_TESTS} + 45/45 + 30/30"),
     ]
     for index, (tag, body) in enumerate(closing):
         y = 1.85 + index * 0.78

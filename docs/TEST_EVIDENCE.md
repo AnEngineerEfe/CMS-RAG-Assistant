@@ -93,20 +93,20 @@ birlikte ayağa kalkabildiğini doğrular.
 
 ## Son doğrulama
 
-2026-07-31 tarihinde hazır bilgi tabanı kabul turunda:
+2026-08-02 tarihinde hazır bilgi tabanı kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `63/63` başarılı
+- Otomatik testler: `69/69` başarılı
 - Retrieval kabul seti: `8/8` başarılı
 - Gerçek yanıt kabul seti: `7/7` başarılı
-- Altın benchmark: `33/33` başarılı (`23 TP / 10 TN / 0 FP / 0 FN`)
+- Altın benchmark: `45/45` başarılı (`30 TP / 15 TN / 0 FP / 0 FN`)
 - Altın benchmark Hit@6: `%100`
-- Altın benchmark MRR: `0,8841`
+- Altın benchmark MRR: `0,8361`
 - Bağımsız chunk hakemi: `67/67` geçerli, `0` geçersiz çıktı
-- Bağımsız cevap hakemi + altın kaynak kapısı: `23/23`
+- Bağımsız cevap hakemi + altın kaynak kapısı: `30/30`
 - FAISS / gerçek pgvector ilk-6 sıra eşitliği: `23/23`
-- Optimize hibrit retrieval MRR: `0,8841`
-- Optimize ortalama retrieval gecikmesi: `1508,7 ms`
+- Genişletilmiş hibrit retrieval MRR: `0,8361`
+- Optimize ortalama retrieval gecikmesi: `1500,2 ms`
 - Hazır PDF kaynağı: `4`
 - İndekslenen anlamlı kanıt parçası: `67`
 - Önceden hesaplanmış embedding satırı: `67`

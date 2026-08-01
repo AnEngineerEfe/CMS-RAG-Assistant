@@ -8,7 +8,8 @@ from typing import Any
 
 import streamlit as st
 
-from .config import PROJECT_ROOT
+from ..infrastructure.audit import AuditStore
+from .config import DATA_DIR, PROJECT_ROOT
 
 
 REPORT_PATHS = {
@@ -67,8 +68,8 @@ def render_evaluation_dashboard() -> None:
     _metric(columns[2], "Hit@6", _percent(retrieval.get("hit_at_k")))
     _metric(columns[3], "MRR", f"{float(retrieval.get('mrr', 0)):.3f}")
 
-    overview, judges, backends = st.tabs(
-        ("Altın set", "Chunk ve cevap hakemi", "FAISS / pgvector")
+    overview, judges, backends, operations = st.tabs(
+        ("Altın set", "Chunk ve cevap hakemi", "FAISS / pgvector", "İşletim / audit")
     )
     with overview:
         _render_gold_summary(benchmark)
@@ -76,6 +77,8 @@ def render_evaluation_dashboard() -> None:
         _render_judge_summary(quality)
     with backends:
         _render_backend_summary(pgvector)
+    with operations:
+        _render_audit_summary(AuditStore(DATA_DIR / "audit").summary())
 
     st.info(
         "Bu ekran kayıtlı ve yeniden üretilebilir test sonuçlarını gösterir. "
@@ -180,6 +183,43 @@ def _render_backend_summary(report: dict[str, Any]) -> None:
     st.dataframe(rows, hide_index=True, width="stretch")
     st.success(
         f"Aynı ilk-K sıralama oranı: {_percent(report.get('identical_top_k_rate'))}"
+    )
+
+
+def _render_audit_summary(summary: dict[str, Any]) -> None:
+    """Gizlilik korumalı yerel çalışma olaylarını ve son sorgu metriklerini gösterir."""
+
+    outcomes = summary.get("outcomes", {})
+    columns = st.columns(4)
+    _metric(columns[0], "Yerel olay", str(summary.get("event_count", 0)))
+    _metric(columns[1], "Kaynaklı", str(outcomes.get("grounded", 0)))
+    _metric(columns[2], "Güvenli ret", str(outcomes.get("unsupported", 0)))
+    _metric(
+        columns[3],
+        "Ort. uçtan uca",
+        f"{float(summary.get('average_latency_ms', 0)):.0f} ms",
+    )
+    events = summary.get("events", [])
+    if not events:
+        st.caption("Henüz audit olayı yok. İlk soru tamamlandığında yerel kayıt oluşur.")
+        return
+    st.markdown("#### Son çalışma olayları")
+    rows = [
+        {
+            "Zaman (UTC)": event.get("timestamp_utc", "")[:19],
+            "Sorgu özeti": event.get("query_hash", ""),
+            "Sonuç": event.get("outcome", "unknown"),
+            "Kapsam": event.get("scope", "unknown"),
+            "Mod": event.get("generation_mode", "unknown"),
+            "Kaynak": event.get("source_count", 0),
+            "Gecikme ms": event.get("latency_ms", 0),
+        }
+        for event in events[:50]
+    ]
+    st.dataframe(rows, hide_index=True, width="stretch")
+    st.caption(
+        "Gizlilik ilkesi: audit kaydı ham soru, ham cevap veya belge metni içermez. "
+        "Sorgular yalnız geri döndürülemez SHA-256 özetiyle temsil edilir."
     )
 
 

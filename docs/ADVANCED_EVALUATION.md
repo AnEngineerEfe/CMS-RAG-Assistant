@@ -44,7 +44,7 @@ gerekçeler `stage1_chunks.csv` ile `stage1_chunk_judgments.csv` dosyalarındad�
 
 ## 2. Aşama — Cevap ve kaynak değerlendirmesi
 
-Altın veri setindeki 23 pozitif sorunun tamamı gerçek uygulama motoruna
+Genişletilmiş altın veri setindeki 30 pozitif sorunun tamamı gerçek uygulama motoruna
 sorulmuştur. Her cevap:
 
 - LLM hakeminin faithfulness, relevance ve completeness puanlarından,
@@ -54,7 +54,10 @@ birlikte geçmek zorundadır.
 
 İlk tur iki varyant cevabında doğru içerik fakat yanlış genel sayfa atfını,
 eğitim/SOPA sorusunda ise yanlış genel cevap kuralını ortaya çıkarmıştır.
-Kurallar ayrıntılı ürün sayfalarına bağlandıktan sonra sonuç `23/23` olmuştur.
+Kurallar ayrıntılı ürün sayfalarına bağlandıktan sonra ilk set `23/23` olmuştur.
+Genişletilmiş tur, iz füzyonu parafrazında doğru sayfa getirilmesine rağmen
+cevabın dolaylı kaldığını göstermiş; doğrudan sayfa-9 kanıt kuralı eklendikten
+sonra nihai sonuç `30/30` olmuştur.
 
 Bu tur ayrıca LLM hakeminin yanlış genel SOPA cevabını kabul edebildiğini
 göstermiştir. Dolayısıyla judge tek başına doğruluk ölçütü değildir; altın
@@ -62,21 +65,21 @@ belge/sayfa ve deterministik kontroller zorunludur.
 
 ## 3. Aşama — Chunk ve retrieval karşılaştırması
 
-Aynı 23 pozitif soru, aynı embedding modeli ve `K=6` ile ölçülmüştür.
+Aynı 30 pozitif soru, aynı embedding modeli ve `K=6` ile ölçülmüştür.
 
 | Yaklaşım | Chunk | Chunk adedi | Hit@6 | MRR | Terim kapsama |
 |---|---:|---:|---:|---:|---:|
-| BM25 | 450 | 136 | %100 | 0,935 | %95,7 |
-| FAISS dense | 450 | 136 | %91,3 | 0,692 | %91,3 |
-| Hybrid RRF | 450 | 136 | %100 | 0,857 | %95,7 |
-| BM25 | 900 | 67 | %100 | 0,899 | %100 |
-| FAISS dense | 900 | 67 | %91,3 | 0,808 | %93,5 |
-| Hybrid RRF | 900 | 67 | %100 | 0,884 | %100 |
-| Hybrid + tam reranker | 900 | 67 | %100 | 0,627 | %100 |
-| Hybrid + kanıt kapısı | 900 | 67 | %100 | 0,884 | %100 |
-| BM25 | 1350 | 48 | %100 | 0,826 | %100 |
-| FAISS dense | 1350 | 48 | %95,7 | 0,768 | %93,5 |
-| Hybrid RRF | 1350 | 48 | %95,7 | 0,891 | %95,7 |
+| BM25 | 450 | 136 | %100 | 0,933 | %96,7 |
+| FAISS dense | 450 | 136 | %90,0 | 0,682 | %90,0 |
+| Hybrid RRF | 450 | 136 | %100 | 0,851 | %96,7 |
+| BM25 | 900 | 67 | %100 | 0,906 | %100 |
+| FAISS dense | 900 | 67 | %90,0 | 0,758 | %91,7 |
+| Hybrid RRF | 900 | 67 | %100 | 0,836 | %100 |
+| Hybrid + tam reranker | 900 | 67 | %100 | 0,836 | %100 |
+| Hybrid + kanıt kapısı | 900 | 67 | %100 | 0,836 | %100 |
+| BM25 | 1350 | 48 | %100 | 0,867 | %100 |
+| FAISS dense | 1350 | 48 | %93,3 | 0,739 | %91,7 |
+| Hybrid RRF | 1350 | 48 | %96,7 | 0,856 | %96,7 |
 
 Mevcut corpus için 900 karakter ve 150 karakter overlap dengeli seçimdir.
 BM25 altın sette güçlüdür; ancak üretimde paraphrase dayanıklılığı için dense ve
@@ -84,14 +87,14 @@ sözcüksel adayların RRF ile birleştirilmesi korunmuştur.
 
 Tam cross-encoder reranking, aynı Hit@6 değerine rağmen MRR'ı düşürmüş ve
 gecikmeyi büyütmüştür. Bu nedenle reranker tüm sıralamayı değiştirmek yerine
-ilk hibrit kanıtları doğrulayan bir kapı olarak kullanılmaktadır. Nihai 33
-vakalı kabul turunda bu tasarım:
+ilk hibrit kanıtları doğrulayan bir kapı olarak kullanılmaktadır. Genişletilmiş
+nihai 45 vakalı kabul turunda bu tasarım:
 
-- TP/TN/FP/FN: `23/10/0/0`
+- TP/TN/FP/FN: `30/15/0/0`
 - Hit@6: `%100`
-- MRR: `0,8841`
-- Ortalama retrieval: `1508,7 ms`
-- p95 retrieval: `2056,7 ms`
+- MRR: `0,8361`
+- Ortalama retrieval: `1500,2 ms`
+- p95 retrieval: `1968,5 ms`
 
 üretmiştir.
 

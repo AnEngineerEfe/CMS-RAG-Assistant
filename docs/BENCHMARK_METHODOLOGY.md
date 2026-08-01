@@ -15,10 +15,10 @@ embedding snapshot'ı önceden üretilir.
 ## Altın veri seti
 
 `evaluation/datasets/gold_cases.json` sürümlü ve makinece doğrulanan ana kabul
-setidir. Mevcut sürüm 20 konu kategorisinde 33 vaka içerir:
+setidir. Mevcut sürüm 20 konu kategorisinde 45 vaka içerir:
 
-- 23 pozitif vaka: cevap için gerekli veri bilgi tabanında vardır.
-- 10 negatif vaka: istenen bilgi yoktur veya kamu veri sınırının dışındadır.
+- 30 pozitif vaka: cevap için gerekli veri bilgi tabanında vardır.
+- 15 negatif vaka: istenen bilgi yoktur veya kamu veri sınırının dışındadır.
 - Doğrudan, paraphrase ve negatif sorgu türleri birlikte ölçülür.
 - Her pozitif vakada beklenen belge, sayfa ve kanıt terimleri bulunur.
 
@@ -74,10 +74,10 @@ başarısızsa komut sıfırdan farklı çıkış kodu döndürür.
 
 ## Son ölçüm ve yorumlama
 
-2026-07-31 tarihli 33 vakalık kabul turunda 33 vaka geçti; TP/TN/FP/FN
-`23/10/0/0`, Hit@6 `%100`, MRR `0,8841`, ortalama retrieval gecikmesi
-`1508,7 ms`, p95 gecikmesi `2056,7 ms` ölçüldü.
+2026-08-02 tarihli 45 vakalık kabul turunda 45 vaka geçti; TP/TN/FP/FN
+`30/15/0/0`, Hit@6 `%100`, MRR `0,8361`, ortalama retrieval gecikmesi
+`1500,2 ms`, p95 gecikmesi `1968,5 ms` ölçüldü.
 
-Bu yüzde yüz sonuç yalnızca sürümlenmiş 33 vakalık set için geçerlidir. Yeni
+Bu yüzde yüz sonuç yalnızca sürümlenmiş 45 vakalık set için geçerlidir. Yeni
 belgeler, soru biçimleri ve alanlar eklendikçe veri seti genişletilmeli; sonuç
 genel veya sınırsız bir doğruluk iddiası olarak sunulmamalıdır.

@@ -1,16 +1,16 @@
 {
   "schema_version": 1,
-  "dataset_cases": 33,
+  "dataset_cases": 45,
   "indexed_chunks": 67,
   "snapshot_loaded": true,
-  "passed": 33,
+  "passed": 45,
   "failed": 0,
   "confusion_matrix": {
-    "true_positive": 23,
-    "true_negative": 10,
+    "true_positive": 30,
+    "true_negative": 15,
     "false_positive": 0,
     "false_negative": 0,
-    "total": 33,
+    "total": 45,
     "accuracy": 1.0,
     "precision": 1.0,
     "recall": 1.0,
@@ -18,12 +18,12 @@
     "f1": 1.0
   },
   "retrieval": {
-    "evaluated": 23,
+    "evaluated": 30,
     "hit_at_k": 1.0,
-    "mrr": 0.8841,
-    "latency_mean_ms": 1573.705,
-    "latency_p50_ms": 1407.961,
-    "latency_p95_ms": 2901.18
+    "mrr": 0.8361,
+    "latency_mean_ms": 1500.224,
+    "latency_p50_ms": 1519.883,
+    "latency_p95_ms": 1968.483
   },
   "breakdowns": {
     "category": {
@@ -33,8 +33,8 @@
         "rate": 1.0
       },
       "ai_governance": {
-        "passed": 1,
-        "total": 1,
+        "passed": 2,
+        "total": 2,
         "rate": 1.0
       },
       "artificial_intelligence": {
@@ -43,8 +43,8 @@
         "rate": 1.0
       },
       "cms_overview": {
-        "passed": 1,
-        "total": 1,
+        "passed": 2,
+        "total": 2,
         "rate": 1.0
       },
       "decision_support": {
@@ -63,8 +63,8 @@
         "rate": 1.0
       },
       "main": {
-        "passed": 2,
-        "total": 2,
+        "passed": 3,
+        "total": 3,
         "rate": 1.0
       },
       "mission_management": {
@@ -78,8 +78,8 @@
         "rate": 1.0
       },
       "platform_integration": {
-        "passed": 1,
-        "total": 1,
+        "passed": 2,
+        "total": 2,
         "rate": 1.0
       },
       "platform_variants": {
@@ -93,8 +93,8 @@
         "rate": 1.0
       },
       "tactical_data_links": {
-        "passed": 1,
-        "total": 1,
+        "passed": 2,
+        "total": 2,
         "rate": 1.0
       },
       "track_management": {
@@ -103,45 +103,45 @@
         "rate": 1.0
       },
       "training": {
-        "passed": 1,
-        "total": 1,
+        "passed": 3,
+        "total": 3,
         "rate": 1.0
       },
       "unsupported_commercial": {
-        "passed": 3,
-        "total": 3,
+        "passed": 4,
+        "total": 4,
         "rate": 1.0
       },
       "unsupported_internal": {
+        "passed": 5,
+        "total": 5,
+        "rate": 1.0
+      },
+      "unsupported_operational": {
         "passed": 3,
         "total": 3,
         "rate": 1.0
       },
-      "unsupported_operational": {
-        "passed": 2,
-        "total": 2,
-        "rate": 1.0
-      },
       "unsupported_technical": {
-        "passed": 2,
-        "total": 2,
+        "passed": 3,
+        "total": 3,
         "rate": 1.0
       }
     },
     "query_type": {
       "direct": {
-        "passed": 17,
-        "total": 17,
+        "passed": 18,
+        "total": 18,
         "rate": 1.0
       },
       "negative": {
-        "passed": 10,
-        "total": 10,
+        "passed": 15,
+        "total": 15,
         "rate": 1.0
       },
       "paraphrase": {
-        "passed": 6,
-        "total": 6,
+        "passed": 12,
+        "total": 12,
         "rate": 1.0
       }
     },
@@ -152,19 +152,19 @@
         "rate": 1.0
       },
       "hard": {
-        "passed": 6,
-        "total": 6,
+        "passed": 13,
+        "total": 13,
         "rate": 1.0
       },
       "medium": {
-        "passed": 13,
-        "total": 13,
+        "passed": 18,
+        "total": 18,
         "rate": 1.0
       }
     },
     "confusion_cells": {
-      "TN": 10,
-      "TP": 23
+      "TN": 15,
+      "TP": 30
     }
   },
   "results": [
@@ -187,7 +187,7 @@
         "command and control"
       ],
       "retrieval_passed": true,
-      "latency_ms": 5079.968,
+      "latency_ms": 895.927,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -240,7 +240,7 @@
         "distributed execution"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1102.243,
+      "latency_ms": 889.062,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -293,7 +293,7 @@
         "lifecycle"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1196.634,
+      "latency_ms": 1260.682,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -346,7 +346,7 @@
         "track management"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1295.941,
+      "latency_ms": 1157.08,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -399,7 +399,7 @@
         "engagement planning"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1279.637,
+      "latency_ms": 1333.514,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -452,7 +452,7 @@
         "engagement"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1099.378,
+      "latency_ms": 1613.399,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -505,7 +505,7 @@
         "link 16"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1629.347,
+      "latency_ms": 1676.289,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -558,7 +558,7 @@
         "anomaly detection"
       ],
       "retrieval_passed": true,
-      "latency_ms": 661.946,
+      "latency_ms": 624.83,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -611,7 +611,7 @@
         "plug-and-play"
       ],
       "retrieval_passed": true,
-      "latency_ms": 2901.18,
+      "latency_ms": 1659.609,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -664,7 +664,7 @@
         "central component"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1981.409,
+      "latency_ms": 1828.992,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -717,7 +717,7 @@
         "post-op analysis"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1749.236,
+      "latency_ms": 1913.054,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -770,7 +770,7 @@
         "special mission"
       ],
       "retrieval_passed": true,
-      "latency_ms": 805.314,
+      "latency_ms": 729.907,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -823,7 +823,7 @@
         "maritime security"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1227.945,
+      "latency_ms": 1187.018,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -876,7 +876,7 @@
         "situational awareness"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1459.393,
+      "latency_ms": 1393.765,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -929,7 +929,7 @@
         "target motion analysis"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1272.037,
+      "latency_ms": 1301.252,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -982,7 +982,7 @@
         "smart operator assistant"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1104.95,
+      "latency_ms": 1319.999,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -1035,7 +1035,7 @@
         "örüntüleri"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1562.068,
+      "latency_ms": 1630.354,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -1083,7 +1083,7 @@
         "karar"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1535.065,
+      "latency_ms": 1526.408,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -1136,7 +1136,7 @@
         "kapalı ağlarda"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1407.961,
+      "latency_ms": 1519.883,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -1189,7 +1189,7 @@
         "doğal dil"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1509.173,
+      "latency_ms": 1847.152,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -1237,7 +1237,7 @@
         "açıklanabilirlik"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1501.796,
+      "latency_ms": 1968.483,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -1270,7 +1270,7 @@
         "birlikte çalışabilirlik"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1469.361,
+      "latency_ms": 1797.24,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -1303,7 +1303,7 @@
         "decision support"
       ],
       "retrieval_passed": true,
-      "latency_ms": 1363.237,
+      "latency_ms": 1525.606,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -1330,7 +1330,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1363.891,
+      "latency_ms": 1531.751,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1377,7 +1377,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1446.67,
+      "latency_ms": 1829.255,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1424,7 +1424,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1351.906,
+      "latency_ms": 1960.456,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1471,7 +1471,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1015.786,
+      "latency_ms": 1154.602,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1518,7 +1518,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 570.536,
+      "latency_ms": 692.388,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1565,7 +1565,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1482.615,
+      "latency_ms": 1713.278,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -1612,7 +1612,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1119.779,
+      "latency_ms": 936.998,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1659,7 +1659,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1579.783,
+      "latency_ms": 1640.662,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -1686,7 +1686,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1052.67,
+      "latency_ms": 1160.056,
       "sources": [
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
@@ -1733,7 +1733,7 @@
       "evidence_terms_matched": [],
       "evidence_terms_expected": [],
       "retrieval_passed": true,
-      "latency_ms": 1341.231,
+      "latency_ms": 1720.302,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -1764,6 +1764,601 @@
           "document": "advent_cms.pdf",
           "page": 8,
           "score": 0.0154
+        }
+      ]
+    },
+    {
+      "case_id": "combat_system_relationship",
+      "category": "cms_overview",
+      "question": "Savaş sistemleriyle ADVENT arasındaki ilişki tam olarak nedir?",
+      "query_type": "paraphrase",
+      "difficulty": "hard",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "gold_rank": 2,
+      "evidence_terms_matched": [
+        "ağ destekli veri entegre savaş yönetim sistemi",
+        "sensör ve silah entegrasyonu"
+      ],
+      "evidence_terms_expected": [
+        "ağ destekli veri entegre savaş yönetim sistemi",
+        "sensör ve silah entegrasyonu"
+      ],
+      "retrieval_passed": true,
+      "latency_ms": 1761.379,
+      "sources": [
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0045
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.1312
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.031
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0292
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 4,
+          "score": 0.0147
+        }
+      ]
+    },
+    {
+      "case_id": "sopa_behavioral_recommendations",
+      "category": "training",
+      "question": "Operatörün geçmiş kararlarına bakıp tavsiye veren ADVENT yeteneği hangisidir?",
+      "query_type": "paraphrase",
+      "difficulty": "hard",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "gold_rank": 1,
+      "evidence_terms_matched": [
+        "smart operator assistant",
+        "recommendations"
+      ],
+      "evidence_terms_expected": [
+        "smart operator assistant",
+        "recommendations"
+      ],
+      "retrieval_passed": true,
+      "latency_ms": 1142.908,
+      "sources": [
+        {
+          "document": "advent_cms.pdf",
+          "page": 31,
+          "score": 0.0359
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0099
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 8,
+          "score": 0.0297
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0161
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 17,
+          "score": 0.0161
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 3,
+          "score": 0.0159
+        }
+      ]
+    },
+    {
+      "case_id": "tactical_links_extended",
+      "category": "tactical_data_links",
+      "question": "Link 11 ve Link 16 dışında kamuya açık broşürde hangi taktik veri bağları sayılıyor?",
+      "query_type": "paraphrase",
+      "difficulty": "hard",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "gold_rank": 2,
+      "evidence_terms_matched": [
+        "link 22",
+        "jreap",
+        "simple",
+        "vmf"
+      ],
+      "evidence_terms_expected": [
+        "link 22",
+        "jreap",
+        "simple",
+        "vmf"
+      ],
+      "retrieval_passed": true,
+      "latency_ms": 1861.341,
+      "sources": [
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.9152
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 12,
+          "score": 0.4016
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0292
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0159
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 32,
+          "score": 0.0154
+        }
+      ]
+    },
+    {
+      "case_id": "cms_scalability",
+      "category": "platform_integration",
+      "question": "ADVENT küçük botlardan komuta merkezlerine kadar ölçeklenebilir mi?",
+      "query_type": "paraphrase",
+      "difficulty": "medium",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "gold_rank": 2,
+      "evidence_terms_matched": [
+        "küçük botlardan komuta merkezlerine",
+        "ölçeklenebilir"
+      ],
+      "evidence_terms_expected": [
+        "küçük botlardan komuta merkezlerine",
+        "ölçeklenebilir"
+      ],
+      "retrieval_passed": true,
+      "latency_ms": 1464.876,
+      "sources": [
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0015
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.9988
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0161
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 4,
+          "score": 0.0156
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 28,
+          "score": 0.0154
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 30,
+          "score": 0.0152
+        }
+      ]
+    },
+    {
+      "case_id": "main_closed_network",
+      "category": "main",
+      "question": "MAIN internet olmadan kapalı ağda çalışabilecek şekilde açıklanmış mı?",
+      "query_type": "paraphrase",
+      "difficulty": "medium",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "gold_rank": 1,
+      "evidence_terms_matched": [
+        "kapalı ağlarda",
+        "veri gizliliği"
+      ],
+      "evidence_terms_expected": [
+        "kapalı ağlarda",
+        "veri gizliliği"
+      ],
+      "retrieval_passed": true,
+      "latency_ms": 3184.134,
+      "sources": [
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0174
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0302
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0159
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 20,
+          "score": 0.0154
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 10,
+          "score": 0.0149
+        }
+      ]
+    },
+    {
+      "case_id": "common_training_virtual",
+      "category": "training",
+      "question": "ADVENT ortak sanal ortamda müşterek eğitimi nasıl destekliyor?",
+      "query_type": "paraphrase",
+      "difficulty": "hard",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "gold_rank": 4,
+      "evidence_terms_matched": [
+        "common training",
+        "shared virtual environment"
+      ],
+      "evidence_terms_expected": [
+        "common training",
+        "shared virtual environment"
+      ],
+      "retrieval_passed": true,
+      "latency_ms": 1464.937,
+      "sources": [
+        {
+          "document": "advent_cms.pdf",
+          "page": 16,
+          "score": 0.0523
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 30,
+          "score": 0.0071
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0164
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 11,
+          "score": 0.0164
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0161
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 10,
+          "score": 0.0161
+        }
+      ]
+    },
+    {
+      "case_id": "ai_public_data_boundary",
+      "category": "ai_governance",
+      "question": "ADVENT AI kamu araştırma paketinin içermediği veri türleri nelerdir?",
+      "query_type": "direct",
+      "difficulty": "medium",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "gold_rank": 1,
+      "evidence_terms_matched": [
+        "algoritma parametreleri",
+        "tasnifli bilgi"
+      ],
+      "evidence_terms_expected": [
+        "algoritma parametreleri",
+        "tasnifli bilgi"
+      ],
+      "retrieval_passed": true,
+      "latency_ms": 1527.644,
+      "sources": [
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.7935
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0511
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0313
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0299
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 8,
+          "score": 0.0149
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 32,
+          "score": 0.0147
+        }
+      ]
+    },
+    {
+      "case_id": "missing_encryption_algorithm",
+      "category": "unsupported_internal",
+      "question": "ADVENT güvenli haberleşmede hangi şifreleme algoritmasını kullanır?",
+      "query_type": "negative",
+      "difficulty": "hard",
+      "actual_data_available": false,
+      "predicted_answerable": false,
+      "confusion_cell": "TN",
+      "gold_rank": null,
+      "evidence_terms_matched": [],
+      "evidence_terms_expected": [],
+      "retrieval_passed": true,
+      "latency_ms": 1637.589,
+      "sources": [
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0066
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0836
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 4,
+          "score": 0.0159
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 28,
+          "score": 0.0156
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 30,
+          "score": 0.0154
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 8,
+          "score": 0.0152
+        }
+      ]
+    },
+    {
+      "case_id": "missing_live_coordinates",
+      "category": "unsupported_operational",
+      "question": "Görevdeki ADVENT platformlarının anlık koordinatları nelerdir?",
+      "query_type": "negative",
+      "difficulty": "hard",
+      "actual_data_available": false,
+      "predicted_answerable": false,
+      "confusion_cell": "TN",
+      "gold_rank": null,
+      "evidence_terms_matched": [],
+      "evidence_terms_expected": [],
+      "retrieval_passed": true,
+      "latency_ms": 1296.835,
+      "sources": [
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0369
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0038
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 4,
+          "score": 0.0164
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 28,
+          "score": 0.0161
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0159
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 30,
+          "score": 0.0159
+        }
+      ]
+    },
+    {
+      "case_id": "missing_hardware_ram",
+      "category": "unsupported_technical",
+      "question": "ADVENT operatör konsolunda tam olarak kaç GB RAM vardır?",
+      "query_type": "negative",
+      "difficulty": "medium",
+      "actual_data_available": false,
+      "predicted_answerable": false,
+      "confusion_cell": "TN",
+      "gold_rank": null,
+      "evidence_terms_matched": [],
+      "evidence_terms_expected": [],
+      "retrieval_passed": true,
+      "latency_ms": 1602.428,
+      "sources": [
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0003
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0002
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.029
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0159
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 4,
+          "score": 0.0149
+        }
+      ]
+    },
+    {
+      "case_id": "missing_training_duration",
+      "category": "unsupported_commercial",
+      "question": "ADVENT Academy eğitiminin kesin eğitim süresi kaç saattir?",
+      "query_type": "negative",
+      "difficulty": "medium",
+      "actual_data_available": false,
+      "predicted_answerable": false,
+      "confusion_cell": "TN",
+      "gold_rank": null,
+      "evidence_terms_matched": [],
+      "evidence_terms_expected": [],
+      "retrieval_passed": true,
+      "latency_ms": 1777.152,
+      "sources": [
+        {
+          "document": "advent_cms.pdf",
+          "page": 30,
+          "score": 0.0908
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0007
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0298
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0164
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.0156
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 10,
+          "score": 0.0154
+        }
+      ]
+    },
+    {
+      "case_id": "missing_operator_password",
+      "category": "unsupported_internal",
+      "question": "ADVENT operatörünün görev parolası nedir?",
+      "query_type": "negative",
+      "difficulty": "hard",
+      "actual_data_available": false,
+      "predicted_answerable": false,
+      "confusion_cell": "TN",
+      "gold_rank": null,
+      "evidence_terms_matched": [],
+      "evidence_terms_expected": [],
+      "retrieval_passed": true,
+      "latency_ms": 1661.821,
+      "sources": [
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0386
+        },
+        {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "score": 0.069
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "score": 0.0164
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 4,
+          "score": 0.0152
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 28,
+          "score": 0.0149
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 30,
+          "score": 0.0147
         }
       ]
     }

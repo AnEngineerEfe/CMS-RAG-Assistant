@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-31T07:56:39.255496+00:00",
+  "generated_at": "2026-08-01T21:53:08.344389+00:00",
   "configuration": {
     "generator_model": "qwen2.5:3b",
     "judge_model": "llama3.2:3b",
@@ -1457,10 +1457,10 @@
       "gold_evidence_only": true
     },
     "summary": {
-      "evaluated": 23,
-      "judge_completed": 23,
-      "judge_correct": 23,
-      "strict_passed": 23,
+      "evaluated": 30,
+      "judge_completed": 30,
+      "judge_correct": 30,
+      "strict_passed": 30,
       "strict_success_rate": 1.0
     },
     "cases": [
@@ -1481,7 +1481,7 @@
             "score": 1.0
           }
         ],
-        "latency_ms": 3.069,
+        "latency_ms": 2.352,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
@@ -1493,7 +1493,7 @@
       {
         "case_id": "network_enabled_capability",
         "question": "ADVENT ağ destekli yetenek yaklaşımıyla ne sağlar?",
-        "answer": "ADVENT'nin ağ destekli yetenekleriyle, farklı platformlardan gelen taktik verilerin paylaşılması ve koordineli görev icrası için altyapı sağlar. Ayrıca, önceliklendirilmesi ve angajman planlamasına da [SOURCE 1]",
+        "answer": "ADVENT Network Enabled Capability (NEC) yaklaşımı, birden çok platform arasındaki ağa bağlanan işlevleri ve görevleri optimize eder. Bu sistem, operasyonların stratejik planlamasını, tehdit analizlerini ve tüm.task force arasında koordinasyonlu uygulamaları kolaylaştırır. Ayrıca, ADVENT'nin gelişmiş sensör birleştirme yetenekleri ile komutanlarla ilgili hava, yüzeye, suya ve yola geçiş gibi durumları geniş bir perspektifle izleyebilir ve karar verme sürecini hızlandırır. [SOURCE 1]",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           3,
@@ -1503,79 +1503,79 @@
         "gold_source_used": true,
         "sources": [
           {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 1,
-            "score": 0.9506
-          },
-          {
             "document": "advent_cms.pdf",
             "page": 3,
-            "score": 0.8978
-          },
-          {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 2,
-            "score": 0.0875
+            "score": 0.9757
           },
           {
             "document": "advent_cms.pdf",
             "page": 18,
-            "score": 0.0606
+            "score": 0.1099
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 2,
+            "score": 0.0302
+          },
+          {
+            "document": "advent_cms.pdf",
+            "page": 12,
+            "score": 0.0161
           }
         ],
-        "latency_ms": 79892.421,
+        "latency_ms": 67433.706,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
         "correct": true,
-        "rationale": "All claims directly answer the question and are supported by gold evidence.",
+        "rationale": "Directly answers the question with all supported claims and covers requested facts about ADVENT Network Enabled Capability (NEC) approach.",
         "status": "completed",
         "strict_pass": true
       },
       {
         "case_id": "track_management",
         "question": "İz yönetimi iz yaşam döngüsünü nasıl yönetir?",
-        "answer": "İz yönetimi, sistemizin yaşam döngüsü üzerindeki görevi olan iz yaşam döngüsünü yönetir. Bu, izlerin oluşturulması, ilişkilendirilmesi, sınıflandırılması ve silah ve sensör koordinasyonu gibi işlevleri içerir [SOURCE 1]",
+        "answer": "İz yönetimi, sistem lifecycle'ini yöneterek track yaşam döngüsünü düzenler. Bu süreçte, track oluşturulur, ilişkilendirilir ve sınıflandırılır. Ayrıca, tracklar arasındaki ilişkiyi korumak için correlation ve merging algoritmaları da kullanılır. [SOURCE 1]",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           9
         ],
         "gold_source_used": true,
         "sources": [
-          {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 1,
-            "score": 0.3048
-          },
-          {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 2,
-            "score": 0.0355
-          },
           {
             "document": "advent_cms.pdf",
             "page": 9,
             "score": 0.0307
           },
           {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.1882
+          },
+          {
             "document": "advent_cms.pdf",
-            "page": 26,
-            "score": 0.0003
+            "page": 15,
+            "score": 0.0297
+          },
+          {
+            "document": "advent_ai_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0286
           }
         ],
-        "latency_ms": 41794.912,
+        "latency_ms": 37443.942,
         "faithfulness": 4,
         "answer_relevance": 4,
         "completeness": 4,
         "correct": true,
-        "rationale": "Faithful to all claims, directly answers the question, and covers requested supported facts.",
+        "rationale": "Faithful to gold evidence, directly answers the question, and covers requested supported facts.",
         "status": "completed",
         "strict_pass": true
       },
       {
         "case_id": "track_management_paraphrase",
         "question": "Farklı sensörlerden gelen izler nasıl ortak bir taktik resme dönüştürülüyor?",
-        "answer": "Daha fazla bilgi için [SOURCE 1] ve [SOURCE 3] kaynaklarına başvurulmalıdır. Bu kaynaklarda, sistem, farklı platformlardan gelen sensör ve silah entegrasyonu, iz yönetimi, taktik karar desteği ve silah",
+        "answer": "İz yönetimi, farklı kaynaklardan gelen iz verilerini korelasyon ve birleştirme işlemleriyle eşleştirir; track data fusion sonucunda birden çok gözlemi tek ve tutarlı bir taktik görünümde toplar. Aynı katman izlerin yaşam döngüsünü de yönetir [SOURCE 1]. ",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           9
@@ -1583,39 +1583,24 @@
         "gold_source_used": true,
         "sources": [
           {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 1,
-            "score": 0.2896
-          },
-          {
             "document": "advent_cms.pdf",
             "page": 9,
-            "score": 0.045
-          },
-          {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 2,
-            "score": 0.0062
-          },
-          {
-            "document": "advent_cms.pdf",
-            "page": 26,
-            "score": 0.0014
+            "score": 1.0
           }
         ],
-        "latency_ms": 14468.822,
-        "faithfulness": 3,
-        "answer_relevance": 3,
-        "completeness": 3,
+        "latency_ms": 2.191,
+        "faithfulness": 4,
+        "answer_relevance": 4,
+        "completeness": 4,
         "correct": true,
-        "rationale": "The answer provides relevant information about track management, system management, weapon control and monitoring, engagement planning, operation support, navigation support, geographical display system, and key software components, but lacks specific details and examples to fully support the claims.",
+        "rationale": "Answer directly addresses the question, covers key supported facts about track management and its role in creating a unified view of multiple data received from various sources.",
         "status": "completed",
         "strict_pass": true
       },
       {
         "case_id": "weapon_sensor_management",
         "question": "Silah ve sensör kaynak havuzu nasıl yönetilir?",
-        "answer": "Silah ve sensör kaynak havuzu, ADVENT CMS'de Weapon Control and Monitoring yazılımı tarafından yönetilir. Bu yazılım, farklı silah sistemlerini ADVENT'a entegre eder ve adaptif hale getirir. Ayrıca, weapon resource pool'ü (diğer platform [SOURCE 1]",
+        "answer": "Kaynakta soruyla ilgili şu bilgi yer alıyor: ve koordineli görev icrası için altyapı sağlar. Temel işlev grupları desteği sunar. • Komuta ve kontrol: Operatöre ortak harekât resmi, görev koordinasyonu ve karar • Sensör entegrasyonu ve veri füzyonu: Farklı sensörlerden gelen gözlemleri • İz yönetimi: İzlerin oluşturulması, ilişkilendirilmesi, sınıflandırılması, • Tehdit değerlendirme ve angajman: Tehditlerin değerlendirilmesi, • Silah ve sensör koordinasyonu: Platform yeteneklerinin ağ üzeri [SOURCE 1]",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           9
@@ -1625,37 +1610,37 @@
           {
             "document": "advent_cms_kamuya_acik_arastirma.pdf",
             "page": 1,
-            "score": 0.0467
+            "score": 0.0143
           },
           {
             "document": "advent_cms.pdf",
-            "page": 10,
-            "score": 0.0435
+            "page": 15,
+            "score": 0.0004
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 2,
+            "score": 0.03
           },
           {
             "document": "advent_cms.pdf",
             "page": 9,
-            "score": 0.0383
-          },
-          {
-            "document": "advent_cms.pdf",
-            "page": 3,
-            "score": 0.0108
+            "score": 0.0295
           }
         ],
-        "latency_ms": 38795.154,
+        "latency_ms": 33542.465,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
         "correct": true,
-        "rationale": "All claims supported, directly answers, and covers requested facts with gold evidence from TRACK MANAGEMENT Situational Awareness, SYSTEM MANAGEMENT Optimized management of system services, WEAPON CONTROL AND MONITORING Software modules designed to integrate and adapt different weapon systems into ADVENT, ENGAGEMENT PLANNING Engagement planning and execution feature that manages the weapon and sensor resource pool, OPERATION SUPPORT Management, planning and execution of all other operational tas",
+        "rationale": "All claims supported, directly answers, and covers requested facts with gold evidence from the provided source.",
         "status": "completed",
         "strict_pass": true
       },
       {
         "case_id": "common_engagement",
         "question": "ADVENT ortak angajman yeteneği ne sağlar?",
-        "answer": "ADVENT ortak angajman yetenekleriyle, operatörlerin tek bir platformda tüm güçün koordinasyonunu sağlar ve farklı sensörlerden gelen gözlemleri ve silahların kullanılmasını yönetir. Ayrıca, taktik karar desteği ve silah [SOURCE 1]",
+        "answer": "ADVENT ortak angajman yetenekleriyle, platformların tek tek optimize edilmesi yerine görev kuvvetinin birlikte çalışmasına, ağ destekli yeteneklere ve müşterek görev icrasına odaklanır. Sensör ve silah entegrasyonu, iz yönetimi, taktik karar desteği, silah kontrolü, ortak taktik resim, eğitim ve simülasyon gibi savaş yönetimi işlevlerini bütünleştürür. [SOURCE 1]",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           10,
@@ -1664,27 +1649,27 @@
         "gold_source_used": true,
         "sources": [
           {
+            "document": "advent_cms.pdf",
+            "page": 11,
+            "score": 0.0146
+          },
+          {
             "document": "advent_cms_kamuya_acik_arastirma.pdf",
             "page": 1,
-            "score": 0.8002
+            "score": 0.9356
           },
           {
             "document": "advent_cms.pdf",
             "page": 10,
-            "score": 0.7518
+            "score": 0.0318
           },
           {
-            "document": "advent_cms.pdf",
-            "page": 9,
-            "score": 0.0663
-          },
-          {
-            "document": "advent_cms.pdf",
-            "page": 11,
-            "score": 0.0146
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 2,
+            "score": 0.0159
           }
         ],
-        "latency_ms": 36799.635,
+        "latency_ms": 35119.642,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
@@ -1696,7 +1681,7 @@
       {
         "case_id": "tactical_data_links",
         "question": "ADVENT hangi taktik veri linklerini destekler?",
-        "answer": "ADVENT, NATO standartlarıyla uyumluluk hedefleyen ve desteklediği taktik veri bağlantılarını şu şekilde listeler: Link 11, Link 16, Link 22 (JREAP, SIMPLE, VMF), Link Y, Link Green ve Link H [SOURCE 1]",
+        "answer": "ADVENT, NATO Links: Link 11, Link 16 ve Link 22 (JREAP, SIMPLE, VMF), Non-NATO Links: Link Y ve Link Green, ve ADVENT Native Link: Link H taktik veri bağlantılarını destekler. [SOURCE 1]",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           12
@@ -1704,39 +1689,39 @@
         "gold_source_used": true,
         "sources": [
           {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 1,
-            "score": 0.999
+            "document": "advent_cms.pdf",
+            "page": 12,
+            "score": 0.8683
           },
           {
             "document": "advent_cms_kamuya_acik_arastirma.pdf",
             "page": 2,
-            "score": 0.9133
+            "score": 0.8847
           },
           {
-            "document": "advent_cms.pdf",
-            "page": 12,
-            "score": 0.8185
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0313
           },
           {
             "document": "advent_cms.pdf",
             "page": 26,
-            "score": 0.4494
+            "score": 0.0306
           }
         ],
-        "latency_ms": 37369.132,
+        "latency_ms": 28564.507,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
         "correct": true,
-        "rationale": "All claims supported, directly answers, and covers requested facts with gold evidence.",
+        "rationale": "Answer directly addresses the question, provides all supported claims and covers requested facts with gold evidence.",
         "status": "completed",
         "strict_pass": true
       },
       {
         "case_id": "ai_anomaly_detection",
         "question": "ADVENT yapay zekâyı anomali tespitinde nasıl kullanır?",
-        "answer": "ADVENT, yapay zeka destekli bir anormalite tespit sistemi kullanarak deniz harekâtında operatörün desteklenmesi gereken anormallikleri tespit etmektedir. Bu sistem, deniz seviyesindeki iz anomali [SOURCE 1]",
+        "answer": "ADVENT, yüksek yoğunluk seviyinde yükselebilir araçların gerçek zamanlı tespiti ve sınıflandırılması üzerinde yapay zeka kullanır. Ayrıca, gürültülü veya gölgeleyici koşullarda deniz seyrüseferlerinin gerçek zamanlı tanımlanması için de AI kullanılır. [SOURCE 1]",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           14,
@@ -1745,39 +1730,39 @@
         "gold_source_used": true,
         "sources": [
           {
-            "document": "advent_ai_kamuya_acik_arastirma.pdf",
-            "page": 1,
-            "score": 0.9077
-          },
-          {
             "document": "advent_cms.pdf",
             "page": 14,
             "score": 0.8208
           },
           {
             "document": "advent_cms.pdf",
-            "page": 6,
-            "score": 0.1413
+            "page": 15,
+            "score": 0.1257
+          },
+          {
+            "document": "advent_ai_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0308
           },
           {
             "document": "advent_cms.pdf",
-            "page": 15,
-            "score": 0.1257
+            "page": 31,
+            "score": 0.0308
           }
         ],
-        "latency_ms": 39761.008,
-        "faithfulness": 4,
+        "latency_ms": 29523.914,
+        "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
         "correct": true,
-        "rationale": "Answer directly addresses the question, provides detailed information on ADVENT's capabilities and uses, and covers all requested supported facts.",
+        "rationale": "All claims supported, directly answers, covers requested facts with gold evidence from havelsan.com.tr",
         "status": "completed",
         "strict_pass": true
       },
       {
         "case_id": "platform_integration",
         "question": "ADVENT platform entegrasyonunu nasıl gerçekleştirir?",
-        "answer": "ADVENT platformu, plug-and-play architektrini kullanarak herhangi bir platforma uyumlu şekilde entegre edilir. Bu süreçte AI destekli rule-based karar destek sistemi de dahil olur ve tüm bu özelliklerin birleştirildiği sonuc [SOURCE 1]",
+        "answer": "ADVENT platformu, plug-and-play architektürü ile herhangi bir platforma uyumlu şekilde entegre edilir. Bu sayede C2, MMS ve CMS özellikleri gibi çeşitli görev ortamında performansı iyileştirmek için özelleştirilmiş çözümler sunulur. [SOURCE 1]",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           17
@@ -1787,37 +1772,37 @@
           {
             "document": "advent_cms.pdf",
             "page": 17,
-            "score": 0.9876
-          },
-          {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 1,
-            "score": 0.5396
+            "score": 0.9867
           },
           {
             "document": "advent_cms.pdf",
             "page": 5,
-            "score": 0.3204
+            "score": 0.227
           },
           {
             "document": "advent_cms.pdf",
             "page": 4,
-            "score": 0.1232
+            "score": 0.029
+          },
+          {
+            "document": "advent_cms.pdf",
+            "page": 12,
+            "score": 0.0159
           }
         ],
-        "latency_ms": 39282.217,
+        "latency_ms": 35586.967,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
         "correct": true,
-        "rationale": "All claims supported, directly answers and covers requested facts.",
+        "rationale": "All claims supported, directly answers, and covers requested facts.",
         "status": "completed",
         "strict_pass": true
       },
       {
         "case_id": "surface_platform_role",
         "question": "ADVENT su üstü savaş gemilerinde hangi rolü üstlenir?",
-        "answer": "ADVENT su üstü savaş gemilerinde taktik izleme, tehdit analizi ve angajman planlaması gibi görevleri yerine kalarak komuta ve kontrol yapar. [SOURCE 1]",
+        "answer": "ADVENT su üstü savaş gemilerinde taktik seyrüsefer, hedef analizi ve hedef yönetimi gibi işlevler üstlenir. [SOURCE 1]",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           18
@@ -1832,32 +1817,32 @@
           {
             "document": "advent_cms_kamuya_acik_arastirma.pdf",
             "page": 2,
-            "score": 0.2137
-          },
-          {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 1,
-            "score": 0.0795
+            "score": 0.1018
           },
           {
             "document": "advent_cms.pdf",
             "page": 4,
-            "score": 0.0407
+            "score": 0.0304
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0286
           }
         ],
-        "latency_ms": 35866.505,
+        "latency_ms": 26168.947,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
         "correct": true,
-        "rationale": "Answer directly addresses the question, provides detailed information on the role of ADVENT in surface platforms, and covers all requested supported facts.",
+        "rationale": "The answer directly addresses the question, provides faithfulness to all claims supported, and covers requested facts about the role of ADVENT in surface platforms.",
         "status": "completed",
         "strict_pass": true
       },
       {
         "case_id": "mine_warfare",
         "question": "ADVENT mayın harbi operasyonlarında hangi aşamaları destekler?",
-        "answer": "ADVENT, Mine Warfare (mayın harbi) operasyonlarında Planning, Preparation, Realization ve Post-Op Analysis aşamalarını destekler. Ayrıca MW Degree of Readiness, MW Threat Warning, MW Coordination, Task Organization, Warfare Doctrine Management, Threat Warning Management, Safety Against Mines, [SOURCE 1]",
+        "answer": "ADVENT mayın harbi operasyonlarında istihbarat, keşif ve gözetleme; denizaltı ve suüstü harbi; elektronik harp; arama-kurtarma ve taktik veri bağı rölesi gibi görevleri desteklediği açıklanır. [SOURCE 1: advent_cms_kamuya_acik_arastirma.pdf, page 2]",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           20,
@@ -1867,31 +1852,31 @@
         "sources": [
           {
             "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 1,
-            "score": 0.8383
+            "page": 2,
+            "score": 0.202
           },
           {
             "document": "advent_cms.pdf",
-            "page": 20,
-            "score": 0.6104
+            "page": 8,
+            "score": 0.0603
           },
           {
             "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 2,
-            "score": 0.2375
+            "page": 1,
+            "score": 0.0299
           },
           {
             "document": "advent_cms.pdf",
-            "page": 6,
-            "score": 0.0411
+            "page": 21,
+            "score": 0.0295
           }
         ],
-        "latency_ms": 33976.727,
+        "latency_ms": 32810.489,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
         "correct": true,
-        "rationale": "All claims supported, directly answers, and covers requested facts with gold evidence from havelsan.com.tr",
+        "rationale": "All claims supported, directly answers, and covers requested facts with gold evidence from advent_cms_kamuya_acik_arastirma.pdf",
         "status": "completed",
         "strict_pass": true
       },
@@ -1912,7 +1897,7 @@
             "score": 1.0
           }
         ],
-        "latency_ms": 1.254,
+        "latency_ms": 3.815,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
@@ -1938,19 +1923,19 @@
             "score": 1.0
           }
         ],
-        "latency_ms": 2.46,
+        "latency_ms": 3.766,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
         "correct": true,
-        "rationale": "All claims supported, directly answers, and covers requested facts with gold evidence.",
+        "rationale": "all claims supported, directly answers, covers requested facts with gold evidence from havelsan.com.tr",
         "status": "completed",
         "strict_pass": true
       },
       {
         "case_id": "advent_ufuk",
         "question": "ADVENT UFUK ne amaçla kullanılır?",
-        "answer": "ADVENT UFUK, deniz güvenliği ve deniz durumsal farkındalığına odaklanan bir komuta ve kontrol/vebilendirme/sigorta yönetim sistemi olarak kullanılır. [SOURCE 1]",
+        "answer": "ADVENT UFUK, deniz güvenliği ve deniz durumsal farkındalığına odaklanır. Kıyı ve deniz gözetleme radarları, seyrüsefer radarları, elektronik destek sistemleri, IFF, ADS-B ve başka komuta-kontrol sistemlerinden gelen verileri toplama, birleştirme, sınıflandırma ve kimliklendirme işlevlerini kapsar. [SOURCE 1]",
         "gold_document": "advent_cms.pdf",
         "gold_pages": [
           26
@@ -1960,30 +1945,30 @@
           {
             "document": "advent_cms.pdf",
             "page": 26,
-            "score": 0.9985
+            "score": 0.9982
           },
           {
             "document": "advent_cms_kamuya_acik_arastirma.pdf",
             "page": 2,
-            "score": 0.9826
+            "score": 0.5093
           },
           {
             "document": "advent_cms.pdf",
-            "page": 3,
-            "score": 0.4547
+            "page": 18,
+            "score": 0.0294
           },
           {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 1,
-            "score": 0.3864
+            "document": "advent_cms.pdf",
+            "page": 14,
+            "score": 0.0284
           }
         ],
-        "latency_ms": 26220.2,
+        "latency_ms": 32537.979,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
         "correct": true,
-        "rationale": "Fully supports all claims, directly answers, and covers requested supported facts with detailed evidence.",
+        "rationale": "Fully supports all claims, directly answers, and covers requested facts with gold evidence.",
         "status": "completed",
         "strict_pass": true
       },
@@ -2004,7 +1989,7 @@
             "score": 1.0
           }
         ],
-        "latency_ms": 2.768,
+        "latency_ms": 4.355,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
@@ -2035,7 +2020,7 @@
             "score": 1.0
           }
         ],
-        "latency_ms": 3.612,
+        "latency_ms": 3.905,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
@@ -2060,7 +2045,7 @@
             "score": 1.0
           }
         ],
-        "latency_ms": 1.362,
+        "latency_ms": 1.849,
         "faithfulness": 4,
         "answer_relevance": 4,
         "completeness": 4,
@@ -2072,7 +2057,7 @@
       {
         "case_id": "advent_ai_operator_paraphrase",
         "question": "Yapay zekâ karar verirken ADVENT operatörünün işini nasıl kolaylaştırıyor?",
-        "answer": "ADVENT-AI, deniz harekâtında çalışan operatörlere yapay zeka tarafından alınan kararlara güvenebilmeleri için destek sağlıyor. Bu, iz seviyesinde anomali tespiti, elektronik harp ve karıştırma koşullar [SOURCE 1]",
+        "answer": "ADVENT-AI, yapay zekâ destekli karar katmanı ile deniz harekâtında çalışan operatörlere yardımcı olmak için çeşitli özellikler sunuyor. Bu özellikler arasında iz seviyesinde anomali tespiti, elektronik harp ve karıştırma koşullarında suüstü nesnelerinin gerçek zamanlı tespit ve sınıflandırılması, yapay zekâ destekli taktik resim üretimi, deniz seyrüsefer desteği, platform emniyeti, akıllı izleme, sesli asistan ve deniz topçu ateş etkinliği tahminini yer alıyor. Bu özellikler, operatörleri daha hızlı ve ADVENT-AI, yapay zekâ destekli karar katmanı ile deniz harekâtında çalışan operatörleri yardımcı olmak için çeşitli özellikler sunuyor: iz seviyesinde anomali tespiti, elektronik harp ve karıştırma koşullarında suüstü nesnelerinin gerçek zamanlı tespit ve sınıflandırılması, yapay zekâ destekli taktik [SOURCE 1]",
         "gold_document": "advent_ai_kamuya_acik_arastirma.pdf",
         "gold_pages": [
           1
@@ -2082,12 +2067,7 @@
           {
             "document": "advent_ai_kamuya_acik_arastirma.pdf",
             "page": 1,
-            "score": 0.9226
-          },
-          {
-            "document": "advent_cms_kamuya_acik_arastirma.pdf",
-            "page": 1,
-            "score": 0.9193
+            "score": 0.9613
           },
           {
             "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -2097,15 +2077,20 @@
           {
             "document": "advent_cms.pdf",
             "page": 14,
-            "score": 0.1042
+            "score": 0.0305
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0161
           }
         ],
-        "latency_ms": 14328.753,
+        "latency_ms": 62195.089,
         "faithfulness": 4,
         "answer_relevance": 4,
         "completeness": 3,
         "correct": true,
-        "rationale": "Faithfulness 4 karena tüm claims destekleniyor, ancak bazı details missing. Answer relevance 4 because direct answers veriliyor, ancak bazı details eksik. Completeness 3 because bazı requested facts yok.",
+        "rationale": "Sadece bazı özelliklere odaklanıldığı için completeness 3 olarak belirlendi. Özetle, RAG projesi ve açıklanan özellikler gold evidence olarak kabul edilirken, tüm detailsin tam olarak present edildiği için faithfulness ve answer_relevance 4 olarak belirlendi.",
         "status": "completed",
         "strict_pass": true
       },
@@ -2125,7 +2110,7 @@
             "score": 1.0
           }
         ],
-        "latency_ms": 1.857,
+        "latency_ms": 3.611,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
@@ -2137,7 +2122,7 @@
       {
         "case_id": "main_maintenance_paraphrase",
         "question": "Bakım personeli doğal dille yardım istediğinde hangi yerel asistan devreye girer?",
-        "answer": "MAIN bakım ve karar destek asistanı, bakım personeline doğal dil etkileşimiyle operasyonel güvenlik/doğrulamaya katkıda bulunan bir yerel asistan devreye girer. [SOURCE 1]",
+        "answer": "Bakım personeli doğal dille yardım istediğinde MAIN platformu tarafından geliştirilmiş bir yerel asistan devreye girer. [SOURCE 1]",
         "gold_document": "advent_ai_kamuya_acik_arastirma.pdf",
         "gold_pages": [
           1
@@ -2147,30 +2132,30 @@
           {
             "document": "advent_ai_kamuya_acik_arastirma.pdf",
             "page": 1,
-            "score": 0.1943
+            "score": 0.0557
           },
           {
             "document": "advent_cms_kamuya_acik_arastirma.pdf",
             "page": 1,
-            "score": 0.0023
+            "score": 0.0001
+          },
+          {
+            "document": "advent_cms.pdf",
+            "page": 3,
+            "score": 0.0154
           },
           {
             "document": "advent_cms_kamuya_acik_arastirma.pdf",
             "page": 2,
-            "score": 0.0006
-          },
-          {
-            "document": "advent_cms.pdf",
-            "page": 4,
-            "score": 0.0
+            "score": 0.0149
           }
         ],
-        "latency_ms": 39881.137,
-        "faithfulness": 4,
-        "answer_relevance": 4,
+        "latency_ms": 27847.905,
+        "faithfulness": 5,
+        "answer_relevance": 5,
         "completeness": 4,
         "correct": true,
-        "rationale": "RAG projesi ve kamuya açık kaynaklar ile desteklenen MAIN bakım ve karar destek asistanı hakkında bilgi verilmektedir.",
+        "rationale": "Sadece MAIN platformu tarafından geliştirilmiş bir yerel asistan devreye girer.",
         "status": "completed",
         "strict_pass": true
       },
@@ -2190,7 +2175,7 @@
             "score": 1.0
           }
         ],
-        "latency_ms": 0.545,
+        "latency_ms": 1.562,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 4,
@@ -2215,7 +2200,7 @@
             "score": 1.0
           }
         ],
-        "latency_ms": 0.276,
+        "latency_ms": 1.556,
         "faithfulness": 5,
         "answer_relevance": 5,
         "completeness": 5,
@@ -2227,7 +2212,7 @@
       {
         "case_id": "undersea_decision_support",
         "question": "Kamuya açık denizaltı harbi karar destek sistemi hangi verileri birleştirir?",
-        "answer": "Kamuya Açık Denizaltı Harbi Karar Destek Sistemi, çevresel analiz, arama planlama, kuvvet yönetimi ve ortak taktik resim gibi verileri birleştirerek denizaltı savunma harbi kuvvetlerinin işbirlik [SOURCE 1]",
+        "answer": "Kamuya Açık Denizaltı Harbi Karar Destek Sistemi, çevresel analiz, arama planlama, kuvvet yönetimi, ortak taktik resim, sensör iz ve ölçümleri, otomatik ve manuel platformlar arası iz füzyonu gibi işlevlerde veriyi çok alanlı harekât destekler. [SOURCE 1]",
         "gold_document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
         "gold_pages": [
           2
@@ -2237,20 +2222,285 @@
           {
             "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
             "page": 1,
-            "score": 0.454
+            "score": 0.2516
           },
           {
             "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
             "page": 2,
-            "score": 0.0003
+            "score": 0.0006
           }
         ],
-        "latency_ms": 44780.086,
+        "latency_ms": 29206.549,
+        "faithfulness": 5,
+        "answer_relevance": 5,
+        "completeness": 5,
+        "correct": true,
+        "rationale": "Sadece gold evidence kullanılıyor ve tüm supported facts coverage está.",
+        "status": "completed",
+        "strict_pass": true
+      },
+      {
+        "case_id": "combat_system_relationship",
+        "question": "Savaş sistemleriyle ADVENT arasındaki ilişki tam olarak nedir?",
+        "answer": "ADVENT, savaş sistemlerinden bağımsız bir yardımcı araç değil; sensör ve silah entegrasyonu, iz yönetimi, taktik karar desteği, silah kontrolü ve ortak taktik resim işlevlerini bir araya getiren ağ destekli, veri entegre bir Savaş Yönetim Sistemidir [SOURCE 1]. ",
+        "gold_document": "advent_cms_kamuya_acik_arastirma.pdf",
+        "gold_pages": [
+          1
+        ],
+        "gold_source_used": true,
+        "sources": [
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 1.0
+          }
+        ],
+        "latency_ms": 6.36,
         "faithfulness": 3,
         "answer_relevance": 3,
         "completeness": 3,
         "correct": true,
-        "rationale": "Sadece kamuya açık kaynaklar ve RAG prototipinin ilkeleri ile uyumlu olan bilgiye dayanır.",
+        "rationale": "Savaş sistemleriyle ADVENT arasındaki ilişki tam olarak nedir? ADVENT, savaş sistemlerinden bağımsız bir yardımcı araç değil; sensör ve silah entegrasyonu, iz yönetimi, taktik karar desteği, silah kontrolü ve ortak taktik resim işlevlerini bir araya getiren ağ destekli, veri entegre bir Savaş Yönetim Sistemidir.",
+        "status": "completed",
+        "strict_pass": true
+      },
+      {
+        "case_id": "sopa_behavioral_recommendations",
+        "question": "Operatörün geçmiş kararlarına bakıp tavsiye veren ADVENT yeteneği hangisidir?",
+        "answer": "ADVENT yetanesi, SOPA (Smart Operator Assistant) tarafından kullanılan bir yapay zeka modelüdür ve operatörün geçmiş kararlarına ve davranışlarına dayanarak tavsiye vermektedir. [SOURCE 1]",
+        "gold_document": "advent_cms.pdf",
+        "gold_pages": [
+          31
+        ],
+        "gold_source_used": true,
+        "sources": [
+          {
+            "document": "advent_cms.pdf",
+            "page": 31,
+            "score": 0.0359
+          },
+          {
+            "document": "advent_ai_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0099
+          },
+          {
+            "document": "advent_cms.pdf",
+            "page": 8,
+            "score": 0.0297
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0161
+          }
+        ],
+        "latency_ms": 36153.265,
+        "faithfulness": 4,
+        "answer_relevance": 4,
+        "completeness": 4,
+        "correct": true,
+        "rationale": "Faithful to the gold evidence, directly answers the question and covers all requested supported facts.",
+        "status": "completed",
+        "strict_pass": true
+      },
+      {
+        "case_id": "tactical_links_extended",
+        "question": "Link 11 ve Link 16 dışında kamuya açık broşürde hangi taktik veri bağları sayılıyor?",
+        "answer": "Kaynakta soruyla ilgili şu bilgi yer alıyor: Sistem; sensör ve silah entegrasyonu, iz yönetimi, taktik karar desteği, silah kontrolü, ortak taktik resim, eğitim ve simülasyon gibi savaş yönetimi işlevlerini bütünleştirir. HAVELSAN'ın kamuya açık ürün sayfasına göre ADVENT; küçük botlardan komuta merkezlerine kadar farklı büyüklükteki yapılara ölçeklenebilir. Link 11, Link 16, Link 22, SIMPLE, JREAP ve VMF gibi taktik veri bağlantılarını desteklediği ve NATO standartlarıyla uyumluluk hedefle [SOURCE 1]",
+        "gold_document": "advent_cms.pdf",
+        "gold_pages": [
+          12
+        ],
+        "gold_source_used": true,
+        "sources": [
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.9152
+          },
+          {
+            "document": "advent_cms.pdf",
+            "page": 12,
+            "score": 0.4016
+          },
+          {
+            "document": "advent_ai_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0292
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 2,
+            "score": 0.0159
+          }
+        ],
+        "latency_ms": 37184.938,
+        "faithfulness": 5,
+        "answer_relevance": 5,
+        "completeness": 5,
+        "correct": true,
+        "rationale": "All claims supported, directly answers, and covers requested facts with gold evidence.",
+        "status": "completed",
+        "strict_pass": true
+      },
+      {
+        "case_id": "cms_scalability",
+        "question": "ADVENT küçük botlardan komuta merkezlerine kadar ölçeklenebilir mi?",
+        "answer": "ADVENT ürün ailesinin tek tek optimize edilmesi yerine görev kuvvetinin birlikte çalışmasına, ağ destekli yeteneklere ve müşterek görev icrasına odaklanmasıdır. Bu nedenle, ADVENT küçük botlardan komuta merkezlerine kadar ölçeklenebilir olabilir. [SOURCE 2: advent_cms_kamuya_acik_arastirma.pdf, page 1]",
+        "gold_document": "advent_cms_kamuya_acik_arastirma.pdf",
+        "gold_pages": [
+          1
+        ],
+        "gold_source_used": true,
+        "sources": [
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 2,
+            "score": 0.0015
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.9988
+          },
+          {
+            "document": "advent_ai_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0161
+          },
+          {
+            "document": "advent_cms.pdf",
+            "page": 4,
+            "score": 0.0156
+          }
+        ],
+        "latency_ms": 42841.444,
+        "faithfulness": 3,
+        "answer_relevance": 3,
+        "completeness": 3,
+        "correct": true,
+        "rationale": "Sorguya direct olarak cevap veren ve ilgili destekleyici evidenceyi sunan bir cevaptır.",
+        "status": "completed",
+        "strict_pass": true
+      },
+      {
+        "case_id": "main_closed_network",
+        "question": "MAIN internet olmadan kapalı ağda çalışabilecek şekilde açıklanmış mı?",
+        "answer": "MAIN internet bağlantısı olmadan kapalı ağlarda çalışabilmesi, rol tabanlı erişim kontrolü ve veri gizliliği özellikleri ile açıklanmıştır. [SOURCE 1]",
+        "gold_document": "advent_ai_kamuya_acik_arastirma.pdf",
+        "gold_pages": [
+          1
+        ],
+        "gold_source_used": true,
+        "sources": [
+          {
+            "document": "advent_ai_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0174
+          },
+          {
+            "document": "advent_ai_kamuya_acik_arastirma.pdf",
+            "page": 2,
+            "score": 0.0
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 2,
+            "score": 0.0302
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0159
+          }
+        ],
+        "latency_ms": 26158.908,
+        "faithfulness": 4,
+        "answer_relevance": 4,
+        "completeness": 4,
+        "correct": true,
+        "rationale": "RAG projesi, MAIN'in kendisi değildir; yalnız kamuya açık dokümanlarla çalışan yerel bir araştırma prototipidir. Kamuya açıklanan AI kullanım alanları HAVELSAN, ADVENT bağlamında tehditlerin kimliklendirilmesi ve sınıflandırılması, anomali tespiti, seyrüsefer emniyeti, durumsal farkındalık, akıllı eğitim ve simülasyon desteği gibi alanları belirtir.",
+        "status": "completed",
+        "strict_pass": true
+      },
+      {
+        "case_id": "common_training_virtual",
+        "question": "ADVENT ortak sanal ortamda müşterek eğitimi nasıl destekliyor?",
+        "answer": "ADVENT, müşterek eğitim için ortak sanal ortamlarda güçlü eğitime erişim sağlar. Bu, virtual ortamlar aracılığıyla individual kamyon ve multiple kamyonların arasında paylaşılabilir görevleri gerçekleştirmeyi destekler. [SOURCE 1]",
+        "gold_document": "advent_cms.pdf",
+        "gold_pages": [
+          11
+        ],
+        "gold_source_used": true,
+        "sources": [
+          {
+            "document": "advent_cms.pdf",
+            "page": 16,
+            "score": 0.0523
+          },
+          {
+            "document": "advent_cms.pdf",
+            "page": 30,
+            "score": 0.0071
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 2,
+            "score": 0.0164
+          },
+          {
+            "document": "advent_cms.pdf",
+            "page": 11,
+            "score": 0.0164
+          }
+        ],
+        "latency_ms": 30403.161,
+        "faithfulness": 5,
+        "answer_relevance": 5,
+        "completeness": 5,
+        "correct": true,
+        "rationale": "Directly answers the question and covers all requested supported facts with gold evidence.",
+        "status": "completed",
+        "strict_pass": true
+      },
+      {
+        "case_id": "ai_public_data_boundary",
+        "question": "ADVENT AI kamu araştırma paketinin içermediği veri türleri nelerdir?",
+        "answer": "ADVENT AI Kamuya Açık Araştırma paketi şirket içi eğitim verileri, mimari ayrıntıları, algoritma parametreleri ve operasyonel verilere sahiptir. Paketin kapsamı yalnızca HAVELSAN'ın kamuya açık açıklamalarından türetilmiştir. [SOURCE 1]",
+        "gold_document": "advent_ai_kamuya_acik_arastirma.pdf",
+        "gold_pages": [
+          1
+        ],
+        "gold_source_used": true,
+        "sources": [
+          {
+            "document": "advent_ai_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.7935
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 1,
+            "score": 0.0511
+          },
+          {
+            "document": "advent_cms_kamuya_acik_arastirma.pdf",
+            "page": 2,
+            "score": 0.0313
+          },
+          {
+            "document": "advent_ai_kamuya_acik_arastirma.pdf",
+            "page": 2,
+            "score": 0.0299
+          }
+        ],
+        "latency_ms": 39768.935,
+        "faithfulness": 4,
+        "answer_relevance": 4,
+        "completeness": 4,
+        "correct": true,
+        "rationale": "Faithfulness: Tüm claims destekleniyor, answer_relevance: Soru direct olarak cevaplıyor, completeness: Tüm requested supported facts coverage doing",
         "status": "completed",
         "strict_pass": true
       }
@@ -2258,7 +2508,7 @@
   },
   "stage3": {
     "method": {
-      "positive_cases": 23,
+      "positive_cases": 30,
       "limit": 6,
       "chunk_sizes": [
         450,
@@ -2273,14 +2523,14 @@
         "chunk_size": 450,
         "overlap": 75,
         "chunk_count": 136,
-        "build_seconds": 43.086,
-        "mean_term_coverage": 0.9565,
-        "evaluated": 23,
+        "build_seconds": 11.501,
+        "mean_term_coverage": 0.9667,
+        "evaluated": 30,
         "hit_at_k": 1.0,
-        "mrr": 0.9348,
-        "latency_mean_ms": 2.27,
-        "latency_p50_ms": 2.265,
-        "latency_p95_ms": 3.405,
+        "mrr": 0.9333,
+        "latency_mean_ms": 1.465,
+        "latency_p50_ms": 1.063,
+        "latency_p95_ms": 3.992,
         "status": "completed"
       },
       {
@@ -2288,14 +2538,14 @@
         "chunk_size": 450,
         "overlap": 75,
         "chunk_count": 136,
-        "build_seconds": 43.086,
-        "mean_term_coverage": 0.913,
-        "evaluated": 23,
-        "hit_at_k": 0.913,
-        "mrr": 0.692,
-        "latency_mean_ms": 53.032,
-        "latency_p50_ms": 52.677,
-        "latency_p95_ms": 73.157,
+        "build_seconds": 11.501,
+        "mean_term_coverage": 0.9,
+        "evaluated": 30,
+        "hit_at_k": 0.9,
+        "mrr": 0.6817,
+        "latency_mean_ms": 50.617,
+        "latency_p50_ms": 43.733,
+        "latency_p95_ms": 114.012,
         "status": "completed"
       },
       {
@@ -2303,14 +2553,14 @@
         "chunk_size": 450,
         "overlap": 75,
         "chunk_count": 136,
-        "build_seconds": 43.086,
-        "mean_term_coverage": 0.9565,
-        "evaluated": 23,
+        "build_seconds": 11.501,
+        "mean_term_coverage": 0.9667,
+        "evaluated": 30,
         "hit_at_k": 1.0,
-        "mrr": 0.8565,
-        "latency_mean_ms": 47.088,
-        "latency_p50_ms": 45.195,
-        "latency_p95_ms": 65.936,
+        "mrr": 0.8511,
+        "latency_mean_ms": 51.834,
+        "latency_p50_ms": 49.917,
+        "latency_p95_ms": 79.165,
         "status": "completed"
       },
       {
@@ -2318,14 +2568,14 @@
         "chunk_size": 900,
         "overlap": 150,
         "chunk_count": 67,
-        "build_seconds": 16.035,
+        "build_seconds": 12.319,
         "mean_term_coverage": 1.0,
-        "evaluated": 23,
+        "evaluated": 30,
         "hit_at_k": 1.0,
-        "mrr": 0.8986,
-        "latency_mean_ms": 1.411,
-        "latency_p50_ms": 1.356,
-        "latency_p95_ms": 2.122,
+        "mrr": 0.9056,
+        "latency_mean_ms": 1.096,
+        "latency_p50_ms": 0.933,
+        "latency_p95_ms": 1.953,
         "status": "completed"
       },
       {
@@ -2333,14 +2583,14 @@
         "chunk_size": 900,
         "overlap": 150,
         "chunk_count": 67,
-        "build_seconds": 16.035,
-        "mean_term_coverage": 0.9348,
-        "evaluated": 23,
-        "hit_at_k": 0.913,
-        "mrr": 0.808,
-        "latency_mean_ms": 49.484,
-        "latency_p50_ms": 47.678,
-        "latency_p95_ms": 72.272,
+        "build_seconds": 12.319,
+        "mean_term_coverage": 0.9167,
+        "evaluated": 30,
+        "hit_at_k": 0.9,
+        "mrr": 0.7583,
+        "latency_mean_ms": 41.895,
+        "latency_p50_ms": 38.337,
+        "latency_p95_ms": 60.399,
         "status": "completed"
       },
       {
@@ -2348,14 +2598,14 @@
         "chunk_size": 900,
         "overlap": 150,
         "chunk_count": 67,
-        "build_seconds": 16.035,
+        "build_seconds": 12.319,
         "mean_term_coverage": 1.0,
-        "evaluated": 23,
+        "evaluated": 30,
         "hit_at_k": 1.0,
-        "mrr": 0.8841,
-        "latency_mean_ms": 48.923,
-        "latency_p50_ms": 45.571,
-        "latency_p95_ms": 73.689,
+        "mrr": 0.8361,
+        "latency_mean_ms": 39.835,
+        "latency_p50_ms": 37.634,
+        "latency_p95_ms": 54.518,
         "status": "completed"
       },
       {
@@ -2363,14 +2613,14 @@
         "chunk_size": 900,
         "overlap": 150,
         "chunk_count": 67,
-        "build_seconds": 16.035,
+        "build_seconds": 12.319,
         "mean_term_coverage": 1.0,
-        "evaluated": 23,
+        "evaluated": 30,
         "hit_at_k": 1.0,
-        "mrr": 0.6268,
-        "latency_mean_ms": 5569.205,
-        "latency_p50_ms": 4901.636,
-        "latency_p95_ms": 9773.362,
+        "mrr": 0.8361,
+        "latency_mean_ms": 1789.568,
+        "latency_p50_ms": 1646.062,
+        "latency_p95_ms": 3230.697,
         "status": "completed"
       },
       {
@@ -2378,14 +2628,14 @@
         "chunk_size": 900,
         "overlap": 150,
         "chunk_count": 67,
-        "build_seconds": 16.035,
+        "build_seconds": 12.319,
         "mean_term_coverage": 1.0,
-        "evaluated": 23,
+        "evaluated": 30,
         "hit_at_k": 1.0,
-        "mrr": 0.8841,
-        "latency_mean_ms": 1759.573,
-        "latency_p50_ms": 1714.06,
-        "latency_p95_ms": 2359.12,
+        "mrr": 0.8361,
+        "latency_mean_ms": 1789.784,
+        "latency_p50_ms": 1919.058,
+        "latency_p95_ms": 2336.731,
         "status": "completed"
       },
       {
@@ -2393,14 +2643,14 @@
         "chunk_size": 1350,
         "overlap": 225,
         "chunk_count": 48,
-        "build_seconds": 18.334,
+        "build_seconds": 11.235,
         "mean_term_coverage": 1.0,
-        "evaluated": 23,
+        "evaluated": 30,
         "hit_at_k": 1.0,
-        "mrr": 0.8261,
-        "latency_mean_ms": 4.887,
-        "latency_p50_ms": 1.044,
-        "latency_p95_ms": 5.014,
+        "mrr": 0.8667,
+        "latency_mean_ms": 1.03,
+        "latency_p50_ms": 0.954,
+        "latency_p95_ms": 1.702,
         "status": "completed"
       },
       {
@@ -2408,14 +2658,14 @@
         "chunk_size": 1350,
         "overlap": 225,
         "chunk_count": 48,
-        "build_seconds": 18.334,
-        "mean_term_coverage": 0.9348,
-        "evaluated": 23,
-        "hit_at_k": 0.9565,
-        "mrr": 0.7681,
-        "latency_mean_ms": 55.54,
-        "latency_p50_ms": 39.329,
-        "latency_p95_ms": 89.032,
+        "build_seconds": 11.235,
+        "mean_term_coverage": 0.9167,
+        "evaluated": 30,
+        "hit_at_k": 0.9333,
+        "mrr": 0.7389,
+        "latency_mean_ms": 91.205,
+        "latency_p50_ms": 83.317,
+        "latency_p95_ms": 164.624,
         "status": "completed"
       },
       {
@@ -2423,14 +2673,14 @@
         "chunk_size": 1350,
         "overlap": 225,
         "chunk_count": 48,
-        "build_seconds": 18.334,
-        "mean_term_coverage": 0.9565,
-        "evaluated": 23,
-        "hit_at_k": 0.9565,
-        "mrr": 0.8913,
-        "latency_mean_ms": 33.756,
-        "latency_p50_ms": 34.449,
-        "latency_p95_ms": 39.583,
+        "build_seconds": 11.235,
+        "mean_term_coverage": 0.9667,
+        "evaluated": 30,
+        "hit_at_k": 0.9667,
+        "mrr": 0.8556,
+        "latency_mean_ms": 46.33,
+        "latency_p50_ms": 42.813,
+        "latency_p95_ms": 65.452,
         "status": "completed"
       }
     ]
@@ -3747,5 +3997,5 @@
       }
     ]
   },
-  "runtime_seconds": 1689.156
+  "runtime_seconds": 237.02
 }

@@ -7,10 +7,12 @@
   döngüsü, hibrit RAG hattı, yerel model davranışı, güvenlik, kullanıcı arayüzü,
   kurulum, test kanıtları, Git akışı, sorun giderme, yol haritası, sunum planı ve
   terimler sözlüğünü kapsayan nihai Word belgesidir.
+  Güncel sürüm; 69/69 otomatik test, 45 vakalık altın benchmark, 30/30 bağımsız cevap hakemi,
+  PDF sayfa önizlemesi ve gizlilik korumalı audit mimarisini de içerir.
 
 - `CMS-RAG_Nihai_Proje_Sunumu.pptx`  
   16:9 oranında, 17 slayttan oluşan sunum dosyasıdır. Mimari, RAG pipeline,
-  güven modeli, konuşma izolasyonu, test skorları, Git akışı, kurulum, yol
+  güven modeli, konuşma izolasyonu, güncel test skorları, audit, Git akışı, kurulum, yol
   haritası ve canlı demo senaryosu yerleşik şekil ve diyagramlarla anlatılır.
 
 ## Sunum önerisi

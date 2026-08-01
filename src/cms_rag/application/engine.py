@@ -6,6 +6,7 @@ import os
 import re
 from collections.abc import Iterator
 from pathlib import Path
+from time import perf_counter
 
 from ollama import Client
 
@@ -13,6 +14,7 @@ from ..domain.evidence import EvidenceResponder
 from ..domain.models import SearchHit
 from ..domain.query import CMSQueryProcessor
 from ..infrastructure.ingest import MarkdownIngestor, PDFIngestor
+from ..infrastructure.audit import AuditStore
 from ..infrastructure.knowledge import (
     load_curated_chunks,
     supplemental_document_paths,
@@ -36,6 +38,7 @@ class CMSRAGEngine:
         self.data_dir = data_dir
         self.model = model or os.getenv("CMS_RAG_MODEL", "qwen2.5:3b")
         self._ollama = Client(timeout=120.0)
+        self.audit = AuditStore(data_dir / "audit")
         self.retriever: HybridRetriever | None = None
         self.history: list[dict[str, str]] = []
         self.snapshot_loaded = False
@@ -118,30 +121,58 @@ class CMSRAGEngine:
     def stream_ask(self, question: str, scope: str = "all") -> tuple[Iterator[str], list[SearchHit]]:
         """Soruyu kanıt kuralları, retrieval ve Ollama sırasıyla akışlı cevaplar."""
 
+        started_at = perf_counter()
         if not self.retriever:
             return self._completed(
                 question,
                 "\u00d6nce resm\u00ee PDF dok\u00fcman\u0131n\u0131 y\u00fckleyip indeksleyin.",
                 scope,
+                started_at=started_at,
+                generation_mode="unavailable",
             ), []
 
         # Alan dışı sohbeti erken reddetmek gecikmeyi ve belgesiz üretim riskini azaltır.
         if CMSQueryProcessor.is_non_domain_chitchat(question):
-            return self._completed(question, NO_ANSWER, scope), []
+            return self._completed(
+                question,
+                NO_ANSWER,
+                scope,
+                started_at=started_at,
+                generation_mode="safe_rejection",
+            ), []
         scoped_history = self._history_for(scope)
         evidence_chunks = [chunk for chunk in self.retriever.chunks if scope == "all" or chunk.collection == scope]
         # Açıkça belgelenmiş sık sorular model belirsizliğine bırakılmadan cevaplanır.
         evidence_answer = EvidenceResponder.answer(question, scoped_history, evidence_chunks)
         if evidence_answer:
             answer, hits = evidence_answer
-            return self._completed(question, answer, scope), hits
+            return self._completed(
+                question,
+                answer,
+                scope,
+                hits=hits,
+                started_at=started_at,
+                generation_mode="evidence_rule",
+            ), hits
 
         retrieval_query = CMSQueryProcessor.expand(self.build_retrieval_query(question, scope))
         hits = self.retriever.search(retrieval_query, scope=scope)
         if not self.retriever.is_answerable(retrieval_query, hits):
-            return self._completed(question, NO_ANSWER, scope), []
+            return self._completed(
+                question,
+                NO_ANSWER,
+                scope,
+                started_at=started_at,
+                generation_mode="evidence_gate",
+            ), []
         prompt = self._prompt(question, hits, scope)
-        return self._ollama_stream(question, prompt, hits, scope), hits
+        return self._ollama_stream(
+            question,
+            prompt,
+            hits,
+            scope,
+            started_at=started_at,
+        ), hits
 
     def clear_chat(self) -> None:
         """Motorun kapsam etiketli kısa konuşma belleğini temizler."""
@@ -246,7 +277,16 @@ QUESTION
         )
         return f"Kaynakta soruyla ilgili şu bilgi yer alıyor: {excerpt} [SOURCE 1]"
 
-    def _completed(self, question: str, answer: str, scope: str = "all") -> Iterator[str]:
+    def _completed(
+        self,
+        question: str,
+        answer: str,
+        scope: str = "all",
+        *,
+        hits: list[SearchHit] | None = None,
+        started_at: float | None = None,
+        generation_mode: str = "deterministic",
+    ) -> Iterator[str]:
         """Hazır cevabı kelime kelime yayınlayan ve sonunda belleğe alan akış kurar."""
 
         def iterator() -> Iterator[str]:
@@ -255,6 +295,14 @@ QUESTION
             for word in answer.split(" "):
                 yield f"{word} "
             self._remember(question, answer, scope)
+            self._record_audit(
+                question,
+                answer,
+                hits or [],
+                scope,
+                started_at,
+                generation_mode,
+            )
         return iterator()
 
     def _ollama_stream(
@@ -263,6 +311,8 @@ QUESTION
         prompt: str,
         hits: list[SearchHit],
         scope: str = "all",
+        *,
+        started_at: float | None = None,
     ) -> Iterator[str]:
         """Ollama akışını yayınlar, kaynak işaretini garanti eder ve hatayı anlaşılır kılar."""
 
@@ -360,7 +410,61 @@ QUESTION
                 answer = "Yerel Ollama servisine ula\u015f\u0131lamad\u0131. `ollama serve` komutunu \u00e7al\u0131\u015ft\u0131r\u0131n."
                 yield answer
             self._remember(question, answer, scope)
+            self._record_audit(
+                question,
+                answer,
+                hits if "ula\u015f\u0131lamad\u0131" not in answer else [],
+                scope,
+                started_at,
+                "ollama",
+            )
         return iterator()
+
+    def _record_audit(
+        self,
+        question: str,
+        answer: str,
+        hits: list[SearchHit],
+        scope: str,
+        started_at: float | None,
+        generation_mode: str,
+    ) -> None:
+        """Yanıt akışını bozmadan gizlilik korumalı işletim olayını kaydeder."""
+
+        if generation_mode == "unavailable":
+            outcome = "unavailable"
+        elif answer == NO_ANSWER:
+            outcome = "unsupported"
+        elif "Ollama servisine ula\u015f\u0131lamad\u0131" in answer:
+            outcome = "service_error"
+        else:
+            outcome = "grounded"
+        sources = [
+            {
+                "document": hit.chunk.document,
+                "page": hit.chunk.page,
+                "collection": hit.chunk.collection,
+            }
+            for hit in hits
+        ]
+        latency_ms = (
+            (perf_counter() - started_at) * 1000 if started_at is not None else 0.0
+        )
+        try:
+            self.audit.record(
+                question=question,
+                scope=scope,
+                model=self.model,
+                outcome=outcome,
+                latency_ms=latency_ms,
+                sources=sources,
+                answer_chars=len(answer),
+                citation_present="[SOURCE" in answer.upper(),
+                generation_mode=generation_mode,
+            )
+        except OSError:
+            # Audit diski kullanılamazsa kullanıcı yanıtı yine tamamlanır.
+            return
 
     def _remember(self, question: str, answer: str, scope: str = "all") -> None:
         """Son üç turu kapsamıyla saklayarak sınırsız bağlam büyümesini önler."""

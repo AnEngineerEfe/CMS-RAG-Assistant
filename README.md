@@ -37,6 +37,7 @@ anında web taraması gerekmez.
 - Her mesajla kalıcı kanıt kartları ve kaynak sayfası
 - Kanıt kartından ilgili yerel PDF sayfasının görsel önizlemesi ve güvenli indirme
 - Altın set, LLM hakemi ve FAISS/pgvector sonuçlarını gösteren değerlendirme merkezi
+- Ham soru/cevap saklamayan SHA-256 özetli yerel audit ve işletim görünürlüğü
 - Dört PDF kaynağı ve gürültüden arındırılmış 67 chunk içeren sürümlenmiş snapshot
 - Normal kullanımda belge embeddinglerini yeniden hesaplamayan hızlı açılış
 - Çalışma anında kapalı web erişimi ve yalnız yerel üretim
@@ -158,7 +159,7 @@ Ayrıntılı tasarım için [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), dal ve
 sürüm politikası için [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md), test
 kanıtları için [docs/TEST_EVIDENCE.md](docs/TEST_EVIDENCE.md) dosyasına bakın.
 
-Bilgi kapsamı [docs/COVERAGE_MATRIX.md](docs/COVERAGE_MATRIX.md), 33 vakalık
+Bilgi kapsamı [docs/COVERAGE_MATRIX.md](docs/COVERAGE_MATRIX.md), 45 vakalık
 bilimsel kabul hattı ise
 [docs/BENCHMARK_METHODOLOGY.md](docs/BENCHMARK_METHODOLOGY.md) içinde
 açıklanmıştır.
