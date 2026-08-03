@@ -15,12 +15,14 @@ from ..domain.models import SearchHit
 from ..domain.query import CMSQueryProcessor
 from ..infrastructure.ingest import MarkdownIngestor, PDFIngestor
 from ..infrastructure.audit import AuditStore
+from ..infrastructure.live_evaluation import LiveEvaluationStore
 from ..infrastructure.knowledge import (
     load_curated_chunks,
     supplemental_document_paths,
 )
 from ..infrastructure.retrieval import HybridRetriever
 from ..infrastructure.storage import DocumentStore
+from .live_evaluation import LiveEvaluationAssessor
 
 
 NO_ANSWER = "Bu soruyu destekleyecek yeterli kaynak bulunamad\u0131."
@@ -39,6 +41,8 @@ class CMSRAGEngine:
         self.model = model or os.getenv("CMS_RAG_MODEL", "qwen2.5:3b")
         self._ollama = Client(timeout=120.0)
         self.audit = AuditStore(data_dir / "audit")
+        self.live_evaluations = LiveEvaluationStore(data_dir / "evaluation")
+        self.live_assessor = LiveEvaluationAssessor(data_dir.parent)
         self.retriever: HybridRetriever | None = None
         self.history: list[dict[str, str]] = []
         self.snapshot_loaded = False
@@ -162,6 +166,7 @@ class CMSRAGEngine:
                 question,
                 NO_ANSWER,
                 scope,
+                hits=hits,
                 started_at=started_at,
                 generation_mode="evidence_gate",
             ), []
@@ -462,7 +467,18 @@ QUESTION
                 citation_present="[SOURCE" in answer.upper(),
                 generation_mode=generation_mode,
             )
-        except OSError:
+            live_event = self.live_assessor.assess(
+                question=question,
+                answer=answer,
+                model=self.model,
+                scope=scope,
+                outcome=outcome,
+                hits=hits,
+                latency_ms=latency_ms,
+                generation_mode=generation_mode,
+            )
+            self.live_evaluations.record(live_event)
+        except (OSError, ValueError, TypeError):
             # Audit diski kullanılamazsa kullanıcı yanıtı yine tamamlanır.
             return
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from io import BytesIO
 from typing import Any
 
 import streamlit as st
@@ -27,9 +28,18 @@ def resolve_local_pdf(source_path: str, data_dir: Path = DATA_DIR) -> Path | Non
 
 @st.cache_data(show_spinner=False)
 def render_pdf_page(source_path: str, page_number: int, mtime_ns: int) -> bytes:
-    """PDF'in istenen sayfasını önbelleklenebilir PNG verisine dönüştürür."""
+    """PDF sayfasını PyMuPDF veya taşınabilir PDFium yedeğiyle PNG'ye dönüştürür."""
 
     del mtime_ns
+    try:
+        return _render_with_pymupdf(source_path, page_number)
+    except (ImportError, OSError):
+        return _render_with_pdfium(source_path, page_number)
+
+
+def _render_with_pymupdf(source_path: str, page_number: int) -> bytes:
+    """PyMuPDF kullanılabiliyorsa hızlı sayfa görüntüsü üretir."""
+
     import fitz
 
     with fitz.open(source_path) as document:
@@ -39,6 +49,27 @@ def render_pdf_page(source_path: str, page_number: int, mtime_ns: int) -> bytes:
         page = document.load_page(page_index)
         pixmap = page.get_pixmap(matrix=fitz.Matrix(1.45, 1.45), alpha=False)
         return pixmap.tobytes("png")
+
+
+def _render_with_pdfium(source_path: str, page_number: int) -> bytes:
+    """Windows DLL sorunu yaşandığında PDFium ile aynı PNG çıktısını üretir."""
+
+    import pypdfium2 as pdfium
+
+    document = pdfium.PdfDocument(source_path)
+    if not len(document):
+        document.close()
+        raise ValueError("PDF içinde görüntülenecek sayfa bulunamadı.")
+    page_index = min(max(page_number - 1, 0), len(document) - 1)
+    page = document[page_index]
+    bitmap = page.render(scale=1.45)
+    image = bitmap.to_pil()
+    stream = BytesIO()
+    image.save(stream, format="PNG")
+    bitmap.close()
+    page.close()
+    document.close()
+    return stream.getvalue()
 
 
 @st.dialog("Kanıt sayfası", width="large")

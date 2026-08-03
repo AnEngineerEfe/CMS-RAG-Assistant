@@ -36,7 +36,9 @@ anında web taraması gerekmez.
 - Ollama üzerinden yerel ve akışlı yanıt üretimi
 - Her mesajla kalıcı kanıt kartları ve kaynak sayfası
 - Kanıt kartından ilgili yerel PDF sayfasının görsel önizlemesi ve güvenli indirme
-- Altın set, LLM hakemi ve FAISS/pgvector sonuçlarını gösteren değerlendirme merkezi
+- Her tamamlanan soru için input, output, kullanılan model/motor, chunk doğruluğu ve
+  TP/TN/FP/FN etiketini otomatik kaydeden canlı değerlendirme merkezi
+- Canlı sayaçlardan ayrı tutulan altın set, LLM hakemi ve FAISS/pgvector referans raporları
 - Ham soru/cevap saklamayan SHA-256 özetli yerel audit ve işletim görünürlüğü
 - Dört PDF kaynağı ve gürültüden arındırılmış 67 chunk içeren sürümlenmiş snapshot
 - Normal kullanımda belge embeddinglerini yeniden hesaplamayan hızlı açılış
@@ -93,8 +95,10 @@ streamlit run app.py
 4. Yanıtın altındaki kanıt paketinden belgeyi, sayfayı, otoriteyi ve varsa
    kaynak URL'sini denetleyin.
 5. `Sayfa … · PDF önizle` ile kullanılan sayfanın görüntüsünü doğrudan açın.
-6. Sol paneldeki `Değerlendirme merkezi` üzerinden kayıtlı kalite sonuçlarını
-   ve altyapı karşılaştırmalarını inceleyin.
+6. Sol paneldeki `Değerlendirme merkezi` üzerinden o andan itibaren otomatik biriken
+   canlı test tablosunu, confusion matrix'i ve sürümlü referans raporlarını inceleyin.
+7. Canlı tabloyu gerektiğinde UTF-8 CSV olarak indirin veya yalnız bu deney kayıtlarını
+   `Canlı kayıtları sıfırla` düğmesiyle temizleyin.
 
 Ek PDF zorunlu değildir. Gerektiğinde `İsteğe bağlı ek belge` alanından yalnızca
 kamuya açık veya kullanım yetkiniz bulunan PDF eklenebilir. Aynı içerik ikinci

@@ -140,6 +140,8 @@ Bozuk veya metinsiz bir PDF tüm indeksleme işlemini çökertmez; belge atlanı
   `.pdf` dosyalarını kabul eder; dizin geçişi ve dış dosya erişimi reddedilir.
 - Yerel audit olayı ham soru, cevap veya belge metni saklamaz; sorguyu kısaltılmış
   SHA-256 özetiyle, sonucu ise kapsam, gecikme ve belge/sayfa metadatasıyla kaydeder.
+- Mentör değerlendirmesi için açıkça istenen ham input/output kayıtları audit'ten ayrı,
+  Git dışında tutulan `data/evaluation/live_tests.jsonl` deney deposunda saklanır.
 - Dosya adı depolama yolu olarak kullanılmaz; içerik hash'i kullanılır.
 - Kamuya açık resmî başlangıç broşürü dışında, yüklenen çalışma verisi sürüm
   kontrolü dışında tutulur.
@@ -153,10 +155,12 @@ iş akışı ve ağ çıkış politikası.
 Arayüz; hazır kaynak sayısı, toplam aktif belge, snapshot durumu, çalışma-anı web
 erişiminin kapalı olduğu, indeks parça sayısı, aktif model, arama yöntemi ve her
 yanıtın kanıt paketini gösterir. Kanıt sayfası yerel PDF görüntüsü olarak
-denetlenebilir. Değerlendirme merkezi; confusion matrix, Hit@6, MRR, gecikme,
-chunk rubriği, cevap hakemi ve FAISS/pgvector karşılaştırmasını sürümlü JSON
-raporlarından okur. İşletim/audit sekmesi olay sayısı, kaynaklı yanıt, güvenli
-ret, gecikme ve son olay metadatasını ham kullanıcı içeriği olmadan sunar.
+denetlenebilir. Değerlendirme merkezi her tamamlanan kullanıcı turunu input, output,
+model/üretim yolu, chunk kalite kararı ve TP/TN/FP/FN etiketiyle canlı tabloya ekler.
+Gerçek sınıf önce altın-set eşleşmesinden, eşleşme yoksa etiketi görünür bırakılan
+otomatik kanıt denetiminden gelir. Hit@6, MRR, chunk/cevap hakemi ve FAISS/pgvector
+sonuçları canlı sayaçlara karıştırılmadan ayrı referans sekmesinde gösterilir.
+İşletim/audit sekmesi ham kullanıcı içeriği olmadan operasyon metadatasını sunar.
 
 ## 10. Kod açıklama standardı
 

@@ -1,6 +1,7 @@
 streamlit>=1.45,<2
 pypdf>=6.0,<7
 pymupdf>=1.26,<2
+pypdfium2>=5.0,<6
 sentence-transformers>=5.0,<6
 faiss-cpu>=1.10,<2
 rank-bm25>=0.2,<1

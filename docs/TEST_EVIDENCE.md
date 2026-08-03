@@ -93,10 +93,10 @@ birlikte ayağa kalkabildiğini doğrular.
 
 ## Son doğrulama
 
-2026-08-02 tarihinde hazır bilgi tabanı kabul turunda:
+2026-08-03 tarihinde hazır bilgi tabanı ve canlı değerlendirme kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `69/69` başarılı
+- Otomatik testler: `72/72` başarılı
 - Retrieval kabul seti: `8/8` başarılı
 - Gerçek yanıt kabul seti: `7/7` başarılı
 - Altın benchmark: `45/45` başarılı (`30 TP / 15 TN / 0 FP / 0 FN`)

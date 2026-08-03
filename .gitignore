@@ -13,6 +13,7 @@ data/documents/manifest.json
 # Yerel/yeniden üretilebilir indeks ve loglar
 data/index/
 data/audit/
+data/evaluation/
 *.log
 
 # IDE ve işletim sistemi

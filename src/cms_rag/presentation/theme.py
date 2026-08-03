@@ -6,12 +6,15 @@ import streamlit as st
 _STYLES = """
 <style>
   :root {
-    --navy: #10213b;
-    --blue: #3267b1;
-    --ink: #17263d;
-    --muted: #66758d;
-    --line: #dce5f0;
+    --navy: #0d2342;
+    --blue: #255fa8;
+    --ink: #12233c;
+    --muted: #5d6f88;
+    --line: #d5e0ed;
     --surface: rgba(255, 255, 255, .94);
+  }
+  html, body, [class*="css"] {
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
   }
   .stApp {
     color: var(--ink);
@@ -21,14 +24,15 @@ _STYLES = """
   }
   [data-testid="stHeader"] { background: transparent; }
   [data-testid="stMainBlockContainer"] {
-    max-width: 1180px;
-    padding-top: 2.2rem;
+    max-width: 1320px;
+    padding-top: 2rem;
     padding-bottom: 7rem;
   }
   [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0b1b32 0%, #102846 100%);
     border-right: 1px solid rgba(255,255,255,.08);
   }
+  [data-testid="stSidebar"] > div:first-child { padding: 1.35rem 1rem; }
   [data-testid="stSidebar"] * { color: #edf4ff; }
   [data-testid="stSidebar"] [data-baseweb="select"] > div,
   [data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
@@ -38,6 +42,21 @@ _STYLES = """
   }
   [data-testid="stSidebar"] button {
     border-radius: 10px;
+    border-color: rgba(255,255,255,.20);
+  }
+  [data-testid="stSidebar"] [role="radiogroup"] {
+    display: grid;
+    gap: .42rem;
+  }
+  [data-testid="stSidebar"] [role="radiogroup"] label {
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 11px;
+    padding: .55rem .65rem;
+    transition: background .16s ease, border-color .16s ease;
+  }
+  [data-testid="stSidebar"] [role="radiogroup"] label:hover {
+    background: rgba(255,255,255,.10);
     border-color: rgba(255,255,255,.20);
   }
   .sidebar-brand { padding: .4rem 0 .75rem; }
@@ -70,11 +89,18 @@ _STYLES = """
     max-width: 42rem;
     line-height: 1.6;
   }
+  .evaluation-hero {
+    background: linear-gradient(135deg, rgba(255,255,255,.96), rgba(239,246,255,.94));
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 1.45rem 1.6rem;
+    box-shadow: 0 10px 30px rgba(24, 53, 91, .06);
+  }
   .metric-card {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 16px;
-    padding: 1rem 1.1rem;
+    padding: 1.05rem 1.15rem;
     box-shadow: 0 8px 26px rgba(24, 48, 82, .06);
     margin-top: .45rem;
   }
@@ -99,6 +125,7 @@ _STYLES = """
     box-shadow: 0 5px 18px rgba(25, 48, 79, .035);
   }
   [data-testid="stChatMessage"] p { line-height: 1.7; }
+  [data-testid="stChatMessage"] { font-size: 1rem; }
   .answer-label {
     color: var(--blue);
     font-size: .68rem;
@@ -135,6 +162,48 @@ _STYLES = """
     background: rgba(255,255,255,.97);
     box-shadow: 0 14px 36px rgba(19, 43, 76, .12);
   }
+  [data-testid="stTabs"] [data-baseweb="tab-list"] {
+    gap: .3rem;
+    border-bottom: 1px solid var(--line);
+  }
+  [data-testid="stTabs"] [data-baseweb="tab"] {
+    min-height: 3rem;
+    padding: .65rem .9rem;
+    font-weight: 650;
+  }
+  [data-testid="stDataFrame"] {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .evaluation-empty {
+    min-height: 13rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    color: var(--muted);
+    background: rgba(255,255,255,.7);
+    border: 1px dashed #b9c9dc;
+    border-radius: 16px;
+    margin-top: .75rem;
+  }
+  .evaluation-empty strong { color: var(--navy); font-size: 1.05rem; }
+  .matrix-legend {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .65rem;
+    margin-top: 1rem;
+  }
+  .matrix-legend span {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    padding: .75rem .9rem;
+    color: var(--muted);
+  }
+  .matrix-legend b { color: var(--blue); margin-right: .3rem; }
   .prompt-guide {
     color: var(--muted);
     font-size: .8rem;
@@ -144,6 +213,7 @@ _STYLES = """
     [data-testid="stMainBlockContainer"] { padding-top: 1rem; }
     .hero h1 { font-size: 2rem; }
     .metric-card { margin-top: 0; }
+    .matrix-legend { grid-template-columns: 1fr; }
   }
 </style>
 """

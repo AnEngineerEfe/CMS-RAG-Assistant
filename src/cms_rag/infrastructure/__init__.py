@@ -8,6 +8,7 @@ from .knowledge import (
     manifest_paths,
     supplemental_document_paths,
 )
+from .live_evaluation import LiveEvaluationStore
 from .retrieval import HybridRetriever
 from .storage import DocumentStore
 
@@ -15,6 +16,7 @@ __all__ = [
     "AuditStore",
     "DocumentStore",
     "HybridRetriever",
+    "LiveEvaluationStore",
     "load_curated_chunks",
     "load_manifest",
     "manifest_paths",

@@ -15,15 +15,15 @@ class StreamlitJourneyTests(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual(app.selectbox[0].value, "all")
 
-    def test_evaluation_workspace_displays_verified_reports(self):
+    def test_evaluation_workspace_starts_with_live_test_counters(self):
         app = AppTest.from_file("app.py", default_timeout=180).run()
         self.assertFalse(app.exception)
         app.radio[0].set_value("evaluation").run()
         page = "\n".join(item.value for item in app.markdown)
         self.assertIn("Değerlendirme Merkezi", page)
-        self.assertIn("45/45", page)
-        self.assertIn("100.0%", page)
-        self.assertEqual(len(app.tabs), 4)
+        self.assertIn("Canlı test", page)
+        self.assertIn("Doğru chunk", page)
+        self.assertGreaterEqual(len(app.tabs), 4)
         self.assertFalse(app.exception)
 
     def test_source_button_opens_the_exact_pdf_evidence_page(self):
