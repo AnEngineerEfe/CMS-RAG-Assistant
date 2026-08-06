@@ -204,6 +204,64 @@ _STYLES = """
     color: var(--muted);
   }
   .matrix-legend b { color: var(--blue); margin-right: .3rem; }
+  .confusion-wrap {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(7rem, .72fr) repeat(2, minmax(10rem, 1fr));
+    gap: .55rem;
+    margin: .8rem 0 1.25rem;
+  }
+  .confusion-predicted {
+    grid-column: 3 / 5;
+    text-align: center;
+    color: var(--muted);
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .11rem;
+  }
+  .confusion-col, .confusion-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--navy);
+    font-size: .82rem;
+    font-weight: 750;
+    padding: .45rem;
+  }
+  .confusion-col.positive { grid-column: 3; grid-row: 2; }
+  .confusion-col.negative { grid-column: 4; grid-row: 2; }
+  .confusion-col { background: #eaf1fa; border-radius: 10px; }
+  .confusion-actual {
+    grid-row: 3 / 5;
+    grid-column: 1;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    align-self: center;
+    justify-self: start;
+    color: var(--muted);
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .11rem;
+  }
+  .confusion-row { background: rgba(255,255,255,.72); border-radius: 12px; }
+  .confusion-row.actual-positive { grid-column: 2; grid-row: 3; }
+  .confusion-row.actual-negative { grid-column: 2; grid-row: 4; }
+  .confusion-row small { color: var(--muted); font-weight: 500; }
+  .confusion-cell {
+    min-height: 9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 8px 22px rgba(22, 48, 82, .06);
+  }
+  .confusion-cell.correct { background: linear-gradient(145deg, #effaf4, #e1f3e9); }
+  .confusion-cell.error { background: linear-gradient(145deg, #fff6ef, #fce7dd); }
+  .confusion-cell b { color: var(--muted); font-size: .75rem; letter-spacing: .12rem; }
+  .confusion-cell strong { color: var(--navy); font-size: 2.45rem; line-height: 1.1; }
+  .confusion-cell span { color: var(--muted); font-size: .75rem; }
   .prompt-guide {
     color: var(--muted);
     font-size: .8rem;
@@ -214,6 +272,8 @@ _STYLES = """
     .hero h1 { font-size: 2rem; }
     .metric-card { margin-top: 0; }
     .matrix-legend { grid-template-columns: 1fr; }
+    .confusion-wrap { grid-template-columns: 2rem 5.5rem repeat(2, minmax(7rem, 1fr)); }
+    .confusion-cell { min-height: 7.5rem; }
   }
 </style>
 """

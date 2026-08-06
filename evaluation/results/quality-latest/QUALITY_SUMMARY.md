@@ -2,7 +2,7 @@
 
 ## 1. Aşama — Chunk Kalitesi
 
-- Değerlendirilen: **67/67**
+- Değerlendirilen: **77/77**
 - Kabul oranı: **100.0%**
 - Geçersiz judge çıktısı: **0**
 

@@ -3,13 +3,19 @@
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Iterable
 from typing import Any
 
 from ollama import Client
 
 from ..domain.models import Chunk
-from .models import AnswerJudgeResult, ChunkJudgeResult
+from .models import (
+    AnswerJudgeResult,
+    ChunkJudgeResult,
+    ChunkOriginJudgeResult,
+    QuestionGenerationResult,
+)
 
 
 class JudgeUnavailableError(RuntimeError):
@@ -124,11 +130,86 @@ class OllamaJudge:
                 )
         return results
 
-    def _chat_json(self, prompt: str, *, num_predict: int) -> dict[str, Any]:
+    def generate_question(
+        self,
+        chunk_id: str,
+        chunk: Chunk,
+        *,
+        focus: str = "",
+    ) -> QuestionGenerationResult:
+        """Tek chunk'tan, cevabı yalnız o metinde bulunan doğal bir Türkçe soru üretir."""
+
+        payload = self._chat_json(
+            self._question_generation_prompt(chunk_id, chunk, focus),
+            num_predict=80,
+            attempts=1,
+            num_ctx=2048,
+        )
+        question = str(payload.get("question", "")).strip()
+        rationale = str(payload.get("rationale", "")).strip()[:500]
+        valid = (
+            str(payload.get("chunk_id", "")) == chunk_id
+            and 12 <= len(question) <= 240
+            and question.endswith("?")
+        )
+        return QuestionGenerationResult(
+            chunk_id=chunk_id,
+            question=question if valid else "",
+            rationale=rationale,
+            status="completed" if valid else "invalid_judge_output",
+        )
+
+    def judge_chunk_origin(
+        self,
+        *,
+        case_id: str,
+        question: str,
+        answer: str,
+        candidates: list[tuple[str, Chunk]],
+    ) -> ChunkOriginJudgeResult:
+        """Yeni ve bağımsız sorguda cevabı destekleyen aday chunk kimliklerini seçer."""
+
+        payload = self._chat_json(
+            self._chunk_origin_prompt(
+                case_id,
+                question,
+                answer,
+                candidates,
+            ),
+            num_predict=96,
+        )
+        selected = payload.get("selected_chunk_ids", [])
+        candidate_ids = {chunk_id for chunk_id, _ in candidates}
+        valid_selected = (
+            tuple(str(item) for item in selected)
+            if isinstance(selected, list)
+            else ()
+        )
+        valid = (
+            str(payload.get("case_id", "")) == case_id
+            and isinstance(payload.get("answer_supported"), bool)
+            and set(valid_selected) <= candidate_ids
+        )
+        return ChunkOriginJudgeResult(
+            case_id=case_id,
+            answer_supported=bool(payload.get("answer_supported")) if valid else False,
+            selected_chunk_ids=valid_selected if valid else (),
+            rationale=str(payload.get("rationale", ""))[:500],
+            status="completed" if valid else "invalid_judge_output",
+        )
+
+    def _chat_json(
+        self,
+        prompt: str,
+        *,
+        num_predict: int,
+        attempts: int = 2,
+        num_ctx: int = 4096,
+    ) -> dict[str, Any]:
         """Ollama yanıtını katı JSON nesnesine dönüştürür ve hatayı görünür kılar."""
 
         last_error: Exception | None = None
-        for attempt in range(2):
+        for attempt in range(attempts):
             try:
                 response = self._client.chat(
                     model=self.model,
@@ -143,7 +224,7 @@ class OllamaJudge:
                     format="json",
                     options={
                         "temperature": 0.0,
-                        "num_ctx": 4096,
+                        "num_ctx": num_ctx,
                         "num_predict": num_predict * (attempt + 1),
                         "seed": 42,
                     },
@@ -212,6 +293,108 @@ class OllamaJudge:
             "\"rationale\":\"short evidence-based reason\"}]}. INPUT:\n"
             + json.dumps(bounded, ensure_ascii=False)
         )
+
+    @staticmethod
+    def _question_generation_prompt(
+        chunk_id: str,
+        chunk: Chunk,
+        focus: str,
+    ) -> str:
+        """Büyük modele tek chunk ve katı soru üretim sözleşmesini verir."""
+
+        return (
+            "You are the independent large-model question generator in a RAG evaluation. "
+            "Use ONLY the supplied chunk. Produce exactly one natural Turkish question whose "
+            "complete factual answer is explicitly present in this chunk. Do not mention the "
+            "chunk, page, source, test, or answer. Avoid yes/no questions and avoid combining "
+            "unrelated facts. The question MUST target the supplied focus and include its most "
+            "distinctive named capability, component, or function; reject vague wording such as "
+            "'hangi avantajlar' or 'hangi özellik'. Return JSON only: {\"chunk_id\":\"exact id\","
+            "\"question\":\"... ?\",\"rationale\":\"which explicit fact makes it answerable\"}. "
+            "INPUT:\n"
+            + json.dumps(
+                {
+                    "chunk_id": chunk_id,
+                    "document": chunk.document,
+                    "page": chunk.page,
+                    "focus": focus,
+                    "text": chunk.text,
+                },
+                ensure_ascii=False,
+            )
+        )
+
+    @staticmethod
+    def _chunk_origin_prompt(
+        case_id: str,
+        question: str,
+        answer: str,
+        candidates: list[tuple[str, Chunk]],
+    ) -> str:
+        """Hakeme soru/cevap ve yalnız retrieval adaylarını kimlikleriyle verir."""
+
+        bounded_candidates = [
+            {
+                "chunk_id": chunk_id,
+                "document": chunk.document,
+                "page": chunk.page,
+                "text": OllamaJudge._focused_candidate_text(
+                    f"{question} {answer}",
+                    chunk.text,
+                ),
+            }
+            for chunk_id, chunk in candidates
+        ]
+        return (
+            "You are the independent large-model chunk-origin judge in a NEW CHAT. "
+            "Use only the candidate chunks. Decide whether the answer is factually supported "
+            "and select every candidate chunk that directly contains the facts needed to answer "
+            "the question. Do not select topical but non-supporting chunks. Return JSON only: "
+            "{\"case_id\":\"exact id\",\"answer_supported\":true,"
+            "\"selected_chunk_ids\":[\"exact chunk id\"],\"rationale\":\"max 8 words\"}. INPUT:\n"
+            + json.dumps(
+                {
+                    "case_id": case_id,
+                    "question": question,
+                    "answer": answer[:800],
+                    "candidates": bounded_candidates,
+                },
+                ensure_ascii=False,
+            )
+        )
+
+    @staticmethod
+    def _focused_candidate_text(query: str, text: str, limit: int = 650) -> str:
+        """Hakeme uzun chunk'ın başı yerine soru-cevapla en ilgili cümleleri verir."""
+
+        ignored = {
+            "advent", "hangi", "nedir", "olarak", "icin", "için", "ile",
+            "bir", "the", "and", "what", "which", "source",
+        }
+        query_terms = {
+            token
+            for token in re.findall(r"\w+", query.lower())
+            if len(token) > 2 and token not in ignored
+        }
+        sentences = [
+            sentence.strip()
+            for sentence in re.split(r"(?<=[.!?])\s+", text)
+            if sentence.strip()
+        ]
+        ranked = sorted(
+            enumerate(sentences),
+            key=lambda item: (
+                len(query_terms & set(re.findall(r"\w+", item[1].lower()))),
+                -item[0],
+            ),
+            reverse=True,
+        )
+        selected = " ".join(
+            sentences[index] for index in sorted(index for index, _ in ranked[:3])
+        ) or text
+        if len(selected) <= limit:
+            return selected
+        return selected[:limit].rsplit(" ", 1)[0].rstrip() + "…"
 
 
 def _index_items(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:

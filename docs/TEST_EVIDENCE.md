@@ -34,7 +34,7 @@ Bu belge yalnızca tekrar çalıştırılabilir otomasyon sonuçlarını kaydede
 - Domain, application, infrastructure ve presentation bağımlılık yönleri
 - Tüm kaynak sınıf ve fonksiyonlarının Türkçe işlev açıklaması taşıması
 - Küratörlü PDF'lerin metin çıkarımı ve açık veri sınırı taşıması
-- Manifestin dört kamuya açık kaynak ve kapalı çalışma-anı web erişimi bildirmesi
+- Manifestin beş kamuya açık kaynak ve kapalı çalışma-anı web erişimi bildirmesi
 - Snapshot chunk/embedding sayılarının bire bir eşleşmesi
 - Hazır resmî broşürün ek belge yönetiminden silinememesi
 - Motorun belge embeddinglerini yeniden üretmeden snapshot yüklemesi
@@ -93,23 +93,26 @@ birlikte ayağa kalkabildiğini doğrular.
 
 ## Son doğrulama
 
-2026-08-03 tarihinde hazır bilgi tabanı ve canlı değerlendirme kabul turunda:
+2026-08-06 tarihinde hazır bilgi tabanı ve bağımsız değerlendirme kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `72/72` başarılı
+- Otomatik testler: `82/82` başarılı
 - Retrieval kabul seti: `8/8` başarılı
 - Gerçek yanıt kabul seti: `7/7` başarılı
 - Altın benchmark: `45/45` başarılı (`30 TP / 15 TN / 0 FP / 0 FN`)
 - Altın benchmark Hit@6: `%100`
-- Altın benchmark MRR: `0,8361`
-- Bağımsız chunk hakemi: `67/67` geçerli, `0` geçersiz çıktı
+- Altın benchmark MRR: `0,7694`
+- Bağımsız chunk hakemi: `77/77` geçerli, `0` geçersiz çıktı
+- 20-vaka confusion matrix: `15 TP / 4 TN / 0 FP / 1 FN`
+- 20-vaka accuracy / F1: `%95,0 / %96,77`
+- Exact chunk-köken katı başarı: `13/16` (`%81,25`)
 - Bağımsız cevap hakemi + altın kaynak kapısı: `30/30`
 - FAISS / gerçek pgvector ilk-6 sıra eşitliği: `23/23`
-- Genişletilmiş hibrit retrieval MRR: `0,8361`
-- Optimize ortalama retrieval gecikmesi: `1500,2 ms`
-- Hazır PDF kaynağı: `4`
-- İndekslenen anlamlı kanıt parçası: `67`
-- Önceden hesaplanmış embedding satırı: `67`
+- Genişletilmiş hibrit retrieval MRR: `0,7694`
+- Optimize ortalama retrieval gecikmesi: `1438,3 ms`
+- Hazır PDF kaynağı: `5`
+- İndekslenen anlamlı kanıt parçası: `77`
+- Önceden hesaplanmış embedding satırı: `77`
 - 80 karakter altı gürültü chunk: `0`
 - Snapshot yükleme: başarılı
 - Streamlit sağlık endpoint'i: `HTTP 200`

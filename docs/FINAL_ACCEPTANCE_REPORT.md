@@ -1,6 +1,6 @@
 # Nihai Kabul Raporu
 
-Tarih: 2026-07-30
+Tarih: 2026-08-06
 
 ## Sonuç
 
@@ -18,15 +18,18 @@ veri kullanılmamıştır.
 
 | Kontrol | Sonuç |
 |---|---:|
-| Otomatik test | 41/41 başarılı |
+| Otomatik test | 82/82 başarılı |
 | Retrieval kabul vakası | 8/8 başarılı |
 | Gerçek yanıt kabul vakası | 7/7 başarılı |
-| Hazır PDF kaynağı | 4 |
-| İndekslenen anlamlı chunk | 67 |
-| Önceden hesaplanmış embedding | 67 |
+| Hazır PDF kaynağı | 5 |
+| İndekslenen anlamlı chunk | 77 |
+| Önceden hesaplanmış embedding | 77 |
+| 20-vaka confusion matrix | 15 TP / 4 TN / 0 FP / 1 FN |
+| 20-vaka accuracy / F1 | %95,0 / %96,77 |
+| Exact chunk-köken başarı | 13/16 (%81,25) |
 | 80 karakter altı gürültü chunk | 0 |
-| PDF sayfası | 40/40 metinli |
-| PDF metin karakteri | 44.398 |
+| PDF sayfası | 42/42 metinli |
+| PDF metin karakteri | 50.802 |
 | Snapshot yükleme | Başarılı |
 | Çalışma anı web erişimi | Kapalı |
 | Varsayılan model | qwen2.5:3b |
@@ -39,6 +42,7 @@ Paket aşağıdaki kamuya açık içeriklerden oluşturulmuştur:
 - ADVENT CMS ve ürün ailesi kamuya açık araştırma özeti
 - ADVENT-AI ve MAIN yapay zekâ entegrasyonu kamuya açık araştırma özeti
 - Deniz C2, veri ve sorumlu yapay zekâ yönetişimi kamuya açık araştırma özeti
+- Genel deniz CMS mühendisliği, sıfır güven ve güvenilir AI kamu araştırma özeti
 
 Her araştırma PDF'i kaynak adreslerini, veri sınırını ve hazırlanma tarihini taşır.
 Manifest, kaynak hash'lerini ve üretilen PDF'leri; snapshot ise chunk meta verileri

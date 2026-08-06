@@ -2,6 +2,7 @@
 
 from .dataset import load_cases
 from .judge import JudgeUnavailableError, OllamaJudge
+from .lineage import ChunkLineageEvaluationRunner
 from .experiments import QualityExperimentRunner
 from .pgvector_backend import PgVectorBenchmark, PgVectorUnavailableError
 from .models import (
@@ -21,6 +22,7 @@ __all__ = [
     "EvaluationCase",
     "JudgeUnavailableError",
     "OllamaJudge",
+    "ChunkLineageEvaluationRunner",
     "QualityExperimentRunner",
     "PgVectorBenchmark",
     "PgVectorUnavailableError",

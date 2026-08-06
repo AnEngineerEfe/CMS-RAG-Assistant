@@ -1,5 +1,5 @@
 {
-  "indexed_chunks": 67,
+  "indexed_chunks": 77,
   "snapshot_loaded": true,
   "passed": 7,
   "total": 7,
@@ -20,7 +20,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 3.27,
+      "elapsed_ms": 8.61,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -48,7 +48,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 2.49,
+      "elapsed_ms": 15.38,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -76,7 +76,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 2.75,
+      "elapsed_ms": 128.18,
       "sources": [
         {
           "document": "advent_cms.pdf",
@@ -112,7 +112,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.27,
+      "elapsed_ms": 22.9,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -126,7 +126,7 @@
       "id": "main_paraphrase",
       "question": "MAIN personelin bakım işine nasıl yardım ediyor?",
       "answerable_expected": true,
-      "answer": "MAIN, bakım personelinin bakım adımlarını belirlemesine ve talimatlara erişmesine yardımcı olan doğal dil tabanlı bir destek asistanıdır. Kamuya açık açıklamaya göre kapalı ağlarda ve yerel modellerle çalışacak şekilde tasarlanmıştır [SOURCE 1].",
+      "answer": "MAIN, bakım personelinin bakım adımlarını belirlemesine ve talimatlara erişmesine yardımcı olur; sistem geneli soru-cevap ve doğal dil etkileşimi sunar. Kamuya açık açıklamaya göre kapalı ağlarda ve yerel modellerle çalışacak şekilde tasarlanmıştır [SOURCE 1].",
       "expected_terms": [
         "bakım adımlarını",
         "kapalı ağlarda"
@@ -138,7 +138,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1.63,
+      "elapsed_ms": 22.81,
       "sources": [
         {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
@@ -164,7 +164,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 2.35,
+      "elapsed_ms": 12.2,
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -184,7 +184,7 @@
       "decision_ok": true,
       "citation_ok": true,
       "concepts_ok": true,
-      "elapsed_ms": 1405.22,
+      "elapsed_ms": 2521.94,
       "sources": [],
       "passed": true
     }

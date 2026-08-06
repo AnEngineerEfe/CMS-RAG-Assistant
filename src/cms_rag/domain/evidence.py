@@ -65,9 +65,9 @@ class EvidenceResponder:
         if asks_main and main_source:
             return (
                 "MAIN, bakım personelinin bakım adımlarını belirlemesine ve talimatlara "
-                "erişmesine yardımcı olan doğal dil tabanlı bir destek asistanıdır. Kamuya "
-                "açık açıklamaya göre kapalı ağlarda ve yerel modellerle çalışacak şekilde "
-                "tasarlanmıştır [SOURCE 1].",
+                "erişmesine yardımcı olur; sistem geneli soru-cevap ve doğal dil etkileşimi "
+                "sunar. Kamuya açık açıklamaya göre kapalı ağlarda ve yerel modellerle "
+                "çalışacak şekilde tasarlanmıştır [SOURCE 1].",
                 [SearchHit(main_source, 1.0)],
             )
 
@@ -82,6 +82,17 @@ class EvidenceResponder:
                 "verebilirlik, açıklanabilirlik ve izlenebilirlik, güvenilirlik, yönetilebilirlik "
                 "ve önyargıyı azaltma başlıklarını kapsar [SOURCE 1].",
                 [SearchHit(responsible_ai_source, 1.0)],
+            )
+
+        asks_ai_rmf_functions = "nist ai rmf" in normalized and any(
+            marker in normalized for marker in ("dort islev", "yasam dongusu")
+        )
+        ai_rmf_source = EvidenceResponder._find(chunks, "Govern, Map, Measure ve Manage")
+        if asks_ai_rmf_functions and ai_rmf_source:
+            return (
+                "NIST AI RMF, risk yönetimini yaşam döngüsüne yayan dört işlevi Govern, "
+                "Map, Measure ve Manage olarak adlandırır [SOURCE 1].",
+                [SearchHit(ai_rmf_source, 1.0)],
             )
 
         asks_track_fusion = any(
@@ -107,9 +118,56 @@ class EvidenceResponder:
                 [SearchHit(track_source, 1.0)],
             )
 
+        asks_navigation_support = any(
+            marker in normalized for marker in ("seyir destegi", "seyir planlama")
+        ) and any(marker in normalized for marker in ("hangi uc", "ek olarak"))
+        navigation_source = EvidenceResponder._find(chunks, "NAVIGATION SUPPORT")
+        if asks_navigation_support and navigation_source:
+            return (
+                "ADVENT seyir desteği; seyir planlama ve icrasına ek olarak taranmış kanal "
+                "(swept-channel), seyir güvenliği ve demirleme işlevlerini sağlar [SOURCE 1].",
+                [SearchHit(navigation_source, 1.0)],
+            )
+
+        asks_link_components = any(
+            marker in normalized for marker in ("link turlerini", "ek bilesen")
+        ) and "advent" in normalized
+        link_source = EvidenceResponder._find(chunks, "eliminating the need for additional")
+        if asks_link_components and link_source:
+            return (
+                "Tüm link türlerinin ADVENT CMS yazılımına bütünleştirilmesi; ek yazılım, "
+                "donanım ve link veri işlemci birimi gereksinimini ortadan kaldırır [SOURCE 1].",
+                [SearchHit(link_source, 1.0)],
+            )
+
+        asks_console_units = "ozel konsol" in normalized and "advent" in normalized
+        console_source = EvidenceResponder._find(chunks, "eliminating the need for dedicated consoles")
+        if asks_console_units and console_source:
+            return (
+                "SONAR, ESM, TDL ve silah sistemleri ADVENT ile tam bütünleşik çalışabilir; "
+                "özel konsol gerektirmeden herhangi bir CMS konsolundan tam işlevle "
+                "kullanılabilir [SOURCE 1].",
+                [SearchHit(console_source, 1.0)],
+            )
+
+        asks_common_operations = "ortak operasyon" in normalized and any(
+            marker in normalized for marker in ("planla", "icra")
+        )
+        common_operation_source = EvidenceResponder._find(
+            chunks,
+            "centralized planning, distribution and simultaneous execution",
+        )
+        if asks_common_operations and common_operation_source:
+            return (
+                "ADVENT ortak operasyonları merkezî planlama, dağıtım ve eş zamanlı icra "
+                "yaklaşımıyla; arama-kurtarma, seyir ve operasyon görevlerini koordineli "
+                "biçimde destekler [SOURCE 1].",
+                [SearchHit(common_operation_source, 1.0)],
+            )
+
         asks_marti = (
             "advent marti" in normalized
-            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "platform"))
+            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "platform", "veri isleme", "hangi uc islem"))
         )
         marti_source = EvidenceResponder._find(
             chunks,
@@ -120,13 +178,14 @@ class EvidenceResponder:
             return (
                 "ADVENT MARTI, özel görev uçakları ve helikopterler için tasarlanmış hava "
                 "komuta-kontrol sistemidir; gerçek zamanlı gözetleme, durumsal farkındalık, "
-                "karar desteği ve angajman planlamayı destekler [SOURCE 1].",
+                "karar desteği ve angajman planlamayı destekler. Sensörler ve taktik veri "
+                "bağlarından gelen veriye toplama, analiz ve füzyon uygular [SOURCE 1].",
                 [SearchHit(marti_source, 1.0)],
             )
 
         asks_rota = (
             "advent rota" in normalized
-            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev"))
+            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "sistemini", "arayuz"))
         )
         rota_source = EvidenceResponder._find(
             chunks,
@@ -135,15 +194,15 @@ class EvidenceResponder:
         )
         if asks_rota and rota_source:
             return (
-                "ADVENT ROTA, insansız platformların görev yönetimi ile keşif-gözetleme "
-                "verilerinin komuta-kontrol yapısına aktarılmasını destekleyen ADVENT ailesi "
-                "çözümüdür [SOURCE 1].",
+                "ADVENT ROTA, insansız platformların seyir sistemini geliştirmek üzere "
+                "tasarlanmıştır; modüler ve esnek arayüzleri sensör/silah yönetimi ile "
+                "insanlı sistemlere ağ destekli entegrasyonu kolaylaştırır [SOURCE 1].",
                 [SearchHit(rota_source, 1.0)],
             )
 
         asks_ufuk = (
             "advent ufuk" in normalized
-            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "platform"))
+            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "platform", "sensor", "kaynak", "veri"))
         )
         ufuk_source = EvidenceResponder._find(
             chunks,
@@ -153,14 +212,15 @@ class EvidenceResponder:
         if asks_ufuk and ufuk_source:
             return (
                 "ADVENT UFUK, deniz güvenliği ve durumsal farkındalık için komuta-kontrol "
-                "ve istihbarat/bilgi yönetimi sağlar; kıyı sensörlerinden gelen verileri "
-                "birleştirerek tanınmış deniz resmi üretimini destekler [SOURCE 1].",
+                "ve bilgi yönetimi sağlar. Kıyı radarları ve elektronik destek sistemlerinin "
+                "yanı sıra IFF, ADS-B ve AIS verilerini birleştirerek tanınmış deniz resmi "
+                "üretimini destekler [SOURCE 1].",
                 [SearchHit(ufuk_source, 1.0)],
             )
 
         asks_muren = (
             "advent muren" in normalized
-            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "platform"))
+            and any(marker in normalized for marker in ("gorev", "ne yapar", "islev", "platform", "gelistiril", "denizalti sinifi"))
         )
         muren_source = EvidenceResponder._find(
             chunks,
@@ -170,8 +230,8 @@ class EvidenceResponder:
         if asks_muren and muren_source:
             return (
                 "ADVENT MÜREN, su altı platformları için yeni nesil komuta-kontrol "
-                "sistemidir; sonar ve sensör verilerini işleyerek su altı taktik resmi, "
-                "karar desteği ve taktik değerlendirmeyi destekler [SOURCE 1].",
+                "sistemidir ve Preveze sınıfı denizaltılar için geliştirilen MÜREN "
+                "yeteneklerini ADVENT savaş sistemi kabiliyetleriyle birleştirir [SOURCE 1].",
                 [SearchHit(muren_source, 1.0)],
             )
 

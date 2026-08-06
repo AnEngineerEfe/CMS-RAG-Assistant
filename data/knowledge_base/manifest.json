@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "knowledge_cutoff": "2026-07-30",
+  "knowledge_cutoff": "2026-08-05",
   "runtime_web_access": false,
   "data_boundary": "Yalnız kamuya açık kaynaklar; şirket içi, tasnifli veya kişisel veri yok.",
   "sources": [
@@ -27,6 +27,12 @@
       "collection": "open_source",
       "authority": "NATO and U.S. Navy public official sources — curated",
       "source_url": "https://www.nato.int/en/about-us/official-texts-and-resources/official-texts/2024/07/10/summary-of-natos-revised-artificial-intelligence-ai-strategy"
+    },
+    {
+      "path": "knowledge_base/sources/genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
     }
   ]
 }

@@ -5,6 +5,7 @@ import unittest
 
 from src.cms_rag.domain import Chunk
 from src.cms_rag.evaluation import (
+    ChunkLineageEvaluationRunner,
     ConfusionMatrix,
     OllamaJudge,
     RetrievalMetrics,
@@ -81,6 +82,16 @@ class EvaluationDatasetTests(unittest.TestCase):
 
 
 class EvaluationMetricTests(unittest.TestCase):
+    def test_expected_term_matching_tolerates_punctuation_variants(self):
+        answer = "komuta & kontrol gereksinimleri"
+
+        self.assertTrue(
+            ChunkLineageEvaluationRunner._matches_expected_term(
+                answer,
+                "komuta-kontrol|command & control",
+            )
+        )
+
     def test_confusion_matrix_metrics_are_computed_from_all_cells(self):
         matrix = ConfusionMatrix()
         for actual, predicted in (
@@ -105,6 +116,59 @@ class EvaluationMetricTests(unittest.TestCase):
 
 
 class LocalJudgeTests(unittest.TestCase):
+    def test_origin_judge_uses_query_focused_late_sentence(self):
+        text = ("Genel ürün bilgisi. " * 80) + "IFF, ADS-B ve AIS verileri birleştirilir."
+
+        focused = OllamaJudge._focused_candidate_text(
+            "Hangi IFF ADS-B AIS kaynakları kullanılır?",
+            text,
+        )
+
+        self.assertIn("IFF, ADS-B ve AIS", focused)
+
+    def test_large_model_question_generation_requires_exact_chunk_id(self):
+        """Soru üreticisi yalnız sözleşmeye uyan, soru işaretli çıktıyı kabul etmelidir."""
+
+        judge = OllamaJudge("large-test-model")
+        judge._client = _FakeOllamaClient(
+            {
+                "chunk_id": "doc.pdf:p1:c1",
+                "question": "CMS sensör verisini hangi amaçla birleştirir?",
+                "rationale": "Yanıt chunk içinde açıkça bulunuyor.",
+            }
+        )
+        result = judge.generate_question(
+            "doc.pdf:p1:c1",
+            Chunk("CMS sensör verisini ortak resim için birleştirir.", "doc.pdf", 1, "doc.pdf"),
+        )
+
+        self.assertEqual(result.status, "completed")
+        self.assertTrue(result.question.endswith("?"))
+
+    def test_chunk_origin_judge_rejects_unknown_chunk_ids(self):
+        """Hakem aday havuzunda bulunmayan chunk kimliğini seçememelidir."""
+
+        judge = OllamaJudge("large-test-model")
+        judge._client = _FakeOllamaClient(
+            {
+                "case_id": "L01",
+                "answer_supported": True,
+                "selected_chunk_ids": ["unknown"],
+                "rationale": "Invalid selection.",
+            }
+        )
+        result = judge.judge_chunk_origin(
+            case_id="L01",
+            question="Soru?",
+            answer="Cevap.",
+            candidates=[
+                ("doc.pdf:p1:c1", Chunk("Kanıt.", "doc.pdf", 1, "doc.pdf"))
+            ],
+        )
+
+        self.assertEqual(result.status, "invalid_judge_output")
+        self.assertEqual(result.selected_chunk_ids, ())
+
     def test_chunk_acceptance_is_derived_from_all_rubric_scores(self):
         judge = OllamaJudge("independent-test-model")
         judge._client = _FakeOllamaClient(

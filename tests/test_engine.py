@@ -14,6 +14,86 @@ from src.cms_rag.domain import (
 
 
 class CMSRAGEngineTests(unittest.TestCase):
+    def test_repeated_model_sentence_is_emitted_only_once(self):
+        """Model aynı cümleyi iki kez üretse bile kullanıcı tek kopya görmelidir."""
+
+        class RepeatingOllama:
+            @staticmethod
+            def chat(**kwargs):
+                del kwargs
+                yield {
+                    "message": {
+                        "content": (
+                            "ADVENT ortak taktik resim sunar. "
+                            "ADVENT ortak taktik resim sunar."
+                        )
+                    },
+                    "done_reason": "stop",
+                }
+
+        with TemporaryDirectory() as directory:
+            engine = CMSRAGEngine(Path(directory))
+            engine._ollama = RepeatingOllama()
+            hit = SearchHit(Chunk("kanıt", "official.pdf", 1, "official.pdf"), 1.0)
+            answer = "".join(engine._ollama_stream("Soru", "İstem", [hit]))
+
+        self.assertEqual(answer.count("ortak taktik resim sunar"), 1)
+        self.assertEqual(answer.count("[SOURCE 1]"), 1)
+
+    def test_model_question_echo_and_verbose_source_marker_are_cleaned(self):
+        question = "NEC hangi iki yaklaşımı kullanır?"
+        raw = (
+            "NEC hangi iki yaklaşımı kullanır? "
+            "[SOURCE 1: advent.pdf, page 3] Merkezi kontrol ve dağıtık icra."
+        )
+
+        answer = CMSRAGEngine._clean_model_answer(question, raw)
+
+        self.assertEqual(answer, "Merkezi kontrol ve dağıtık icra.")
+
+    def test_incomplete_trailing_sentence_is_removed(self):
+        answer = (
+            "Merkezi kontrol ve dağıtık icra kullanılır. [SOURCE 1] "
+            "Model burada ikinci bir cümleye başlayıp"
+        )
+
+        completed = CMSRAGEngine._complete_sentences_only(answer)
+
+        self.assertEqual(
+            completed,
+            "Merkezi kontrol ve dağıtık icra kullanılır. [SOURCE 1]",
+        )
+
+    def test_unpunctuated_stop_is_completed_once(self):
+        """Model stop bildirse de noktalamasız yarım Türkçe cümle tamamlatılmalıdır."""
+
+        class IncompleteOllama:
+            calls = 0
+
+            @classmethod
+            def chat(cls, **kwargs):
+                del kwargs
+                cls.calls += 1
+                if cls.calls == 1:
+                    yield {
+                        "message": {"content": "Sistem sensör verisini"},
+                        "done_reason": "stop",
+                    }
+                else:
+                    yield {
+                        "message": {"content": "ortak resimde birleştirir."},
+                        "done_reason": "stop",
+                    }
+
+        with TemporaryDirectory() as directory:
+            engine = CMSRAGEngine(Path(directory))
+            engine._ollama = IncompleteOllama()
+            hit = SearchHit(Chunk("kanıt", "official.pdf", 1, "official.pdf"), 1.0)
+            answer = "".join(engine._ollama_stream("Soru", "İstem", [hit]))
+
+        self.assertEqual(IncompleteOllama.calls, 2)
+        self.assertIn("sensör verisini ortak resimde birleştirir.", answer)
+
     def test_length_limited_response_is_completed_before_citation(self):
         test_case = self
 
@@ -333,6 +413,30 @@ class CMSRAGEngineTests(unittest.TestCase):
         self.assertIn("korelasyon", answer)
         self.assertIn("track data fusion", answer)
         self.assertEqual(sources[0].chunk.page, 9)
+
+    def test_specific_fact_lists_are_answered_before_general_advent_rule(self):
+        chunks = [
+            Chunk("NAVIGATION SUPPORT includes swept-channel, navigation safety and anchoring.", "advent.pdf", 9, "advent.pdf"),
+            Chunk("eliminating the need for additional software, hardware, or link data processor units.", "advent.pdf", 12, "advent.pdf"),
+            Chunk("SONAR, ESM, TDL, and weapon systems operate in full integration, eliminating the need for dedicated consoles.", "advent.pdf", 17, "advent.pdf"),
+            Chunk("centralized planning, distribution and simultaneous execution for search and rescue and navigation.", "advent.pdf", 10, "advent.pdf"),
+            Chunk("ADVENT MÜREN is new-generation for Underwater Platforms and combines MÜREN System developed for Preveze Class Submarines.", "advent.pdf", 28, "advent.pdf"),
+            Chunk("Govern, Map, Measure ve Manage işlevleri risk yönetimini yaşam döngüsüne yayar.", "research.pdf", 2, "research.pdf", collection="open_source"),
+        ]
+        cases = [
+            ("ADVENT seyir desteği planlama ve icraya ek olarak hangi üç işlevi sağlar?", "demirleme"),
+            ("ADVENT link türleri hangi ek bileşen ihtiyacını kaldırır?", "link veri işlemci"),
+            ("ADVENT ile özel konsol gerektirmeden çalışan dört savaş sistemi birimi nedir?", "SONAR"),
+            ("ADVENT ortak operasyonları nasıl planlayıp icra eder?", "eş zamanlı icra"),
+            ("ADVENT MÜREN hangi platform için geliştirilmiştir ve hangi denizaltı sınıfını birleştirir?", "Preveze"),
+            ("NIST AI RMF risk yönetimini yaşam döngüsüne yayan dört işlevi nasıl adlandırır?", "Govern"),
+        ]
+
+        for question, expected in cases:
+            with self.subTest(question=question):
+                result = EvidenceResponder.answer(question, [], chunks)
+                self.assertIsNotNone(result)
+                self.assertIn(expected, result[0])
 
     def test_dotless_turkish_i_is_normalised_for_glossary_matching(self):
         expanded = CMSQueryProcessor.expand(

@@ -2,12 +2,13 @@
   "schema_version": 1,
   "embedding_model": "BAAI/bge-small-en-v1.5",
   "source_sha256": [
-    "0dea235f316d8518c7cfc4fd6eb5dd0f3320334097e7e1c0950669f691794a3e",
-    "12972ba2c0858dd73a086f4329e1ba31462500b203cc02aa551d6db2dcefcffc",
-    "9deaf45094136d3a2d77f5685bbc5f5799c4565219d775d79ed7e472309ed71f",
-    "ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934"
+    "8ddefab67b9202d8ad2a4c856c7e1a11c03f702a3e604302de73f6fd7ae4635d",
+    "b802e9607339730851ebfb59c785e7187770f9a58a2e8718b7865e451ad43b69",
+    "ec48e76816a4a41e6ee57611e0c755d112443f3411c762b4702c858ee64c4934",
+    "f349750c75caac0e3aae5e60bd795fe47c240320d63fa12bba1dabcb61eb3253",
+    "f6dcd8926db277b1b1e3efc8631ff02e5ffb0dc4302686ebd72691a098ceeca0"
   ],
-  "chunk_count": 67,
+  "chunk_count": 77,
   "chunks": [
     {
       "text": "Introducing combat-proven ADVENT, the pinnacle of Combat Management Systems, poised to revolutionize naval operations worldwide with its commitment to tactical excellence. Developed in cooperation with the Turkish Naval Forces Research Center Command (ARMERKOM) to meet all command & control requirements of the naval forces, with a strong presence in the Turkish Navy and recognized globally as the preferred choice for numerous navies, ADVENT redefines situational awareness, decision-making capabilities, and operational efficiency. Its core features epitomize sophistication and precision, offering a blend of cutting-edge technology and strategic design. At the heart of ADVENT lies its advanced capabilities, including Network Enabled Capability (NEC), which optimizes operational effectiveness through centralized control and distributed execution.",
@@ -442,7 +443,7 @@
       "source_url": "https://www.havelsan.com/uploads/docs/cozumler/komuta-kontrol/1753946379_advent-cms.pdf"
     },
     {
-      "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 ADVENT CMS Kamuya Açık Araştırma Özeti Kürasyon tarihi: 30 Temmuz 2026 · Yalnız kamuya açık kaynaklar Kapsam ve veri sınırı Bu bilgi paketi, HAVELSAN'ın deniz savaş yönetim sistemleri alanındaki kamuya açık ürün sayfaları, haberleri ve resmî ürün broşürü temel alınarak hazırlanmış bir ön çalışmadır. HAVELSAN'a ait şirket içi, tasnifli, kişisel veya erişim yetkisi gerektiren hiçbir veri kullanılmamıştır. Buradaki ifadeler operasyonel talimat değildir; yalnızca açık kaynak araştırma ve RAG gösterimi amacı taşır. ADVENT'in amacı ve temel yaklaşımı ADVENT, HAVELSAN tarafından Ağ Destekli Veri Entegre Savaş Yönetim Sistemi olarak tanımlanır. Yeni nesil deniz harekâtında platformların tek tek optimize edilmesi yerine görev kuvvetinin birlikte çalışmasına, ağ destekli yeteneklere ve müşterek görev icrasına odaklanır.",
+      "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 ADVENT CMS Kamuya Açık Araştırma Özeti Kürasyon tarihi: 5 Ağustos 2026 · Yalnız kamuya açık kaynaklar Kapsam ve veri sınırı Bu bilgi paketi, HAVELSAN'ın deniz savaş yönetim sistemleri alanındaki kamuya açık ürün sayfaları, haberleri ve resmî ürün broşürü temel alınarak hazırlanmış bir ön çalışmadır. HAVELSAN'a ait şirket içi, tasnifli, kişisel veya erişim yetkisi gerektiren hiçbir veri kullanılmamıştır. Buradaki ifadeler operasyonel talimat değildir; yalnızca açık kaynak araştırma ve RAG gösterimi amacı taşır. ADVENT'in amacı ve temel yaklaşımı ADVENT, HAVELSAN tarafından Ağ Destekli Veri Entegre Savaş Yönetim Sistemi olarak tanımlanır. Yeni nesil deniz harekâtında platformların tek tek optimize edilmesi yerine görev kuvvetinin birlikte çalışmasına, ağ destekli yeteneklere ve müşterek görev icrasına odaklanır.",
       "document": "advent_cms_kamuya_acik_arastirma.pdf",
       "page": 1,
       "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\advent_cms_kamuya_acik_arastirma.pdf",
@@ -505,7 +506,7 @@
       "source_url": "https://www.havelsan.com/en/solutions/advent-combat-management-system"
     },
     {
-      "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 ADVENT AI Kamuya Açık Araştırma Özeti Kürasyon tarihi: 30 Temmuz 2026 · Yalnız kamuya açık kaynaklar Kapsam ve veri sınırı Bu paket yalnız HAVELSAN'ın kamuya açık açıklamalarından türetilmiştir. Şirket içi eğitim verileri, mimari ayrıntılar, algoritma parametreleri, operasyonel veri veya tasnifli bilgi içermez. Açıklanan yetenekler ürün sahibinin kamuya açık beyanlarıdır; bu ön çalışma bunları bağımsız olarak doğrulanmış performans sonuçları şeklinde sunmaz. MAIN bakım ve karar destek asistanı HAVELSAN'ın 10 Ağustos 2025 tarihli açıklamasına göre kurumsal yapay zekâ platformu MAIN, ADVENT'e bakım destek asistanı olarak entegre edilmektedir.",
+      "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 ADVENT AI Kamuya Açık Araştırma Özeti Kürasyon tarihi: 5 Ağustos 2026 · Yalnız kamuya açık kaynaklar Kapsam ve veri sınırı Bu paket yalnız HAVELSAN'ın kamuya açık açıklamalarından türetilmiştir. Şirket içi eğitim verileri, mimari ayrıntılar, algoritma parametreleri, operasyonel veri veya tasnifli bilgi içermez. Açıklanan yetenekler ürün sahibinin kamuya açık beyanlarıdır; bu ön çalışma bunları bağımsız olarak doğrulanmış performans sonuçları şeklinde sunmaz. MAIN bakım ve karar destek asistanı HAVELSAN'ın 10 Ağustos 2025 tarihli açıklamasına göre kurumsal yapay zekâ platformu MAIN, ADVENT'e bakım destek asistanı olarak entegre edilmektedir.",
       "document": "advent_ai_kamuya_acik_arastirma.pdf",
       "page": 1,
       "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\advent_ai_kamuya_acik_arastirma.pdf",
@@ -559,7 +560,7 @@
       "source_url": "https://www.havelsan.com/en/news/havelsan-showcase-advent-ai-and-barkan-3-first-time-saha-expo-2026"
     },
     {
-      "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 Deniz C2, Veri ve Sorumlu AI Açık Kaynak Özeti Kürasyon tarihi: 30 Temmuz 2026 · Yalnız kamuya açık kaynaklar Kapsam Bu paket, NATO ve ABD Deniz Kuvvetlerinin kamuya açık resmî metinlerinden hazırlanmıştır. ADVENT'e özgü olmayan genel veri, birlikte çalışabilirlik, komuta-kontrol ve sorumlu yapay zekâ ilkelerini açıklar. ADVENT ile doğrudan bir entegrasyon veya kurumsal ilişki, kaynak açıkça belirtmedikçe çıkarılamaz. Veri-merkezli birlikte çalışabilirlik NATO'nun 5 Mayıs 2025 tarihli Alliance Data Strategy metni; kaliteli ve küratörlü veriyi çok alanlı harekât, birlikte çalışabilirlik, durumsal farkındalık ve veriye dayalı karar verme için temel stratejik varlık olarak ele alır.",
+      "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 Deniz C2, Veri ve Sorumlu AI Açık Kaynak Özeti Kürasyon tarihi: 5 Ağustos 2026 · Yalnız kamuya açık kaynaklar Kapsam Bu paket, NATO ve ABD Deniz Kuvvetlerinin kamuya açık resmî metinlerinden hazırlanmıştır. ADVENT'e özgü olmayan genel veri, birlikte çalışabilirlik, komuta-kontrol ve sorumlu yapay zekâ ilkelerini açıklar. ADVENT ile doğrudan bir entegrasyon veya kurumsal ilişki, kaynak açıkça belirtmedikçe çıkarılamaz. Veri-merkezli birlikte çalışabilirlik NATO'nun 5 Mayıs 2025 tarihli Alliance Data Strategy metni; kaliteli ve küratörlü veriyi çok alanlı harekât, birlikte çalışabilirlik, durumsal farkındalık ve veriye dayalı karar verme için temel stratejik varlık olarak ele alır.",
       "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
       "page": 1,
       "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\deniz_c2_veri_ai_yonetisim_arastirma.pdf",
@@ -611,6 +612,96 @@
       "collection": "open_source",
       "authority": "NATO and U.S. Navy public official sources — curated",
       "source_url": "https://www.nato.int/en/about-us/official-texts-and-resources/official-texts/2024/07/10/summary-of-natos-revised-artificial-intelligence-ai-strategy"
+    },
+    {
+      "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 Deniz CMS Mühendisliği ve Güvenilir AI Açık Kaynak Özeti Kürasyon tarihi: 5 Ağustos 2026 · Yalnız kamuya açık kaynaklar Kapsam ve ürünlerden bağımsızlık Bu bilgi paketi, ABD Deniz Kuvvetleri, NAVSEA ve NIST tarafından yayımlanmış kamuya açık resmî kaynaklardan hazırlanmıştır. Deniz savaş yönetim sistemlerine ilişkin genel mühendislik kavramlarını açıklar; ADVENT'e veya başka bir ürüne kaynakta bulunmayan özellik atfetmez. Şirket içi, tasnifli, operasyonel ya da kişisel veri içermez ve operasyonel talimat niteliği taşımaz. Bütünleşik savaş sistemi ve karar desteği ABD Deniz Kuvvetlerinin AEGIS kamu tanımında savaş sistemi; merkezî, otomatik bir komuta-kontrol ve silah kontrol sistemi olarak açıklanır. Bilgisayar tabanlı komuta ve karar bileşeni sistemin çekirdeğidir.",
+      "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "page": 1,
+      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
+    },
+    {
+      "text": "merkezî, otomatik bir komuta-kontrol ve silah kontrol sistemi olarak açıklanır. Bilgisayar tabanlı komuta ve karar bileşeni sistemin çekirdeğidir. Çok işlevli sensörler arama, izleme ve güdüm görevlerini birlikte destekler; savaş sistemi hava, suüstü ve denizaltı harbi gibi birden fazla görev alanındaki unsurları bütünleştirir. Bu örnekten çıkarılabilecek genel CMS ilkesi, sensör verisinin karar desteği ve uygun görev kaynaklarıyla aynı bilgi zincirinde yönetilmesidir. Bu ifade belirli bir angajman yöntemi veya ürün performansı iddiası değildir. Amaç operatöre tutarlı bir durum resmi ve izlenebilir karar desteği sağlamaktır; yetkili insanın karar sorumluluğu korunur.",
+      "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "page": 1,
+      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
+    },
+    {
+      "text": "iddiası değildir. Amaç operatöre tutarlı bir durum resmi ve izlenebilir karar desteği sağlamaktır; yetkili insanın karar sorumluluğu korunur. Ortak operasyon resmi ve veri füzyonu ABD Deniz Kuvvetlerinin GCCS-M kamu açıklamasına göre deniz komuta-kontrol sistemi; dost, hasım ve tarafsız kara, deniz ve hava unsurlarının konum ve nitelik bilgisini birleştirir, ilişkilendirir, süzer, sürdürür ve görüntüler. Haritalar, seyir haritaları, topoğrafik ve oşinografik katmanlar, meteoroloji, görüntü ve farklı istihbarat kaynakları ortak operasyon resminde bir araya getirilebilir. Ortak resim, aynı verinin herkes tarafından kontrolsüz biçimde görülmesi anlamına gelmez. Kullanıcı rolü, görev kapsamı, veri kaynağı, zaman damgası, güven seviyesi ve paylaşım politikası korunmalıdır.",
+      "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "page": 1,
+      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
+    },
+    {
+      "text": "biçimde görülmesi anlamına gelmez. Kullanıcı rolü, görev kapsamı, veri kaynağı, zaman damgası, güven seviyesi ve paylaşım politikası korunmalıdır. Bir CMS açısından veri füzyonu yalnız görselleştirme değil; gözlemlerin ilişkilendirilmesi, mükerrer kayıtların azaltılması, kimlik ve niteliklerin güncellenmesi ve kaynağın izlenebilmesidir. Dağıtık sensör ağı ve birlikte çalışabilirlik ABD Deniz Kuvvetleri Cooperative Engagement Capability tanımında coğrafi olarak dağıtılmış sensörlerin ağ üzerinden birleştirilerek tek bir bütünleşik hava resmi üretmesi anlatılır. Sistem, radar ve dost-düşman tanıma sensörü verisini yetkili birimler arasında paylaşır. Sensör ağı işleme bileşeni ile gerçek zamanlı veri dağıtım bileşeni iki temel işlev grubu olarak belirtilir. Genel CMS mühendisliğinde birlikte çalışabilirlik; yalnız fiziksel bağlantı kurmak değildir.",
+      "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "page": 1,
+      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
+    },
+    {
+      "text": "bileşeni iki temel işlev grubu olarak belirtilir. Genel CMS mühendisliğinde birlikte çalışabilirlik; yalnız fiziksel bağlantı kurmak değildir. Veri modeli, ileti biçimi, zamanlama, kimlik, koordinat referansı, güvenlik etiketi ve anlamın iki sistemde tutarlı yorumlanması gerekir. Taktik veri bağları ve standart arayüzler, farklı platformların ortak durumsal",
+      "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "page": 1,
+      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
+    },
+    {
+      "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 2 farkındalık ve koordineli görev icrası için veri alışverişini destekler. Açık ve modüler mimari ile yaşam döngüsü NAVSEA PEO IWS kamu açıklamasında açık mimari girişimi; radar, sonar, silah, elektronik harp, denizaltı harbi ve komuta-kontrol bileşenlerinin gemi, müşterek ve müttefik sistemlerle uyumlu çalışmasını destekleyen bir yaklaşım olarak sunulur. Kamuya açık savaş sistemi mühendisliği yayınlarında iyi tanımlanmış ve kararlı arayüzlerin, iç bileşenlerin birbirinden daha bağımsız geliştirilmesine yardımcı olduğu belirtilir. Modülerlik, her parçanın sınırsız biçimde değiştirilebilmesi demek değildir. Arayüz sözleşmeleri, sürüm uyumluluğu, emniyet, siber güvenlik ve yeniden sertifikasyon etkileri yönetilmelidir.",
+      "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "page": 2,
+      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
+    },
+    {
+      "text": "değiştirilebilmesi demek değildir. Arayüz sözleşmeleri, sürüm uyumluluğu, emniyet, siber güvenlik ve yeniden sertifikasyon etkileri yönetilmelidir. Yaşam döngüsü; gereksinim, tasarım, entegrasyon, doğrulama, geçerleme, konuşlandırma, bakım, modernizasyon ve kullanım dışı bırakma aşamalarını kapsayan sürekli bir mühendislik faaliyetidir. Test, değerlendirme ve insanlı ekip NAVSEA Surface Combat Systems Center kamu tanımında sistemler arası, platformlar arası ve müşterek ortam birlikte çalışabilirlik testleri; canlı ve benzetimli operasyonlar, eğitim, geliştirme, sertifikasyon ve donanım-döngüde testler birlikte ele alınır. Yüksek doğruluklu test ortamı, gerçek sisteme geçmeden önce arayüz, veri akışı ve insan-makine etkileşimi sorunlarının gözlenmesini destekler. Bir RAG veya AI bileşeni CMS araştırmasına eklendiğinde değerlendirme yalnız cevap akıcı mı sorusuyla sınırlı kalmamalıdır.",
+      "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "page": 2,
+      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
+    },
+    {
+      "text": "gözlenmesini destekler. Bir RAG veya AI bileşeni CMS araştırmasına eklendiğinde değerlendirme yalnız cevap akıcı mı sorusuyla sınırlı kalmamalıdır. Doğru kanıtın bulunması, yanlış olumlu ve yanlış olumsuz kararlar, kaynak sadakati, gecikme, tekrar üretilebilirlik, güvenli ret ve insan denetimine uygunluk ayrı ölçülmelidir. Sıfır güven ve güvenilir yapay zekâ NIST SP 800-207, sıfır güven yaklaşımında kullanıcı veya varlıklara yalnız ağ konumu ya da sahiplik nedeniyle örtük güven verilmemesini; kimlik doğrulama ve yetkilendirmenin kurumsal kaynağa erişimden önce ayrı işlevler olarak uygulanmasını tanımlar. Koruma odağı yalnız ağ segmentleri değil, varlıklar, hizmetler, iş akışları ve hesaplardır.",
+      "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "page": 2,
+      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
+    },
+    {
+      "text": "önce ayrı işlevler olarak uygulanmasını tanımlar. Koruma odağı yalnız ağ segmentleri değil, varlıklar, hizmetler, iş akışları ve hesaplardır. NIST AI RMF; geçerli ve güvenilir, emniyetli, güvenli ve dayanıklı, hesap verebilir ve şeffaf, açıklanabilir ve yorumlanabilir, mahremiyeti güçlendirilmiş ve zararlı önyargıları yönetilmiş AI özelliklerini ele alır. Govern, Map, Measure ve Manage işlevleri risk yönetimini yaşam döngüsüne yayar. Yüksek etkili kullanımda insan rolleri, sorumlulukları, müdahale noktaları ve sistem sınırları açıkça tanımlanmalıdır. Kaynaklar 1. U.S. Navy, “AEGIS Weapon System”, 20 Eylül 2021. https://www.navy.mil/Resources/Fact-Files/Displ ay-FactFiles/Article/2166739/aegis/aegis-weapon-system/ 2. U.S. Department of the Navy, “Global Command and Control System–Maritime”. https://www.secnav.navy.mil/rda/Pages/Programs/GCCSM.aspx 3. U.S.",
+      "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "page": 2,
+      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
+    },
+    {
+      "text": "2. U.S. Department of the Navy, “Global Command and Control System–Maritime”. https://www.secnav.navy.mil/rda/Pages/Programs/GCCSM.aspx 3. U.S. Navy, “Cooperative Engagement Capability”, 14 Ekim 2021. https://www.navy.mil/DesktopModules/ArticleCS/Print.aspx?Arti cle=2166802&ModuleId=724&PortalId=1 4. NAVSEA, “PEO IWS Industry Engagement”. https://www.navsea.navy.mil/Home/PEO-IWS/PEO-IWS-Industry-Engagement/ 5. NAVSEA Surface Combat Systems Center, “About Us”. https://www.navsea.navy.mil/Home/SCSC/About-Us/ 6. NIST, “SP 800-207: Zero Trust Architecture”, Ağustos 2020. https://csrc.nist.gov/pubs/sp/800/207/final 7. NIST, “Artificial Intelligence Risk Management Framework 1.0”, Ocak 2023. https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10",
+      "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "page": 2,
+      "source_path": "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\data\\knowledge_base\\sources\\genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+      "collection": "open_source",
+      "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+      "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/"
     }
   ]
 }

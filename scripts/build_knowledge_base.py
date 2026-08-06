@@ -64,6 +64,14 @@ CURATED_DOCUMENTS = (
         "authority": "NATO and U.S. Navy public official sources — curated",
         "source_url": "https://www.nato.int/en/about-us/official-texts-and-resources/official-texts/2024/07/10/summary-of-natos-revised-artificial-intelligence-ai-strategy",
     },
+    {
+        "content": "04_general_cms_engineering_public_research.md",
+        "output": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "title": "Deniz CMS Mühendisliği ve Güvenilir AI Açık Kaynak Özeti",
+        "collection": "open_source",
+        "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated",
+        "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2166739/aegis/aegis-weapon-system/",
+    },
 )
 
 
@@ -135,7 +143,7 @@ def _story(markdown: str, title: str) -> list:
         Spacer(1, 18 * mm),
         Paragraph(escape(title), styles["title"]),
         Paragraph(
-            "Kürasyon tarihi: 30 Temmuz 2026 · Yalnız kamuya açık kaynaklar",
+            "Kürasyon tarihi: 5 Ağustos 2026 · Yalnız kamuya açık kaynaklar",
             styles["small"],
         ),
         Spacer(1, 10 * mm),
@@ -263,7 +271,7 @@ def _write_manifest() -> list[Path]:
     )
     manifest = {
         "schema_version": 1,
-        "knowledge_cutoff": "2026-07-30",
+        "knowledge_cutoff": "2026-08-05",
         "runtime_web_access": False,
         "data_boundary": (
             "Yalnız kamuya açık kaynaklar; şirket içi, tasnifli veya kişisel veri yok."

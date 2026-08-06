@@ -15,7 +15,7 @@ Bu çalışma üç soruyu ayrı deneylerle cevaplar:
 
 ## 1. Aşama — Chunk kalite hakemi
 
-Üretim snapshot'ındaki 67 chunk'ın tamamı hakeme verilmiştir; örneklem
+Üretim snapshot'ındaki 77 chunk'ın tamamı hakeme verilmiştir; örneklem
 kullanılmamıştır. Her chunk dört boyutta 1–5 arasında değerlendirilmiştir:
 
 - Coherence: tek ve anlaşılır konu
@@ -29,14 +29,14 @@ başarılı sayılmaz. Uzun koşu her chunk sonrasında cache'e yazılır.
 
 | Ölçüm | Sonuç |
 |---|---:|
-| Chunk | 67 |
-| Geçerli judge çıktısı | 67 |
+| Chunk | 77 |
+| Geçerli judge çıktısı | 77 |
 | Geçersiz çıktı | 0 |
-| Kabul edilen | 67 |
-| Coherence ortalaması | 4,119 |
-| Self-containment ortalaması | 3,448 |
-| Boundary quality ortalaması | 4,164 |
-| Size fitness ortalaması | 3,955 |
+| Kabul edilen | 77 |
+| Coherence ortalaması | 4,104 |
+| Self-containment ortalaması | 3,429 |
+| Boundary quality ortalaması | 4,169 |
+| Size fitness ortalaması | 3,961 |
 
 Kabul oranı `%100` olsa da en zayıf boyut öz-yeterliliktir. Bu nedenle sonuç,
 “chunk'lar geliştirilemez” şeklinde yorumlanmamalıdır. Tam metinler ve tekil
@@ -65,6 +65,11 @@ belge/sayfa ve deterministik kontroller zorunludur.
 
 ## 3. Aşama — Chunk ve retrieval karşılaştırması
 
+Bu tablodaki chunk adetleri, karşılaştırmanın çalıştırıldığı önceki 67-chunk
+corpus konfigürasyonuna aittir; 77-chunk güncel snapshot'ın Aşama-1 sonucu ile
+karıştırılmaz. Yaklaşım karşılaştırması yeniden çalıştırıldığında tablo aynı
+komutla yenilenebilir.
+
 Aynı 30 pozitif soru, aynı embedding modeli ve `K=6` ile ölçülmüştür.
 
 | Yaklaşım | Chunk | Chunk adedi | Hit@6 | MRR | Terim kapsama |
@@ -92,9 +97,9 @@ nihai 45 vakalı kabul turunda bu tasarım:
 
 - TP/TN/FP/FN: `30/15/0/0`
 - Hit@6: `%100`
-- MRR: `0,8361`
-- Ortalama retrieval: `1500,2 ms`
-- p95 retrieval: `1968,5 ms`
+- MRR: `0,7694`
+- Ortalama retrieval: `1438,3 ms`
+- p95 retrieval: `1750,2 ms`
 
 üretmiştir.
 
@@ -103,7 +108,7 @@ nihai 45 vakalı kabul turunda bu tasarım:
 Docker içindeki PostgreSQL 16 + pgvector üzerinde geçici ve kalıcı olmayan bir
 tablo kurulmuştur. FAISS ve pgvector:
 
-- aynı 67 önceden hesaplanmış embedding,
+- karşılaştırma tarihinde kullanılan aynı 67 önceden hesaplanmış embedding,
 - exact cosine,
 - aynı 23 sorgu vektörü,
 - aynı koleksiyon filtresi ve K=6
@@ -126,6 +131,12 @@ seçeneği olarak doğrulanmıştır.
 ```powershell
 # Chunk, cevap ve retrieval deneyleri
 .\.venv\Scripts\python.exe -m scripts.run_quality_evaluation
+
+# Yalnız yeni snapshot chunklarını değerlendirip mevcut raporu koruma
+.\.venv\Scripts\python.exe -m scripts.refresh_chunk_quality_stage
+
+# 20 vakalık bağımsız chunk-köken deneyi
+.\.venv\Scripts\python.exe -m scripts.run_chunk_lineage_evaluation
 
 # Geçici gerçek pgvector servisi
 docker compose -f evaluation\pgvector\compose.yaml up -d --wait

@@ -27,8 +27,8 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "deliverables"
 DOCX_PATH = OUTPUT_DIR / "CMS-RAG_Nihai_Teknik_Dokumantasyon.docx"
 PPTX_PATH = OUTPUT_DIR / "CMS-RAG_Nihai_Proje_Sunumu.pptx"
-TODAY = date(2026, 8, 2)
-VERSION = "1.2"
+TODAY = date(2026, 8, 6)
+VERSION = "1.3"
 COMMIT = "codex/evaluation-benchmark"
 BENCHMARK_REPORT = json.loads(
     (ROOT / "evaluation" / "results" / "latest" / "benchmark_report.json")
@@ -38,7 +38,11 @@ QUALITY_REPORT = json.loads(
     (ROOT / "evaluation" / "results" / "quality-latest" / "quality_evaluation_report.json")
     .read_text(encoding="utf-8")
 )
-AUTOMATED_TESTS = 69
+LINEAGE_REPORT = json.loads(
+    (ROOT / "evaluation" / "results" / "lineage-latest" / "lineage_evaluation_report.json")
+    .read_text(encoding="utf-8")
+)
+AUTOMATED_TESTS = 82
 
 NAVY = "0B1F3A"
 BLUE = "1B5FA7"
@@ -326,7 +330,7 @@ def build_word_document() -> None:
             ["Tarih", TODAY.strftime("%d.%m.%Y")],
             ["Doğrulanmış dal", COMMIT],
             ["Mimari", "Hazır PDF paketi + önceden hesaplanmış embedding snapshot'ı"],
-            ["Durum", "Nihai kabul — 41/41 test, 8/8 retrieval, 7/7 yanıt"],
+            ["Durum", "Nihai kabul — 82/82 test, 8/8 retrieval, 7/7 yanıt"],
         ],
         [5.0, 11.5],
     )
@@ -352,7 +356,7 @@ def build_word_document() -> None:
             ["Kaynaklar", "Dört önceden hazırlanmış kamuya açık PDF; şirket verisi kullanılmaz"],
             ["Çalışma modeli", "Yerel Ollama qwen2.5:3b; güçlü donanımda qwen2.5:7b"],
             ["Arayüz", "Streamlit tabanlı, kaynak kartlı ve akışlı sohbet"],
-            ["Son kabul", "41/41 test, 8/8 retrieval, 7/7 yanıt ve 67/67 snapshot"],
+            ["Son kabul", "82/82 test, 8/8 retrieval, 7/7 yanıt ve 77/77 snapshot"],
         ],
         [4.2, 12.3],
     )
@@ -392,7 +396,7 @@ def build_word_document() -> None:
     add_word_body(
         document,
         "Araştırma ve kaynak toplama normal kullanımdan önce tamamlanır. Dört metin "
-        "çıkarılabilir PDF, 67 anlamlı parça ve bunların önceden hesaplanmış embeddingleri "
+        "çıkarılabilir PDF, 77 anlamlı parça ve bunların önceden hesaplanmış embeddingleri "
         "sürümlenmiş bir snapshot olarak hazırlanır. Streamlit açıldığında bu hazır paket "
         "yüklenir; çalışma anında web taraması veya çekirdek belgeleri yeniden embedding "
         "etme işlemi yapılmaz. Yerel Ollama yalnız getirilen kanıt üzerinden cevap üretir."
@@ -404,8 +408,8 @@ def build_word_document() -> None:
             ["Otomatik test", "41 / 41", "Birim, entegrasyon, UI ve mimari sınır testleri"],
             ["Retrieval kabulü", "8 / 8", "Hazır kamuya açık bilgi paketinde doğru kanıt erişimi"],
             ["Yanıt kabulü", "7 / 7", "Kavram, atıf, kaynak ve doğru ret kararı"],
-            ["İndekslenen kanıt", "67", "Dört PDF ve önceden hesaplanmış 67 embedding"],
-            ["PDF bütünlüğü", "40 / 40 sayfa", "44.398 çıkarılmış metin karakteri"],
+            ["İndekslenen kanıt", "77", "Beş PDF ve önceden hesaplanmış 77 embedding"],
+            ["PDF bütünlüğü", "42 / 42 sayfa", "50.802 çıkarılmış metin karakteri"],
             ["Canlı servis", "HTTP 200", "Ana sayfa ve health endpoint"],
             ["Git yeniden üretim", "Başarılı", "Temiz git archive içinde aynı sonuçlar"],
         ],
@@ -451,7 +455,7 @@ def build_word_document() -> None:
             ["Tekrarlı PDF", "İkinci kayıt oluşmamalı", "SHA-256 ile engellendi"],
             ["Takip sorusu", "Son bağlamı anlamalı", "3 turluk kapsam izole bellek"],
             ["Hata davranışı", "İlgisiz kaynak göstermemeli", "UI ve motor testleriyle doğrulandı"],
-            ["Yeniden üretim", "Hazır paket ve snapshot", "41/41, 8/8, 7/7 ve 67/67"],
+            ["Yeniden üretim", "Hazır paket ve snapshot", "82/82, 8/8, 7/7 ve 77/77"],
         ],
         [5.0, 5.8, 5.7],
     )
@@ -885,12 +889,28 @@ def build_word_document() -> None:
                 f"{QUALITY_REPORT['stage1']['summary']['chunk_count']} geçerli",
             ],
             [
+                "20-vaka TP / TN / FP / FN",
+                "{true_positive} / {true_negative} / {false_positive} / {false_negative}".format(
+                    **LINEAGE_REPORT["confusion_matrix"]
+                ),
+            ],
+            [
+                "20-vaka accuracy / F1",
+                f"{LINEAGE_REPORT['confusion_matrix']['accuracy']:.1%} / "
+                f"{LINEAGE_REPORT['confusion_matrix']['f1']:.2%}",
+            ],
+            [
+                "Exact chunk-köken başarı",
+                f"{LINEAGE_REPORT['lineage']['strict_passes']}/"
+                f"{LINEAGE_REPORT['lineage']['evaluated_positive_cases']}",
+            ],
+            [
                 "Hit@6 / MRR",
                 f"{BENCHMARK_REPORT['retrieval']['hit_at_k']:.0%} / "
                 f"{BENCHMARK_REPORT['retrieval']['mrr']:.4f}".replace(".", ","),
             ],
-            ["İndekslenen parça", "67"],
-            ["PDF sayfası", "40/40 metinli"],
+            ["İndekslenen parça", str(QUALITY_REPORT['stage1']['summary']['chunk_count'])],
+            ["PDF sayfası", "42/42 metinli"],
             ["Boş parça / eksik kaynak yolu", "0 / 0"],
             ["Canlı Streamlit", "HTTP 200"],
             ["Temiz Git arşivi", "Aynı test sonuçları"],
@@ -1015,7 +1035,7 @@ def build_word_document() -> None:
             ["3 dk", "Mimari", "Katmanlar, hibrit retrieval ve kanıt zinciri"],
             ["2 dk", "Güvenilirlik", "Hash, güvenli ret, kapsam izolasyonu ve yerel model"],
             ["3 dk", "Canlı demo", "ADVENT → takip sorusu → NATO kapsamı → kaynaksız ret"],
-            ["1 dk", "Test", "41/41, 8/8, 7/7 ve 67/67 snapshot"],
+            ["1 dk", "Test", "82/82, 8/8, 7/7 ve 77/77 snapshot"],
             ["1 dk", "Yol haritası", "OCR, kalıcı indeks, RBAC ve audit"],
         ],
         [2.5, 4.5, 9.6],
@@ -1335,7 +1355,7 @@ def build_powerpoint() -> None:
     add_slide_title(slide, "Tek cümlede proje", "Önceden hazırlanmış kamu bilgisini çevrimdışı, yerel ve kaynaklı cevaba dönüştürür.")
     add_metric_card(slide, 0.7, 2.1, 2.7, "41 / 41", "OTOMATİK TEST")
     add_metric_card(slide, 3.55, 2.1, 2.7, "8 / 8", "RETRIEVAL KABULÜ", GREEN)
-    add_metric_card(slide, 6.4, 2.1, 2.7, "67", "KANIT PARÇASI", ORANGE)
+    add_metric_card(slide, 6.4, 2.1, 2.7, "77", "KANIT PARÇASI", ORANGE)
     add_metric_card(slide, 9.25, 2.1, 2.7, "HTTP 200", "CANLI SERVİS", BLUE)
     add_ppt_box(slide, 0.7, 3.75, 11.95, 2.2, fill=NAVY, line=NAVY)
     add_ppt_text(slide, "Çözüm değeri", 1.05, 4.08, 2.3, 0.35, size=11, color=CYAN, bold=True)
@@ -1566,16 +1586,16 @@ def build_powerpoint() -> None:
     )
     add_metric_card(
         slide, 8.7, 2.0, 2.5,
-        f"{BENCHMARK_REPORT['confusion_matrix']['false_positive']} / "
-        f"{BENCHMARK_REPORT['confusion_matrix']['false_negative']}",
-        "FP / FN", BLUE,
+        f"{LINEAGE_REPORT['confusion_matrix']['false_positive']} / "
+        f"{LINEAGE_REPORT['confusion_matrix']['false_negative']}",
+        "20 VAKA FP / FN", BLUE,
     )
     categories = [
         ("Storage", 8, BLUE),
-        ("Engine", 25, CYAN),
-        ("UI + PDF", 8, GREEN),
-        ("Eval + Audit", 11, ORANGE),
-        ("Architecture", 3, NAVY),
+        ("Engine", 30, CYAN),
+        ("UI + PDF", 17, GREEN),
+        ("Eval + Audit", 19, ORANGE),
+        ("Architecture + KB", 8, NAVY),
     ]
     max_value = max(value for _, value, _ in categories)
     for index, (label, value, color) in enumerate(categories):

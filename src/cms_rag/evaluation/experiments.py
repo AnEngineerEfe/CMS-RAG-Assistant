@@ -146,7 +146,11 @@ class QualityExperimentRunner:
     def evaluate_answers(self, *, cache_path: Path | None = None) -> dict[str, Any]:
         """Pozitif altın sorulara verilen gerçek cevapları bağımsız modele denetletir."""
 
-        engine = CMSRAGEngine(self.data_dir, model=self.generator_model)
+        engine = CMSRAGEngine(
+            self.data_dir,
+            model=self.generator_model,
+            record_runtime_events=False,
+        )
         engine.rebuild()
         snapshot_chunks = self._snapshot_chunks()
         cached: dict[str, dict[str, Any]] = {}

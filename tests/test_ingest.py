@@ -47,6 +47,15 @@ class PDFIngestorTests(unittest.TestCase):
         )
         self.assertEqual([hit.chunk.page for hit in selected], [1, 2, 9])
 
+    def test_gate_places_stronger_cross_encoder_evidence_first(self):
+        weak = SearchHit(Chunk("weak", "doc.pdf", 1, "doc.pdf"), 0.01)
+        strong = SearchHit(Chunk("strong", "doc.pdf", 2, "doc.pdf"), 0.92)
+        tail = SearchHit(Chunk("tail", "doc.pdf", 3, "doc.pdf"), 0.02)
+
+        ordered = HybridRetriever._order_gate_prefix([weak, strong], [tail])
+
+        self.assertEqual([hit.chunk.text for hit in ordered], ["strong", "weak", "tail"])
+
     def test_answerability_gate_separates_strong_and_weak_evidence(self):
         retriever = HybridRetriever.__new__(HybridRetriever)
         retriever._reranker = object()

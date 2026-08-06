@@ -33,7 +33,13 @@ CONTINUATION_MAX_NEW_TOKENS = 96
 class CMSRAGEngine:
     """CMS-RAG kullanım senaryolarını tek bir durumlu servis üzerinden yürütür."""
 
-    def __init__(self, data_dir: Path, model: str | None = None) -> None:
+    def __init__(
+        self,
+        data_dir: Path,
+        model: str | None = None,
+        *,
+        record_runtime_events: bool = True,
+    ) -> None:
         """Veri deposunu ve Ollama istemcisini hazırlar; indekslemeyi tembel bırakır."""
 
         self.store = DocumentStore(data_dir / "documents")
@@ -43,6 +49,7 @@ class CMSRAGEngine:
         self.audit = AuditStore(data_dir / "audit")
         self.live_evaluations = LiveEvaluationStore(data_dir / "evaluation")
         self.live_assessor = LiveEvaluationAssessor(data_dir.parent)
+        self.record_runtime_events = record_runtime_events
         self.retriever: HybridRetriever | None = None
         self.history: list[dict[str, str]] = []
         self.snapshot_loaded = False
@@ -200,9 +207,9 @@ class CMSRAGEngine:
         """Kaynakları numaralandırıp modeli yalnızca bu bağlamdan cevap vermeye zorlar."""
 
         # Uzun ve aynı sayfadan birleşmiş kanıt kartlarının tamamını modele göndermek yerel
-        # donanımda ilk token süresini büyütür. En güçlü üç kanıtın sınırlı bir bölümünü
+        # donanımda ilk token süresini büyütür. En güçlü iki kanıtın sınırlı bir bölümünü
         # kullanmak kaynak kapsamını korurken üretimi belirgin biçimde hızlandırır.
-        prompt_hits = hits[:3]
+        prompt_hits = hits[:2]
         expanded_question = CMSQueryProcessor.expand(question)
         context = "\n\n".join(
             f"[SOURCE {number}: {hit.chunk.document}, page {hit.chunk.page}]\n"
@@ -212,6 +219,11 @@ class CMSRAGEngine:
         return f"""You are a careful CMS documentation assistant. Answer only from CONTEXT.
 Write fluent Turkish in one concise paragraph of at most 55 words.
 Do not invent examples, systems, capabilities, or facts.
+Read SOURCE 1 first and locate the exact sentence that answers the question.
+For questions asking which, what, or how many items, preserve every requested
+item from that sentence and translate technical phrases faithfully; do not
+replace them with broader wording or unsupported synonyms.
+Every answer clause must be directly traceable to one cited source.
 Treat statements describing this research package as a public preliminary study
 as scope metadata; never describe ADVENT itself as a preliminary study.
 If the user asks for an example and the context does not contain one, say that
@@ -228,6 +240,11 @@ CONTEXT
 
 QUESTION
 {question}
+
+FINAL CHECK
+Answer the QUESTION itself, not the general topic. Prefer the exact wording of
+SOURCE 1. If the question requests a fixed number of items, include that exact
+number of source-backed items before writing the citation.
 """
 
     @staticmethod
@@ -270,7 +287,10 @@ QUESTION
         excerpt = " ".join(sentences[index] for index in selected_indexes)
         if not excerpt:
             excerpt = text
-        return excerpt[:limit].rstrip()
+        if len(excerpt) <= limit:
+            return excerpt.rstrip()
+        shortened = excerpt[:limit].rsplit(" ", 1)[0].rstrip(" ,;:")
+        return f"{shortened}…"
 
     def _grounded_fallback(self, question: str, hits: list[SearchHit]) -> str:
         """Model yanlış ret verirse en güçlü kanıttan izlenebilir bir çıkarımsal yedek üretir."""
@@ -278,7 +298,7 @@ QUESTION
         excerpt = self._evidence_excerpt(
             CMSQueryProcessor.expand(question),
             hits[0].chunk.text,
-            limit=450,
+            limit=750,
         )
         return f"Kaynakta soruyla ilgili şu bilgi yer alıyor: {excerpt} [SOURCE 1]"
 
@@ -311,6 +331,243 @@ QUESTION
         return iterator()
 
     def _ollama_stream(
+        self,
+        question: str,
+        prompt: str,
+        hits: list[SearchHit],
+        scope: str = "all",
+        *,
+        started_at: float | None = None,
+    ) -> Iterator[str]:
+        """Ollama çıktısını tamamlar, tekilleştirir ve temiz cevabı aşamalı yayınlar."""
+
+        def iterator() -> Iterator[str]:
+            """Ham modeli kullanıcıya göstermeden önce bütünlük ve tekrar denetimi yapar."""
+
+            try:
+                draft, stop_reason = self._collect_model_response(
+                    [{"role": "user", "content": prompt}],
+                    num_predict=DEFAULT_MAX_NEW_TOKENS,
+                    temperature=0.0,
+                )
+                answer = draft.strip() or NO_ANSWER
+                if self._needs_completion(answer, stop_reason):
+                    continuation, _ = self._collect_model_response(
+                        [
+                            {"role": "user", "content": prompt},
+                            {"role": "assistant", "content": draft},
+                            {
+                                "role": "user",
+                                "content": (
+                                    "Yanıt kesildi. Yalnızca yarım kalan Türkçe cümleyi "
+                                    "mevcut CONTEXT'e dayanarak tamamla; yeni paragraf veya "
+                                    "yeni iddia ekleme."
+                                ),
+                            },
+                        ],
+                        num_predict=CONTINUATION_MAX_NEW_TOKENS,
+                        temperature=0.0,
+                    )
+                    answer = self._merge_continuation(answer, continuation)
+                answer = self._clean_model_answer(question, answer)
+                answer = self._complete_sentences_only(answer)
+                if answer == NO_ANSWER and hits:
+                    answer = self._grounded_fallback(question, hits)
+                if hits and "[SOURCE" not in answer.upper() and answer != NO_ANSWER:
+                    answer += " [SOURCE 1]"
+            except Exception:
+                answer = (
+                    "Yerel Ollama servisine ulaşılamadı. "
+                    "`ollama serve` komutunu çalıştırın."
+                )
+            yield from self._word_stream(answer)
+            self._remember(question, answer, scope)
+            self._record_audit(
+                question,
+                answer,
+                hits if "ulaşılamadı" not in answer else [],
+                scope,
+                started_at,
+                "ollama",
+            )
+
+        return iterator()
+
+    def _collect_model_response(
+        self,
+        messages: list[dict[str, str]],
+        *,
+        num_predict: int,
+        temperature: float,
+    ) -> tuple[str, str]:
+        """Tek Ollama çağrısındaki tokenları kullanıcıya sızdırmadan toplar."""
+
+        parts: list[str] = []
+        stop_reason = ""
+        for response in self._ollama.chat(
+            model=self.model,
+            messages=messages,
+            stream=True,
+            options={
+                "temperature": temperature,
+                "num_predict": num_predict,
+                "num_ctx": 2048,
+            },
+            keep_alive="30m",
+        ):
+            stop_reason = str(response.get("done_reason", stop_reason))
+            token = str(response.get("message", {}).get("content", ""))
+            if token:
+                parts.append(token)
+        return "".join(parts).strip(), stop_reason
+
+    @staticmethod
+    def _needs_completion(answer: str, stop_reason: str) -> bool:
+        """Token sınırı veya noktalamasız bitiş nedeniyle yarım cevabı belirler."""
+
+        if not answer or answer == NO_ANSWER:
+            return False
+        without_citation = re.sub(
+            r"\s*\[SOURCE\s+\d+\]\s*$",
+            "",
+            answer,
+            flags=re.I,
+        ).rstrip()
+        return stop_reason == "length" or not without_citation.endswith((".", "!", "?"))
+
+    @staticmethod
+    def _merge_continuation(draft: str, continuation: str) -> str:
+        """Tamamlama modelinin yinelediği ön eki ayıklayıp yeni metni birleştirir."""
+
+        draft = draft.strip()
+        continuation = continuation.strip()
+        if not continuation:
+            return draft
+        if continuation.lower().startswith(draft.lower()):
+            return continuation
+        maximum = min(len(draft), len(continuation))
+        overlap = 0
+        for size in range(maximum, 7, -1):
+            if draft[-size:].lower() == continuation[:size].lower():
+                overlap = size
+                break
+        suffix = continuation[overlap:].lstrip()
+        separator = " " if draft[-1:].isalnum() and suffix[:1].isalnum() else ""
+        return f"{draft}{separator}{suffix}".strip()
+
+    @classmethod
+    def _clean_model_answer(cls, question: str, answer: str) -> str:
+        """Soru yankısını ve bozuk kaynak etiketini temizleyip tekrarları tekilleştirir."""
+
+        terminology = {
+            "kentralized control": "merkezi kontrol",
+            "centralized control": "merkezi kontrol",
+            "distributed execution": "dağıtık icra",
+            "komando ve kontrol": "komuta ve kontrol",
+        }
+        for source_term, preferred_term in terminology.items():
+            answer = re.sub(
+                re.escape(source_term),
+                preferred_term,
+                answer,
+                flags=re.I,
+            )
+        answer = re.sub(
+            r"\[SOURCE\s+(\d+)[^\]]*\]",
+            r"[SOURCE \1]",
+            answer,
+            flags=re.I,
+        )
+        parts = re.split(r"(?<=\?)\s+", answer.strip(), maxsplit=1)
+        if len(parts) == 2:
+            echoed = set(CMSQueryProcessor.normalise(parts[0]).split())
+            asked = set(CMSQueryProcessor.normalise(question).split())
+            if asked and len(echoed & asked) / len(asked) >= 0.8:
+                answer = re.sub(
+                    r"^\s*\[SOURCE\s+\d+\]\s*",
+                    "",
+                    parts[1],
+                    flags=re.I,
+                )
+        citation_ids = list(
+            dict.fromkeys(re.findall(r"\[SOURCE\s+(\d+)\]", answer, flags=re.I))
+        )
+        answer = re.sub(r"\s*\[SOURCE\s+\d+\]\s*", " ", answer, flags=re.I)
+        cleaned = cls._deduplicate_answer(answer)
+        if citation_ids and cleaned != NO_ANSWER:
+            cleaned = f"{cleaned} " + " ".join(
+                f"[SOURCE {source_id}]" for source_id in citation_ids
+            )
+        return cleaned.strip()
+
+    @staticmethod
+    def _complete_sentences_only(answer: str) -> str:
+        """İkinci tamamlama da kesilirse kullanıcıya yalnız bitmiş cümleleri gösterir."""
+
+        stripped = answer.strip()
+        without_citation = re.sub(
+            r"\s*\[SOURCE\s+\d+\]\s*$",
+            "",
+            stripped,
+            flags=re.I,
+        ).rstrip()
+        if without_citation.endswith((".", "!", "?")):
+            return stripped
+        boundaries = list(
+            re.finditer(r"[.!?](?:\s*\[SOURCE\s+\d+\])?", stripped, flags=re.I)
+        )
+        if not boundaries:
+            return NO_ANSWER
+        return stripped[: boundaries[-1].end()].strip()
+
+    @classmethod
+    def _deduplicate_answer(cls, answer: str) -> str:
+        """Aynı cümle veya art arda yinelenen sözcük dizilerini tek örneğe indirger."""
+
+        compact = " ".join(answer.split())
+        sentences = [
+            sentence.strip()
+            for sentence in re.split(r"(?<=[.!?])\s+", compact)
+            if sentence.strip()
+        ]
+        unique_sentences: list[str] = []
+        seen: set[str] = set()
+        for sentence in sentences:
+            key = re.sub(r"\s*\[SOURCE\s+\d+\]", "", sentence, flags=re.I)
+            key = re.sub(r"\W+", " ", key, flags=re.UNICODE).strip().lower()
+            if key and key in seen:
+                continue
+            if key:
+                seen.add(key)
+            unique_sentences.append(sentence)
+        words = " ".join(unique_sentences).split()
+        changed = True
+        while changed:
+            changed = False
+            for width in range(min(40, len(words) // 2), 3, -1):
+                for start in range(0, len(words) - 2 * width + 1):
+                    first = [item.casefold() for item in words[start : start + width]]
+                    second = [
+                        item.casefold()
+                        for item in words[start + width : start + 2 * width]
+                    ]
+                    if first == second:
+                        del words[start + width : start + 2 * width]
+                        changed = True
+                        break
+                if changed:
+                    break
+        return " ".join(words).strip() or NO_ANSWER
+
+    @staticmethod
+    def _word_stream(answer: str) -> Iterator[str]:
+        """Doğrulanmış cevabı yeniden üretmeden okunabilir parçalarda yayınlar."""
+
+        words = answer.split()
+        for index, word in enumerate(words):
+            yield word if index == len(words) - 1 else f"{word} "
+
+    def _legacy_ollama_stream(
         self,
         question: str,
         prompt: str,
@@ -435,6 +692,9 @@ QUESTION
         generation_mode: str,
     ) -> None:
         """Yanıt akışını bozmadan gizlilik korumalı işletim olayını kaydeder."""
+
+        if not self.record_runtime_events:
+            return
 
         if generation_mode == "unavailable":
             outcome = "unavailable"

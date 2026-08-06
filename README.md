@@ -40,7 +40,7 @@ anında web taraması gerekmez.
   TP/TN/FP/FN etiketini otomatik kaydeden canlı değerlendirme merkezi
 - Canlı sayaçlardan ayrı tutulan altın set, LLM hakemi ve FAISS/pgvector referans raporları
 - Ham soru/cevap saklamayan SHA-256 özetli yerel audit ve işletim görünürlüğü
-- Dört PDF kaynağı ve gürültüden arındırılmış 67 chunk içeren sürümlenmiş snapshot
+- Beş PDF kaynağı ve gürültüden arındırılmış 77 chunk içeren sürümlenmiş snapshot
 - Normal kullanımda belge embeddinglerini yeniden hesaplamayan hızlı açılış
 - Çalışma anında kapalı web erişimi ve yalnız yerel üretim
 - Belge silme, yeniden indeksleme ve güvenli boş-bilgi-tabani davranışı
@@ -88,7 +88,7 @@ streamlit run app.py
 
 ## Kullanım
 
-1. Uygulamayı açın; dört belgeli hazır bilgi tabanı otomatik yüklenir.
+1. Uygulamayı açın; beş belgeli hazır bilgi tabanı otomatik yüklenir.
 2. Sorgu kapsamını `Birleşik`, `Yalnızca resmî` veya `Yalnızca açık kaynak`
    olarak seçin.
 3. ADVENT/CMS veya kamuya açıklanmış AI entegrasyonu hakkında sorunuzu yazın.
@@ -114,7 +114,7 @@ python -m pip install -r requirements-tools.txt
 .\.venv\Scripts\python.exe -m scripts.build_knowledge_base
 ```
 
-Komut üç küratörlü PDF'yi, `manifest.json` dosyasını ve belge embedding
+Komut dört küratörlü PDF'yi, `manifest.json` dosyasını ve belge embedding
 snapshot'ını yeniden üretir. Normal kullanıcı bu komutu çalıştırmaz.
 
 ## Mimari
@@ -191,6 +191,7 @@ Her iki Office dosyası aşağıdaki komutla aynı proje verilerinden yeniden
 .\.venv\Scripts\python.exe -m scripts.evaluate_retrieval
 .\.venv\Scripts\python.exe -m scripts.run_benchmark
 .\.venv\Scripts\python.exe -m scripts.run_quality_evaluation
+.\.venv\Scripts\python.exe -m scripts.run_chunk_lineage_evaluation
 ```
 
 İkinci komut, sabit kabul sorularının beklenen sayfa/koleksiyon/terimleri getirip
@@ -200,6 +201,21 @@ dosyasına yazar.
 Üçüncü komut; 23 pozitif ve 10 negatif altın vakada TP/TN/FP/FN,
 precision/recall/specificity/F1, Hit@6, MRR ve gecikme metriklerini üretir.
 Ayrıntılı rapor `evaluation/results/latest/benchmark_report.json` dosyasındadır.
+
+Son komut, 16 tekil chunk-kökenli pozitif soru ile 4 kaynak-dışı negatif kontrolü
+çalıştırır. Sorular Codex büyük modelle geliştirme zamanında hazırlanıp sürümlenmiş,
+cevaplar yerel `qwen2.5:3b` ile üretilmiş ve retrieval adayları ayrı bir
+`qwen2.5:7b` oturumunda değerlendirilmiştir. Son ölçülen sonuç:
+
+| Gerçek \ Tahmin | Pozitif | Negatif |
+|---|---:|---:|
+| Pozitif · bilgi mevcut | **TP 15** | **FN 1** |
+| Negatif · bilgi mevcut değil | **FP 0** | **TN 4** |
+
+Accuracy `%95,0`, precision `%100`, recall `%93,75`, specificity `%100` ve F1
+`%96,77` olmuştur. Exact başlangıç-chunk ve bağımsız hakem eşleşmesi `13/16`
+(`%81,25`) düzeyindedir. Ayrıntılı, vaka bazlı JSON/CSV ve matris özeti
+`evaluation/results/lineage-latest/` altında sürümlenir.
 
 ## Veri ve güvenlik sınırı
 

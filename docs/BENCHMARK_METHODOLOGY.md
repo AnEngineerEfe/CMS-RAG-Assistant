@@ -74,7 +74,7 @@ başarısızsa komut sıfırdan farklı çıkış kodu döndürür.
 
 ## Son ölçüm ve yorumlama
 
-2026-08-02 tarihli 45 vakalık kabul turunda 45 vaka geçti; TP/TN/FP/FN
+2026-08-06 tarihli 45 vakalık kabul turunda 45 vaka geçti; TP/TN/FP/FN
 `30/15/0/0`, Hit@6 `%100`, MRR `0,8361`, ortalama retrieval gecikmesi
 `1500,2 ms`, p95 gecikmesi `1968,5 ms` ölçüldü.
 

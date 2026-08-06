@@ -27,6 +27,13 @@ REPORT_PATHS = {
         / "quality_evaluation_report.json"
     ),
     "pgvector": PROJECT_ROOT / "evaluation" / "results" / "pgvector-latest.json",
+    "lineage": (
+        PROJECT_ROOT
+        / "evaluation"
+        / "results"
+        / "lineage-latest"
+        / "lineage_evaluation_report.json"
+    ),
 }
 
 
@@ -56,6 +63,7 @@ def render_evaluation_dashboard() -> None:
     benchmark = reports["benchmark"]
     quality = reports["quality"]
     pgvector = reports["pgvector"]
+    lineage = reports["lineage"]
     live_store = LiveEvaluationStore(DATA_DIR / "evaluation")
     live = live_store.summary()
     st.markdown(
@@ -76,9 +84,17 @@ def render_evaluation_dashboard() -> None:
         f"{live.get('chunk_correct', 0)}/{live.get('event_count', 0)}",
     )
 
-    tests, matrix, references, operations = st.tabs(
-        ("Canlı test tablosu", "TP · TN · FP · FN", "Referans raporlar", "İşletim / audit")
+    lineage_tab, tests, matrix, references, operations = st.tabs(
+        (
+            "20 vaka · bağımsız deney",
+            "Canlı test tablosu",
+            "Canlı TP · TN · FP · FN",
+            "Referans raporlar",
+            "İşletim / audit",
+        )
     )
+    with lineage_tab:
+        _render_lineage_evaluation(lineage)
     with tests:
         _render_live_tests(live, live_store)
     with matrix:
@@ -155,22 +171,14 @@ def _render_live_matrix(summary: dict[str, Any]) -> None:
     """Canlı kayıtların confusion matrix hücrelerini sayı ve açıklamayla gösterir."""
 
     cells = summary.get("cells", {})
-    st.markdown("#### Canlı confusion matrix")
-    st.dataframe(
-        [
-            {
-                "Gerçek / Sistem kararı": "Bilgi mevcut",
-                "Cevap verdi": cells.get("TP", 0),
-                "Güvenli reddetti": cells.get("FN", 0),
-            },
-            {
-                "Gerçek / Sistem kararı": "Bilgi mevcut değil",
-                "Cevap verdi": cells.get("FP", 0),
-                "Güvenli reddetti": cells.get("TN", 0),
-            },
-        ],
-        hide_index=True,
-        width="stretch",
+    _render_confusion_grid(
+        {
+            "true_positive": cells.get("TP", 0),
+            "false_negative": cells.get("FN", 0),
+            "false_positive": cells.get("FP", 0),
+            "true_negative": cells.get("TN", 0),
+        },
+        title="Canlı confusion matrix",
     )
     st.markdown(
         "<div class='matrix-legend'>"
@@ -181,6 +189,107 @@ def _render_live_matrix(summary: dict[str, Any]) -> None:
         "</div>",
         unsafe_allow_html=True,
     )
+
+
+def _render_lineage_evaluation(report: dict[str, Any]) -> None:
+    """20 vakalık bağımsız soru–RAG–chunk hakemi deneyini açık adlarla gösterir."""
+
+    if not report:
+        st.warning(
+            "20 vakalık bağımsız deney henüz çalıştırılmadı. "
+            "`python -m scripts.run_chunk_lineage_evaluation` komutunu çalıştırın."
+        )
+        return
+    method = report.get("method", {})
+    matrix = report.get("confusion_matrix", {})
+    lineage = report.get("lineage", {})
+    st.markdown("#### Model görevleri ve bağımsızlık sınırı")
+    roles = st.columns(3)
+    _metric(roles[0], "Soruyu üreten büyük model", str(method.get("question_generator_model", "—")))
+    _metric(roles[1], "RAG cevabını veren küçük model", str(method.get("rag_answer_model", "—")))
+    _metric(roles[2], "Chunk'ı seçen büyük hakem", str(method.get("chunk_origin_judge_model", "—")))
+    st.caption(
+        "Sorular Codex büyük model tarafından yalnız başlangıç chunkı görülerek geliştirme "
+        "zamanında hazırlanmış ve sürümlenmiştir. Küçük model her vakayı yalnız yerel RAG "
+        "ile cevaplar; 7B hakem ayrı ve durumsuz çağrıda retrieval adaylarından cevabı "
+        "destekleyen chunkları seçer."
+    )
+    _render_confusion_grid(matrix, title="20 vakanın confusion matrix sonucu")
+    metrics = st.columns(4)
+    _metric(metrics[0], "Accuracy", _percent(matrix.get("accuracy")))
+    _metric(metrics[1], "Precision", _percent(matrix.get("precision")))
+    _metric(metrics[2], "Recall", _percent(matrix.get("recall")))
+    _metric(
+        metrics[3],
+        "Kaynak chunk eşleşmesi",
+        f"{lineage.get('origin_chunk_matches', 0)}/{lineage.get('evaluated_positive_cases', 0)}",
+    )
+    st.markdown("#### Vaka bazında izlenebilir değerlendirme tablosu")
+    rows = [_lineage_row(case) for case in report.get("cases", [])]
+    st.dataframe(
+        rows,
+        hide_index=True,
+        width="stretch",
+        column_config={
+            "Üretilen soru / input": st.column_config.TextColumn(width="large"),
+            "RAG cevabı / output": st.column_config.TextColumn(width="large"),
+            "Başlangıç chunk": st.column_config.TextColumn(width="medium"),
+            "Hakemin seçtiği chunklar": st.column_config.TextColumn(width="medium"),
+        },
+    )
+
+
+def _render_confusion_grid(matrix: dict[str, Any], *, title: str) -> None:
+    """Gerçek ve tahmin eksenleri sabit, sunumluk 2×2 confusion matrix çizer."""
+
+    st.markdown(f"#### {title}")
+    st.markdown(
+        "<div class='confusion-wrap'>"
+        "<div class='confusion-predicted'>TAHMİN EDİLEN</div>"
+        "<div class='confusion-col positive'>Pozitif · cevap verdi</div>"
+        "<div class='confusion-col negative'>Negatif · güvenli ret</div>"
+        "<div class='confusion-actual'>GERÇEK</div>"
+        "<div class='confusion-row actual-positive'>Pozitif<br><small>bilgi mevcut</small></div>"
+        f"<div class='confusion-cell correct'><b>TP</b><strong>{int(matrix.get('true_positive', 0))}</strong>"
+        "<span>Doğru cevap</span></div>"
+        f"<div class='confusion-cell error'><b>FN</b><strong>{int(matrix.get('false_negative', 0))}</strong>"
+        "<span>Kaçırılan bilgi</span></div>"
+        "<div class='confusion-row actual-negative'>Negatif<br><small>bilgi mevcut değil</small></div>"
+        f"<div class='confusion-cell error'><b>FP</b><strong>{int(matrix.get('false_positive', 0))}</strong>"
+        "<span>Kaynak dışı cevap</span></div>"
+        f"<div class='confusion-cell correct'><b>TN</b><strong>{int(matrix.get('true_negative', 0))}</strong>"
+        "<span>Doğru güvenli ret</span></div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+
+def _lineage_row(case: dict[str, Any]) -> dict[str, Any]:
+    """Tek lineage vakasını kafa karıştırmayan Türkçe tablo alanlarına dönüştürür."""
+
+    return {
+        "Vaka": case.get("case_id", ""),
+        "Tür": case.get("case_type", ""),
+        "Konu": case.get("topic", ""),
+        "Üretilen soru / input": case.get("question", ""),
+        "RAG cevabı / output": case.get("answer", ""),
+        "Soru üreten model": case.get("question_generator_model", ""),
+        "RAG modeli": case.get("rag_model", ""),
+        "Chunk hakemi": case.get("chunk_judge_model", ""),
+        "Başlangıç chunk": case.get("source_chunk_id", "—") or "—",
+        "RAG'ın bulduğu chunklar": " · ".join(case.get("retrieved_chunk_ids", [])) or "—",
+        "Hakemin seçtiği chunklar": " · ".join(case.get("judge_selected_chunk_ids", [])) or "—",
+        "Aynı başlangıç chunkı mı?": "Evet" if case.get("origin_chunk_match") else "Hayır / uygulanamaz",
+        "Gerçekte bilgi": "Var" if case.get("actual_data_available") else "Yok",
+        "Sistem kararı": "Cevap verdi" if case.get("predicted_answerable") else "Güvenli ret",
+        "Matris sonucu": case.get("confusion_cell", ""),
+        "Beklenen terim kapsaması": _percent(case.get("answer_term_coverage")),
+        "Hakem cevabı destekliyor mu?": "Evet" if case.get("answer_supported_by_judge") else "Hayır / uygulanamaz",
+        "RAG süresi (ms)": case.get("rag_latency_ms", 0),
+        "Hakem süresi (ms)": case.get("judge_latency_ms", 0),
+        "Katı başarı": "Geçti" if case.get("strict_pass") else "Geçmedi / uygulanamaz",
+        "Durum": case.get("status", ""),
+    }
 
 
 def _render_reference_reports(

@@ -1,5 +1,5 @@
 {
-  "indexed_chunks": 67,
+  "indexed_chunks": 77,
   "snapshot_loaded": true,
   "passed": 8,
   "total": 8,
@@ -31,13 +31,13 @@
         },
         {
           "document": "advent_cms.pdf",
-          "page": 5,
+          "page": 3,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
         },
         {
           "document": "advent_cms.pdf",
-          "page": 3,
+          "page": 5,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
         },
@@ -151,7 +151,7 @@
         },
         {
           "document": "advent_cms.pdf",
-          "page": 3,
+          "page": 28,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
         }
@@ -172,15 +172,27 @@
       "sources": [
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
-          "page": 2,
+          "page": 1,
           "collection": "open_source",
           "authority": "NATO and U.S. Navy public official sources — curated"
         },
         {
           "document": "deniz_c2_veri_ai_yonetisim_arastirma.pdf",
-          "page": 1,
+          "page": 2,
           "collection": "open_source",
           "authority": "NATO and U.S. Navy public official sources — curated"
+        },
+        {
+          "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+          "page": 1,
+          "collection": "open_source",
+          "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated"
+        },
+        {
+          "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+          "page": 2,
+          "collection": "open_source",
+          "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated"
         }
       ]
     },
@@ -198,6 +210,12 @@
       ],
       "sources": [
         {
+          "document": "advent_cms_kamuya_acik_arastirma.pdf",
+          "page": 1,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
+        },
+        {
           "document": "advent_ai_kamuya_acik_arastirma.pdf",
           "page": 1,
           "collection": "official",
@@ -205,18 +223,6 @@
         },
         {
           "document": "advent_cms_kamuya_acik_arastirma.pdf",
-          "page": 1,
-          "collection": "official",
-          "authority": "HAVELSAN public official sources — curated"
-        },
-        {
-          "document": "advent_cms_kamuya_acik_arastirma.pdf",
-          "page": 2,
-          "collection": "official",
-          "authority": "HAVELSAN public official sources — curated"
-        },
-        {
-          "document": "advent_ai_kamuya_acik_arastirma.pdf",
           "page": 2,
           "collection": "official",
           "authority": "HAVELSAN public official sources — curated"
@@ -226,6 +232,12 @@
           "page": 3,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_ai_kamuya_acik_arastirma.pdf",
+          "page": 2,
+          "collection": "official",
+          "authority": "HAVELSAN public official sources — curated"
         }
       ]
     },
@@ -304,6 +316,18 @@
           "page": 2,
           "collection": "open_source",
           "authority": "NATO and U.S. Navy public official sources — curated"
+        },
+        {
+          "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+          "page": 2,
+          "collection": "open_source",
+          "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated"
+        },
+        {
+          "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+          "page": 1,
+          "collection": "open_source",
+          "authority": "U.S. Navy, NAVSEA and NIST public official sources — curated"
         }
       ]
     },
@@ -322,6 +346,18 @@
       "sources": [
         {
           "document": "advent_cms.pdf",
+          "page": 24,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 25,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_cms.pdf",
           "page": 17,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
@@ -334,25 +370,13 @@
         },
         {
           "document": "advent_cms.pdf",
-          "page": 25,
-          "collection": "official",
-          "authority": "HAVELSAN public official brochure"
-        },
-        {
-          "document": "advent_cms.pdf",
-          "page": 24,
-          "collection": "official",
-          "authority": "HAVELSAN public official brochure"
-        },
-        {
-          "document": "advent_cms.pdf",
-          "page": 4,
-          "collection": "official",
-          "authority": "HAVELSAN public official brochure"
-        },
-        {
-          "document": "advent_cms.pdf",
           "page": 18,
+          "collection": "official",
+          "authority": "HAVELSAN public official brochure"
+        },
+        {
+          "document": "advent_cms.pdf",
+          "page": 12,
           "collection": "official",
           "authority": "HAVELSAN public official brochure"
         }

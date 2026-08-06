@@ -217,12 +217,18 @@ class HybridRetriever:
                         for hit in base_hits[:gate_count]
                     ]
                 )
-                return [
+                scored_prefix = [
                     SearchHit(hit.chunk, float(gate_scores[position]))
-                    if position < gate_count
-                    else hit
-                    for position, hit in enumerate(base_hits)
+                    for position, hit in enumerate(base_hits[:gate_count])
                 ]
+                # Gate modu yalnız ilk iki adayı pahalı çapraz kodlayıcıdan geçirir.
+                # Bu skorları yalnız cevaplanabilirlikte kullanıp RRF sırasını korumak,
+                # daha güçlü kanıtı ikinci sırada bırakarak küçük modelin cevabını bozuyordu.
+                # Karşılaştırılabilir skorlu ön eki sıralar, ölçülmemiş kuyruğu koruruz.
+                return self._order_gate_prefix(
+                    scored_prefix,
+                    base_hits[gate_count:],
+                )
             scores = self._reranker.predict(
                 [(query, self.chunks[item_id].text) for item_id in candidate_ids]
             )
@@ -377,6 +383,19 @@ class HybridRetriever:
             for token in cls._tokenise(query)
             if token not in ignored and len(token) > 2
         }
+
+    @staticmethod
+    def _order_gate_prefix(
+        scored_prefix: list[SearchHit],
+        unscored_tail: list[SearchHit],
+    ) -> list[SearchHit]:
+        """Çapraz kodlayıcıyla ölçülen ön eki sıralar; RRF kuyruğunu değiştirmez."""
+
+        return sorted(
+            scored_prefix,
+            key=lambda hit: hit.score,
+            reverse=True,
+        ) + list(unscored_tail)
 
     @staticmethod
     def _deduplicate_by_page(

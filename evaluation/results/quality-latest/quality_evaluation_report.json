@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-01T21:53:08.344389+00:00",
+  "generated_at": "2026-08-06T08:04:16.782459+00:00",
   "configuration": {
     "generator_model": "qwen2.5:3b",
     "judge_model": "llama3.2:3b",
@@ -9,7 +9,8 @@
       900,
       1350
     ],
-    "runtime_web_access": false
+    "runtime_web_access": false,
+    "snapshot_chunk_count": 77
   },
   "stage1": {
     "method": {
@@ -25,17 +26,17 @@
       ]
     },
     "summary": {
-      "chunk_count": 67,
-      "judged_count": 67,
+      "chunk_count": 77,
+      "judged_count": 77,
       "invalid_judge_outputs": 0,
-      "acceptable_count": 67,
+      "acceptable_count": 77,
       "acceptable_rate": 1.0,
-      "average_characters": 723.37,
+      "average_characters": 727.53,
       "dimension_means": {
-        "coherence": 4.119,
-        "self_containment": 3.448,
-        "boundary_quality": 4.164,
-        "size_fitness": 3.955
+        "coherence": 4.104,
+        "self_containment": 3.429,
+        "boundary_quality": 4.169,
+        "size_fitness": 3.961
       }
     },
     "chunks": [
@@ -576,7 +577,7 @@
         "estimated_tokens": 157,
         "starts_with_word": true,
         "ends_with_terminal": true,
-        "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 ADVENT CMS Kamuya Açık Araştırma Özeti Kürasyon tarihi: 30 Temmuz 2026 · Yalnız kamuya açık kaynaklar Kapsam ve veri sınırı Bu bilgi paketi, HAVELSAN'ın deniz savaş yönetim sistemleri alanındaki kamuya açık ürün sayfaları, haberleri ve resmî ürün broşürü temel alınarak hazırlanmış bir ön çalışmadır. HAVELSAN'a ait şirket içi, tasnifli, kişisel veya erişim yetkisi gerektiren hiçbir veri kullanılmamıştır. Buradaki ifadeler operasyonel talimat değildir; yalnızca açık kaynak araştırma ve RAG gösterimi amacı taşır. ADVENT'in amacı ve temel yaklaşımı ADVENT, HAVELSAN tarafından Ağ Destekli Veri Entegre Savaş Yönetim Sistemi olarak tanımlanır. Yeni nesil deniz harekâtında platformların tek tek optimize edilmesi yerine görev kuvvetinin birlikte çalışmasına, ağ destekli yeteneklere ve müşterek görev icrasına odaklanır."
+        "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 ADVENT CMS Kamuya Açık Araştırma Özeti Kürasyon tarihi: 5 Ağustos 2026 · Yalnız kamuya açık kaynaklar Kapsam ve veri sınırı Bu bilgi paketi, HAVELSAN'ın deniz savaş yönetim sistemleri alanındaki kamuya açık ürün sayfaları, haberleri ve resmî ürün broşürü temel alınarak hazırlanmış bir ön çalışmadır. HAVELSAN'a ait şirket içi, tasnifli, kişisel veya erişim yetkisi gerektiren hiçbir veri kullanılmamıştır. Buradaki ifadeler operasyonel talimat değildir; yalnızca açık kaynak araştırma ve RAG gösterimi amacı taşır. ADVENT'in amacı ve temel yaklaşımı ADVENT, HAVELSAN tarafından Ağ Destekli Veri Entegre Savaş Yönetim Sistemi olarak tanımlanır. Yeni nesil deniz harekâtında platformların tek tek optimize edilmesi yerine görev kuvvetinin birlikte çalışmasına, ağ destekli yeteneklere ve müşterek görev icrasına odaklanır."
       },
       {
         "chunk_id": "advent_cms_kamuya_acik_arastirma.pdf:p1:c2",
@@ -653,7 +654,7 @@
         "estimated_tokens": 125,
         "starts_with_word": true,
         "ends_with_terminal": true,
-        "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 ADVENT AI Kamuya Açık Araştırma Özeti Kürasyon tarihi: 30 Temmuz 2026 · Yalnız kamuya açık kaynaklar Kapsam ve veri sınırı Bu paket yalnız HAVELSAN'ın kamuya açık açıklamalarından türetilmiştir. Şirket içi eğitim verileri, mimari ayrıntılar, algoritma parametreleri, operasyonel veri veya tasnifli bilgi içermez. Açıklanan yetenekler ürün sahibinin kamuya açık beyanlarıdır; bu ön çalışma bunları bağımsız olarak doğrulanmış performans sonuçları şeklinde sunmaz. MAIN bakım ve karar destek asistanı HAVELSAN'ın 10 Ağustos 2025 tarihli açıklamasına göre kurumsal yapay zekâ platformu MAIN, ADVENT'e bakım destek asistanı olarak entegre edilmektedir."
+        "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 ADVENT AI Kamuya Açık Araştırma Özeti Kürasyon tarihi: 5 Ağustos 2026 · Yalnız kamuya açık kaynaklar Kapsam ve veri sınırı Bu paket yalnız HAVELSAN'ın kamuya açık açıklamalarından türetilmiştir. Şirket içi eğitim verileri, mimari ayrıntılar, algoritma parametreleri, operasyonel veri veya tasnifli bilgi içermez. Açıklanan yetenekler ürün sahibinin kamuya açık beyanlarıdır; bu ön çalışma bunları bağımsız olarak doğrulanmış performans sonuçları şeklinde sunmaz. MAIN bakım ve karar destek asistanı HAVELSAN'ın 10 Ağustos 2025 tarihli açıklamasına göre kurumsal yapay zekâ platformu MAIN, ADVENT'e bakım destek asistanı olarak entegre edilmektedir."
       },
       {
         "chunk_id": "advent_ai_kamuya_acik_arastirma.pdf:p1:c2",
@@ -719,7 +720,7 @@
         "estimated_tokens": 135,
         "starts_with_word": true,
         "ends_with_terminal": true,
-        "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 Deniz C2, Veri ve Sorumlu AI Açık Kaynak Özeti Kürasyon tarihi: 30 Temmuz 2026 · Yalnız kamuya açık kaynaklar Kapsam Bu paket, NATO ve ABD Deniz Kuvvetlerinin kamuya açık resmî metinlerinden hazırlanmıştır. ADVENT'e özgü olmayan genel veri, birlikte çalışabilirlik, komuta-kontrol ve sorumlu yapay zekâ ilkelerini açıklar. ADVENT ile doğrudan bir entegrasyon veya kurumsal ilişki, kaynak açıkça belirtmedikçe çıkarılamaz. Veri-merkezli birlikte çalışabilirlik NATO'nun 5 Mayıs 2025 tarihli Alliance Data Strategy metni; kaliteli ve küratörlü veriyi çok alanlı harekât, birlikte çalışabilirlik, durumsal farkındalık ve veriye dayalı karar verme için temel stratejik varlık olarak ele alır."
+        "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 Deniz C2, Veri ve Sorumlu AI Açık Kaynak Özeti Kürasyon tarihi: 5 Ağustos 2026 · Yalnız kamuya açık kaynaklar Kapsam Bu paket, NATO ve ABD Deniz Kuvvetlerinin kamuya açık resmî metinlerinden hazırlanmıştır. ADVENT'e özgü olmayan genel veri, birlikte çalışabilirlik, komuta-kontrol ve sorumlu yapay zekâ ilkelerini açıklar. ADVENT ile doğrudan bir entegrasyon veya kurumsal ilişki, kaynak açıkça belirtmedikçe çıkarılamaz. Veri-merkezli birlikte çalışabilirlik NATO'nun 5 Mayıs 2025 tarihli Alliance Data Strategy metni; kaliteli ve küratörlü veriyi çok alanlı harekât, birlikte çalışabilirlik, durumsal farkındalık ve veriye dayalı karar verme için temel stratejik varlık olarak ele alır."
       },
       {
         "chunk_id": "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c2",
@@ -775,6 +776,116 @@
         "starts_with_word": true,
         "ends_with_terminal": false,
         "text": "ources/official-texts/2025/05/05/data-strategy-for-the-alliance 2. NATO, “Summary of NATO's Revised Artificial Intelligence Strategy”, 10 Temmuz 2024. https://www.nato.int/en/about-us/official-texts -and-resources/official-texts/2024/07/10/summary-of-natos-revised-artificial-intelligence-ai-strategy 3. U.S. Navy PEO C4I, “PMW 150 Command and Control Systems Program Office”, Ocak 2026. https://www.peoc4i.navy.mil/Portals/98/2026_PMW%20150_Tear%20Sheet_FINAL_JAN2026.pdf 4. U.S. Navy, “AN/UYQ-100 Undersea Warfare Decision Support System”, 20 Eylül 2021. https://www.nav y.mil/Resources/Fact-Files/Display-FactFiles/Article/2166791/anuyq-100-undersea-warfare-decision-su pport-system-usw-dss/"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c1",
+        "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "page": 1,
+        "collection": "open_source",
+        "characters": 842,
+        "estimated_tokens": 148,
+        "starts_with_word": true,
+        "ends_with_terminal": true,
+        "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 1 Deniz CMS Mühendisliği ve Güvenilir AI Açık Kaynak Özeti Kürasyon tarihi: 5 Ağustos 2026 · Yalnız kamuya açık kaynaklar Kapsam ve ürünlerden bağımsızlık Bu bilgi paketi, ABD Deniz Kuvvetleri, NAVSEA ve NIST tarafından yayımlanmış kamuya açık resmî kaynaklardan hazırlanmıştır. Deniz savaş yönetim sistemlerine ilişkin genel mühendislik kavramlarını açıklar; ADVENT'e veya başka bir ürüne kaynakta bulunmayan özellik atfetmez. Şirket içi, tasnifli, operasyonel ya da kişisel veri içermez ve operasyonel talimat niteliği taşımaz. Bütünleşik savaş sistemi ve karar desteği ABD Deniz Kuvvetlerinin AEGIS kamu tanımında savaş sistemi; merkezî, otomatik bir komuta-kontrol ve silah kontrol sistemi olarak açıklanır. Bilgisayar tabanlı komuta ve karar bileşeni sistemin çekirdeğidir."
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c2",
+        "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "page": 1,
+        "collection": "open_source",
+        "characters": 675,
+        "estimated_tokens": 113,
+        "starts_with_word": true,
+        "ends_with_terminal": true,
+        "text": "merkezî, otomatik bir komuta-kontrol ve silah kontrol sistemi olarak açıklanır. Bilgisayar tabanlı komuta ve karar bileşeni sistemin çekirdeğidir. Çok işlevli sensörler arama, izleme ve güdüm görevlerini birlikte destekler; savaş sistemi hava, suüstü ve denizaltı harbi gibi birden fazla görev alanındaki unsurları bütünleştirir. Bu örnekten çıkarılabilecek genel CMS ilkesi, sensör verisinin karar desteği ve uygun görev kaynaklarıyla aynı bilgi zincirinde yönetilmesidir. Bu ifade belirli bir angajman yöntemi veya ürün performansı iddiası değildir. Amaç operatöre tutarlı bir durum resmi ve izlenebilir karar desteği sağlamaktır; yetkili insanın karar sorumluluğu korunur."
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c3",
+        "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "page": 1,
+        "collection": "open_source",
+        "characters": 778,
+        "estimated_tokens": 126,
+        "starts_with_word": true,
+        "ends_with_terminal": true,
+        "text": "iddiası değildir. Amaç operatöre tutarlı bir durum resmi ve izlenebilir karar desteği sağlamaktır; yetkili insanın karar sorumluluğu korunur. Ortak operasyon resmi ve veri füzyonu ABD Deniz Kuvvetlerinin GCCS-M kamu açıklamasına göre deniz komuta-kontrol sistemi; dost, hasım ve tarafsız kara, deniz ve hava unsurlarının konum ve nitelik bilgisini birleştirir, ilişkilendirir, süzer, sürdürür ve görüntüler. Haritalar, seyir haritaları, topoğrafik ve oşinografik katmanlar, meteoroloji, görüntü ve farklı istihbarat kaynakları ortak operasyon resminde bir araya getirilebilir. Ortak resim, aynı verinin herkes tarafından kontrolsüz biçimde görülmesi anlamına gelmez. Kullanıcı rolü, görev kapsamı, veri kaynağı, zaman damgası, güven seviyesi ve paylaşım politikası korunmalıdır."
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c4",
+        "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "page": 1,
+        "collection": "open_source",
+        "characters": 857,
+        "estimated_tokens": 133,
+        "starts_with_word": true,
+        "ends_with_terminal": true,
+        "text": "biçimde görülmesi anlamına gelmez. Kullanıcı rolü, görev kapsamı, veri kaynağı, zaman damgası, güven seviyesi ve paylaşım politikası korunmalıdır. Bir CMS açısından veri füzyonu yalnız görselleştirme değil; gözlemlerin ilişkilendirilmesi, mükerrer kayıtların azaltılması, kimlik ve niteliklerin güncellenmesi ve kaynağın izlenebilmesidir. Dağıtık sensör ağı ve birlikte çalışabilirlik ABD Deniz Kuvvetleri Cooperative Engagement Capability tanımında coğrafi olarak dağıtılmış sensörlerin ağ üzerinden birleştirilerek tek bir bütünleşik hava resmi üretmesi anlatılır. Sistem, radar ve dost-düşman tanıma sensörü verisini yetkili birimler arasında paylaşır. Sensör ağı işleme bileşeni ile gerçek zamanlı veri dağıtım bileşeni iki temel işlev grubu olarak belirtilir. Genel CMS mühendisliğinde birlikte çalışabilirlik; yalnız fiziksel bağlantı kurmak değildir."
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c5",
+        "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "page": 1,
+        "collection": "open_source",
+        "characters": 359,
+        "estimated_tokens": 57,
+        "starts_with_word": true,
+        "ends_with_terminal": false,
+        "text": "bileşeni iki temel işlev grubu olarak belirtilir. Genel CMS mühendisliğinde birlikte çalışabilirlik; yalnız fiziksel bağlantı kurmak değildir. Veri modeli, ileti biçimi, zamanlama, kimlik, koordinat referansı, güvenlik etiketi ve anlamın iki sistemde tutarlı yorumlanması gerekir. Taktik veri bağları ve standart arayüzler, farklı platformların ortak durumsal"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c1",
+        "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "page": 2,
+        "collection": "open_source",
+        "characters": 790,
+        "estimated_tokens": 126,
+        "starts_with_word": true,
+        "ends_with_terminal": true,
+        "text": "Kamuya açık ön çalışma · Şirket içi/tasnifli veri içermez Sayfa 2 farkındalık ve koordineli görev icrası için veri alışverişini destekler. Açık ve modüler mimari ile yaşam döngüsü NAVSEA PEO IWS kamu açıklamasında açık mimari girişimi; radar, sonar, silah, elektronik harp, denizaltı harbi ve komuta-kontrol bileşenlerinin gemi, müşterek ve müttefik sistemlerle uyumlu çalışmasını destekleyen bir yaklaşım olarak sunulur. Kamuya açık savaş sistemi mühendisliği yayınlarında iyi tanımlanmış ve kararlı arayüzlerin, iç bileşenlerin birbirinden daha bağımsız geliştirilmesine yardımcı olduğu belirtilir. Modülerlik, her parçanın sınırsız biçimde değiştirilebilmesi demek değildir. Arayüz sözleşmeleri, sürüm uyumluluğu, emniyet, siber güvenlik ve yeniden sertifikasyon etkileri yönetilmelidir."
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c2",
+        "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "page": 2,
+        "collection": "open_source",
+        "characters": 896,
+        "estimated_tokens": 134,
+        "starts_with_word": true,
+        "ends_with_terminal": true,
+        "text": "değiştirilebilmesi demek değildir. Arayüz sözleşmeleri, sürüm uyumluluğu, emniyet, siber güvenlik ve yeniden sertifikasyon etkileri yönetilmelidir. Yaşam döngüsü; gereksinim, tasarım, entegrasyon, doğrulama, geçerleme, konuşlandırma, bakım, modernizasyon ve kullanım dışı bırakma aşamalarını kapsayan sürekli bir mühendislik faaliyetidir. Test, değerlendirme ve insanlı ekip NAVSEA Surface Combat Systems Center kamu tanımında sistemler arası, platformlar arası ve müşterek ortam birlikte çalışabilirlik testleri; canlı ve benzetimli operasyonlar, eğitim, geliştirme, sertifikasyon ve donanım-döngüde testler birlikte ele alınır. Yüksek doğruluklu test ortamı, gerçek sisteme geçmeden önce arayüz, veri akışı ve insan-makine etkileşimi sorunlarının gözlenmesini destekler. Bir RAG veya AI bileşeni CMS araştırmasına eklendiğinde değerlendirme yalnız cevap akıcı mı sorusuyla sınırlı kalmamalıdır."
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c3",
+        "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "page": 2,
+        "collection": "open_source",
+        "characters": 703,
+        "estimated_tokens": 117,
+        "starts_with_word": true,
+        "ends_with_terminal": true,
+        "text": "gözlenmesini destekler. Bir RAG veya AI bileşeni CMS araştırmasına eklendiğinde değerlendirme yalnız cevap akıcı mı sorusuyla sınırlı kalmamalıdır. Doğru kanıtın bulunması, yanlış olumlu ve yanlış olumsuz kararlar, kaynak sadakati, gecikme, tekrar üretilebilirlik, güvenli ret ve insan denetimine uygunluk ayrı ölçülmelidir. Sıfır güven ve güvenilir yapay zekâ NIST SP 800-207, sıfır güven yaklaşımında kullanıcı veya varlıklara yalnız ağ konumu ya da sahiplik nedeniyle örtük güven verilmemesini; kimlik doğrulama ve yetkilendirmenin kurumsal kaynağa erişimden önce ayrı işlevler olarak uygulanmasını tanımlar. Koruma odağı yalnız ağ segmentleri değil, varlıklar, hizmetler, iş akışları ve hesaplardır."
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c4",
+        "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "page": 2,
+        "collection": "open_source",
+        "characters": 866,
+        "estimated_tokens": 124,
+        "starts_with_word": true,
+        "ends_with_terminal": true,
+        "text": "önce ayrı işlevler olarak uygulanmasını tanımlar. Koruma odağı yalnız ağ segmentleri değil, varlıklar, hizmetler, iş akışları ve hesaplardır. NIST AI RMF; geçerli ve güvenilir, emniyetli, güvenli ve dayanıklı, hesap verebilir ve şeffaf, açıklanabilir ve yorumlanabilir, mahremiyeti güçlendirilmiş ve zararlı önyargıları yönetilmiş AI özelliklerini ele alır. Govern, Map, Measure ve Manage işlevleri risk yönetimini yaşam döngüsüne yayar. Yüksek etkili kullanımda insan rolleri, sorumlulukları, müdahale noktaları ve sistem sınırları açıkça tanımlanmalıdır. Kaynaklar 1. U.S. Navy, “AEGIS Weapon System”, 20 Eylül 2021. https://www.navy.mil/Resources/Fact-Files/Displ ay-FactFiles/Article/2166739/aegis/aegis-weapon-system/ 2. U.S. Department of the Navy, “Global Command and Control System–Maritime”. https://www.secnav.navy.mil/rda/Pages/Programs/GCCSM.aspx 3. U.S."
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c5",
+        "document": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf",
+        "page": 2,
+        "collection": "open_source",
+        "characters": 788,
+        "estimated_tokens": 78,
+        "starts_with_word": true,
+        "ends_with_terminal": false,
+        "text": "2. U.S. Department of the Navy, “Global Command and Control System–Maritime”. https://www.secnav.navy.mil/rda/Pages/Programs/GCCSM.aspx 3. U.S. Navy, “Cooperative Engagement Capability”, 14 Ekim 2021. https://www.navy.mil/DesktopModules/ArticleCS/Print.aspx?Arti cle=2166802&ModuleId=724&PortalId=1 4. NAVSEA, “PEO IWS Industry Engagement”. https://www.navsea.navy.mil/Home/PEO-IWS/PEO-IWS-Industry-Engagement/ 5. NAVSEA Surface Combat Systems Center, “About Us”. https://www.navsea.navy.mil/Home/SCSC/About-Us/ 6. NIST, “SP 800-207: Zero Trust Architecture”, Ağustos 2020. https://csrc.nist.gov/pubs/sp/800/207/final 7. NIST, “Artificial Intelligence Risk Management Framework 1.0”, Ocak 2023. https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10"
       }
     ],
     "judgments": [
@@ -1446,6 +1557,106 @@
         "size_fitness": 4,
         "acceptable": true,
         "rationale": "clear and focused topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context",
+        "status": "completed"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c1",
+        "coherence": 4,
+        "self_containment": 3,
+        "boundary_quality": 5,
+        "size_fitness": 4,
+        "acceptable": true,
+        "rationale": "Coherent topic, sufficient local context, no broken words or severed thoughts, and appropriate retrieval context.",
+        "status": "completed"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c2",
+        "coherence": 4,
+        "self_containment": 3,
+        "boundary_quality": 4,
+        "size_fitness": 4,
+        "acceptable": true,
+        "rationale": "sufficient context provided for the topic, clear and logical flow of ideas, no broken words or severed thoughts, appropriate length for retrieval context",
+        "status": "completed"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c3",
+        "coherence": 4,
+        "self_containment": 3,
+        "boundary_quality": 4,
+        "size_fitness": 4,
+        "acceptable": true,
+        "rationale": "coherent topic, some contextual information missing",
+        "status": "completed"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c4",
+        "coherence": 4,
+        "self_containment": 3,
+        "boundary_quality": 4,
+        "size_fitness": 4,
+        "acceptable": true,
+        "rationale": "coherent topic, some context needed for full understanding, no broken words or thoughts, appropriate size and retrieval context",
+        "status": "completed"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c5",
+        "coherence": 4,
+        "self_containment": 3,
+        "boundary_quality": 4,
+        "size_fitness": 4,
+        "acceptable": true,
+        "rationale": "coherent topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context",
+        "status": "completed"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c1",
+        "coherence": 4,
+        "self_containment": 3,
+        "boundary_quality": 4,
+        "size_fitness": 4,
+        "acceptable": true,
+        "rationale": "coherent topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context",
+        "status": "completed"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c2",
+        "coherence": 4,
+        "self_containment": 3,
+        "boundary_quality": 5,
+        "size_fitness": 4,
+        "acceptable": true,
+        "rationale": "Coherent topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context, neither too fragmentary nor bloated.",
+        "status": "completed"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c3",
+        "coherence": 4,
+        "self_containment": 4,
+        "boundary_quality": 4,
+        "size_fitness": 4,
+        "acceptable": true,
+        "rationale": "coherent topic, sufficient local context, no broken words or severed thoughts, appropriate retrieval context",
+        "status": "completed"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c4",
+        "coherence": 4,
+        "self_containment": 4,
+        "boundary_quality": 4,
+        "size_fitness": 4,
+        "acceptable": true,
+        "rationale": "clear and concise language, relevant context provided",
+        "status": "completed"
+      },
+      {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c5",
+        "coherence": 4,
+        "self_containment": 4,
+        "boundary_quality": 4,
+        "size_fitness": 4,
+        "acceptable": true,
+        "rationale": "clear and logical flow of ideas, sufficient context provided",
         "status": "completed"
       }
     ]

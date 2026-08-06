@@ -59,6 +59,37 @@ class AnswerJudgeResult:
         return asdict(self)
 
 
+@dataclass(frozen=True)
+class QuestionGenerationResult:
+    """Büyük değerlendirme modelinin tek bir chunk'tan ürettiği bağımsız soruyu taşır."""
+
+    chunk_id: str
+    question: str
+    rationale: str
+    status: str = "completed"
+
+    def as_dict(self) -> dict[str, Any]:
+        """Soru üretim sonucunu raporlanabilir sözlüğe dönüştürür."""
+
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class ChunkOriginJudgeResult:
+    """Bağımsız hakemin cevabı destekleyen chunk kimlikleri hakkındaki kararını taşır."""
+
+    case_id: str
+    answer_supported: bool
+    selected_chunk_ids: tuple[str, ...]
+    rationale: str
+    status: str = "completed"
+
+    def as_dict(self) -> dict[str, Any]:
+        """Chunk-kökeni kararını JSON ve CSV için sözlüğe dönüştürür."""
+
+        return asdict(self)
+
+
 @dataclass
 class ConfusionMatrix:
     """Bilgi mevcudiyeti ile cevaplanabilirlik kararını TP/TN/FP/FN olarak sayar."""

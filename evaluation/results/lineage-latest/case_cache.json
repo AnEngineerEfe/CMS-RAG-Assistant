@@ -1,0 +1,889 @@
+[
+  {
+    "case_id": "L01",
+    "topic": "Geliştirme iş birliği",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p3:c1",
+    "question": "ADVENT hangi araştırma merkeziyle iş birliği içinde ve hangi temel gereksinimleri karşılamak üzere geliştirilmiştir?",
+    "answer": "ADVENT, tarafından ARMERKOM ile iş birliği içinde geliştirilmiştir ve tüm komuta & kontrol gereksinimlerini karşılamak üzere oluşturulmuştur. [SOURCE 1]",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p3:c1",
+      "advent_cms.pdf:p3:c2"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p3:c1"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "ARMERKOM|Turkish Naval Forces Research Center Command",
+      "komuta-kontrol|command & control"
+    ],
+    "answer_terms_matched": [
+      "ARMERKOM|Turkish Naval Forces Research Center Command",
+      "komuta-kontrol|command & control"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 7653.004,
+    "rag_latency_ms": 7653.004,
+    "judge_latency_ms": 42184.658,
+    "total_latency_ms": 49837.662,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p3:c1",
+      "question": "ADVENT hangi araştırma merkeziyle iş birliği içinde ve hangi temel gereksinimleri karşılamak üzere geliştirilmiştir?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "ARMERKOM ile iş birliği içinde geliştirilmiştir ve tüm komuta & kontrol gereksinimlerini karşılamak üzere oluşturulmuştur.",
+    "status": "completed"
+  },
+  {
+    "case_id": "L02",
+    "topic": "İz yönetimi",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p9:c1",
+    "question": "ADVENT iz yönetimi, farklı kaynaklardan gelen iz verilerini işlerken hangi iki algoritmayı kullanır?",
+    "answer": "ADVENT, iz yönetimi sırasında farklı kaynaklardan gelen iz verilerini işlerken kendi içinde kullanılan iki algoritma olan \"[Correlation]\" ve \"[Merging]\" kullanır. [SOURCE 1]",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p9:c3",
+      "advent_cms.pdf:p9:c1"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p9:c1"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "korelasyon|correlation",
+      "birleştirme|merging"
+    ],
+    "answer_terms_matched": [
+      "korelasyon|correlation",
+      "birleştirme|merging"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 9991.537,
+    "rag_latency_ms": 9991.537,
+    "judge_latency_ms": 40615.945,
+    "total_latency_ms": 50607.481,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p9:c1",
+      "question": "ADVENT iz yönetimi, farklı kaynaklardan gelen iz verilerini işlerken hangi iki algoritmayı kullanır?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "processes correlation and merging algorithms",
+    "status": "completed"
+  },
+  {
+    "case_id": "L03",
+    "topic": "Seyir desteği",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p9:c2",
+    "question": "ADVENT seyir desteği, seyir planlama ve icrasına ek olarak hangi üç işlevi sağlar?",
+    "answer": "ADVENT seyir desteği; seyir planlama ve icrasına ek olarak taranmış kanal (swept-channel), seyir güvenliği ve demirleme işlevlerini sağlar [SOURCE 1].",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p9:c3",
+      "advent_cms.pdf:p9:c1"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p9:c1"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": false,
+    "expected_answer_terms": [
+      "swept-channel|taranmış kanal",
+      "navigation safety|seyir güvenliği",
+      "anchoring|demirleme"
+    ],
+    "answer_terms_matched": [
+      "swept-channel|taranmış kanal",
+      "navigation safety|seyir güvenliği",
+      "anchoring|demirleme"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": false,
+    "latency_ms": 3.197,
+    "rag_latency_ms": 3.197,
+    "judge_latency_ms": 27068.595,
+    "total_latency_ms": 27071.792,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p9:c2",
+      "question": "ADVENT seyir desteği, seyir planlama ve icrasına ek olarak hangi üç işlevi sağlar?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "track management, situational awareness, system management",
+    "status": "completed"
+  },
+  {
+    "case_id": "L04",
+    "topic": "Ortak harekât",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p10:c2",
+    "question": "ADVENT ortak operasyonları arama-kurtarma ve seyir gibi görevler için nasıl planlayıp icra eder?",
+    "answer": "ADVENT ortak operasyonları merkezî planlama, dağıtım ve eş zamanlı icra yaklaşımıyla; arama-kurtarma, seyir ve operasyon görevlerini koordineli biçimde destekler [SOURCE 1].",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p10:c1",
+      "advent_cms.pdf:p10:c2"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p10:c2"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "merkezî planlama|centralized planning",
+      "dağıtım|distribution",
+      "eş zamanlı icra|simultaneous execution"
+    ],
+    "answer_terms_matched": [
+      "merkezî planlama|centralized planning",
+      "dağıtım|distribution",
+      "eş zamanlı icra|simultaneous execution"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 3.389,
+    "rag_latency_ms": 3.389,
+    "judge_latency_ms": 48436.881,
+    "total_latency_ms": 48440.27,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p10:c2",
+      "question": "ADVENT ortak operasyonları arama-kurtarma ve seyir gibi görevler için nasıl planlayıp icra eder?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "centralized planning, distribution and simultaneous execution for tasks",
+    "status": "completed"
+  },
+  {
+    "case_id": "L05",
+    "topic": "Taktik veri bağları",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p12:c1",
+    "question": "ADVENT'in bütün link türlerini CMS yazılımına bütünleştirmesi hangi ek bileşenlere duyulan ihtiyacı ortadan kaldırır?",
+    "answer": "Tüm link türlerinin ADVENT CMS yazılımına bütünleştirilmesi; ek yazılım, donanım ve link veri işlemci birimi gereksinimini ortadan kaldırır [SOURCE 1].",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p12:c1",
+      "advent_cms.pdf:p12:c2"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p12:c1"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "ek yazılım|additional software",
+      "donanım|hardware",
+      "link veri işlemci|link data processor"
+    ],
+    "answer_terms_matched": [
+      "ek yazılım|additional software",
+      "donanım|hardware",
+      "link veri işlemci|link data processor"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 3.68,
+    "rag_latency_ms": 3.68,
+    "judge_latency_ms": 38887.099,
+    "total_latency_ms": 38890.779,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p12:c1",
+      "question": "ADVENT'in bütün link türlerini CMS yazılımına bütünleştirmesi hangi ek bileşenlere duyulan ihtiyacı ortadan kaldırır?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "eliminates need for additional software, hardware or link data processor units",
+    "status": "completed"
+  },
+  {
+    "case_id": "L06",
+    "topic": "Eğitim kabiliyetleri",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p16:c1",
+    "question": "ADVENT eğitim işlevlerini tek gemi ve çoklu gemi eğitimi açısından nasıl sunar?",
+    "answer": "ADVENT eğitim işlevleri tek gemi ve çoklu gemi eğitimi açısından aşağıdaki şekilde sunar: TRAINING CAPABILITIES ADVENT provides advanced training capabilities, available both in virtual environments through simulators and in real environments with live systems. These robust training functionalities are accessible for individual ships and can also facilitate collaborative training among multiple ships, leveraging the network-enabled capability. [SOURCE 1]",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p16:c1",
+      "advent_cms.pdf:p16:c2"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p16:c1"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "tek gemi|individual ships",
+      "iş birliğine dayalı eğitim|collaborative training",
+      "ağ destekli yetenek|network-enabled capability"
+    ],
+    "answer_terms_matched": [
+      "tek gemi|individual ships",
+      "iş birliğine dayalı eğitim|collaborative training",
+      "ağ destekli yetenek|network-enabled capability"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 31362.595,
+    "rag_latency_ms": 31362.595,
+    "judge_latency_ms": 43385.97,
+    "total_latency_ms": 74748.565,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p16:c1",
+      "question": "ADVENT eğitim işlevlerini tek gemi ve çoklu gemi eğitimi açısından nasıl sunar?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "ADVENT provides training for individual and multiple ships",
+    "status": "completed"
+  },
+  {
+    "case_id": "L07",
+    "topic": "Alt sistem entegrasyonu",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p17:c2",
+    "question": "ADVENT ile tam bütünleşik çalışıp özel konsol ihtiyacını ortadan kaldırabilen dört savaş sistemi birimi hangileridir?",
+    "answer": "SONAR, ESM, TDL ve silah sistemleri ADVENT ile tam bütünleşik çalışabilir; özel konsol gerektirmeden herhangi bir CMS konsolundan tam işlevle kullanılabilir [SOURCE 1].",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p17:c1",
+      "advent_cms.pdf:p17:c2"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p17:c2"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "SONAR",
+      "ESM",
+      "TDL",
+      "silah sistem|weapon systems"
+    ],
+    "answer_terms_matched": [
+      "SONAR",
+      "ESM",
+      "TDL",
+      "silah sistem|weapon systems"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 5.596,
+    "rag_latency_ms": 5.596,
+    "judge_latency_ms": 53632.223,
+    "total_latency_ms": 53637.819,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p17:c2",
+      "question": "ADVENT ile tam bütünleşik çalışıp özel konsol ihtiyacını ortadan kaldırabilen dört savaş sistemi birimi hangileridir?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "ADVENT integrates with sonar, ESM, TDL systems",
+    "status": "completed"
+  },
+  {
+    "case_id": "L08",
+    "topic": "Mayın karşı tedbir görev yönetimi",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p20:c1",
+    "question": "ADVENT'in mayın harbi icrası için sunduğu dört ana MCM hizmet aşaması hangileridir?",
+    "answer": "Kaynakta soruyla ilgili şu bilgi yer alıyor: Along with other CMS capabilities, ADVENT provides MCM-specific main services for Planning, Preparation, Realization and Post-Op Analysis to execute Mine Warfare operations by Detection, Classification, Identification and Disposal of mine threats, tactically adjusting the plan execution when deemed necessary. Additionally, ADVENT KALYON provides the following MCM support services: ADVENT MINE WARFARE FEATURES ADVENT COMBAT MANAGEMENT SYSTEM 19 • [SOURCE 1]",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p20:c1",
+      "advent_cms_kamuya_acik_arastirma.pdf:p2:c1"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p20:c1"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "planlama|planning",
+      "hazırlık|preparation",
+      "gerçekleştirme|realization",
+      "operasyon sonrası analiz|post-op analysis"
+    ],
+    "answer_terms_matched": [
+      "planlama|planning",
+      "hazırlık|preparation",
+      "gerçekleştirme|realization",
+      "operasyon sonrası analiz|post-op analysis"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 39654.475,
+    "rag_latency_ms": 39654.475,
+    "judge_latency_ms": 54016.354,
+    "total_latency_ms": 93670.83,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p20:c1",
+      "question": "ADVENT'in mayın harbi icrası için sunduğu dört ana MCM hizmet aşaması hangileridir?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "Planning, Preparation, Realization and Post-Op Analysis",
+    "status": "completed"
+  },
+  {
+    "case_id": "L09",
+    "topic": "ADVENT MARTI",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p22:c1",
+    "question": "ADVENT MARTI'nin veri işleme kabiliyetleri sensörler ve taktik veri bağlarından gelen veriye hangi üç işlemi uygular?",
+    "answer": "ADVENT MARTI, özel görev uçakları ve helikopterler için tasarlanmış hava komuta-kontrol sistemidir; gerçek zamanlı gözetleme, durumsal farkındalık, karar desteği ve angajman planlamayı destekler. Sensörler ve taktik veri bağlarından gelen veriye toplama, analiz ve füzyon uygular [SOURCE 1].",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p22:c1",
+      "advent_cms.pdf:p22:c2"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p22:c2"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": false,
+    "expected_answer_terms": [
+      "toplama|collection",
+      "analiz|analysis",
+      "füzyon|fusion",
+      "taktik veri bağ|tactical data links"
+    ],
+    "answer_terms_matched": [
+      "toplama|collection",
+      "analiz|analysis",
+      "füzyon|fusion",
+      "taktik veri bağ|tactical data links"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": false,
+    "latency_ms": 3.855,
+    "rag_latency_ms": 3.855,
+    "judge_latency_ms": 26863.254,
+    "total_latency_ms": 26867.109,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p22:c1",
+      "question": "ADVENT MARTI'nin veri işleme kabiliyetleri sensörler ve taktik veri bağlarından gelen veriye hangi üç işlemi uygular?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "toplamak, analiz etmek ve füzyon yapmak",
+    "status": "completed"
+  },
+  {
+    "case_id": "L10",
+    "topic": "ADVENT ROTA",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p24:c1",
+    "question": "ADVENT ROTA insansız platformların hangi sistemini geliştirmek üzere tasarlanmıştır ve entegrasyonu hangi arayüz niteliği kolaylaştırır?",
+    "answer": "ADVENT ROTA, insansız platformların seyir sistemini geliştirmek üzere tasarlanmıştır; modüler ve esnek arayüzleri sensör/silah yönetimi ile insanlı sistemlere ağ destekli entegrasyonu kolaylaştırır [SOURCE 1].",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p24:c1"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p24:c1"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "seyir sistemi|navigation system",
+      "modüler ve esnek arayüz|modular and flexible interfaces"
+    ],
+    "answer_terms_matched": [
+      "seyir sistemi|navigation system",
+      "modüler ve esnek arayüz|modular and flexible interfaces"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 3.731,
+    "rag_latency_ms": 3.731,
+    "judge_latency_ms": 34767.945,
+    "total_latency_ms": 34771.676,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p24:c1",
+      "question": "ADVENT ROTA insansız platformların hangi sistemini geliştirmek üzere tasarlanmıştır ve entegrasyonu hangi arayüz niteliği kolaylaştırır?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "geliştirilen sistem ve entegrasyon nitelikleri",
+    "status": "completed"
+  },
+  {
+    "case_id": "L11",
+    "topic": "ADVENT UFUK",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p26:c1",
+    "question": "ADVENT UFUK kıyı boyunca konuşlu sensörlerden veri toplarken belgede sayılan dört kimlik ve trafik kaynağı hangileridir?",
+    "answer": "ADVENT UFUK, deniz güvenliği ve durumsal farkındalık için komuta-kontrol ve bilgi yönetimi sağlar. Kıyı radarları ve elektronik destek sistemlerinin yanı sıra IFF, ADS-B ve AIS verilerini birleştirerek tanınmış deniz resmi üretimini destekler [SOURCE 1].",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": false,
+    "confusion_cell": "FN",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p26:c1",
+      "advent_cms.pdf:p26:c2"
+    ],
+    "judge_selected_chunk_ids": [],
+    "answer_supported_by_judge": false,
+    "origin_chunk_match": false,
+    "expected_answer_terms": [
+      "IFF",
+      "ADSB|ADS-B",
+      "AIS",
+      "Electronic Support Systems|elektronik destek"
+    ],
+    "answer_terms_matched": [
+      "IFF",
+      "ADSB|ADS-B",
+      "AIS",
+      "Electronic Support Systems|elektronik destek"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": false,
+    "latency_ms": 3.577,
+    "rag_latency_ms": 3.577,
+    "judge_latency_ms": 26555.842,
+    "total_latency_ms": 26559.419,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p26:c1",
+      "question": "ADVENT UFUK kıyı boyunca konuşlu sensörlerden veri toplarken belgede sayılan dört kimlik ve trafik kaynağı hangileridir?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "无直接支持答案的片段",
+    "status": "completed"
+  },
+  {
+    "case_id": "L12",
+    "topic": "ADVENT MÜREN",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_cms.pdf:p28:c1",
+    "question": "ADVENT MÜREN hangi platformlar için geliştirilmiştir ve hangi denizaltı sınıfı için geliştirilen MÜREN yeteneklerini birleştirir?",
+    "answer": "ADVENT MÜREN, su altı platformları için yeni nesil komuta-kontrol sistemidir ve Preveze sınıfı denizaltılar için geliştirilen MÜREN yeteneklerini ADVENT savaş sistemi kabiliyetleriyle birleştirir [SOURCE 1].",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_cms.pdf:p28:c1",
+      "advent_cms.pdf:p28:c2"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_cms.pdf:p28:c1"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "su altı platform|underwater platforms",
+      "Preveze"
+    ],
+    "answer_terms_matched": [
+      "su altı platform|underwater platforms",
+      "Preveze"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 3.54,
+    "rag_latency_ms": 3.54,
+    "judge_latency_ms": 46961.893,
+    "total_latency_ms": 46965.432,
+    "question_generation": {
+      "chunk_id": "advent_cms.pdf:p28:c1",
+      "question": "ADVENT MÜREN hangi platformlar için geliştirilmiştir ve hangi denizaltı sınıfı için geliştirilen MÜREN yeteneklerini birleştirir?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "su altı platformları için, Preveze sınıfı denizaltılar için",
+    "status": "completed"
+  },
+  {
+    "case_id": "L13",
+    "topic": "MAIN bakım asistanı",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "advent_ai_kamuya_acik_arastirma.pdf:p1:c2",
+    "question": "MAIN bakım destek asistanı ADVENT kullanıcılarına hangi bakım ve soru-cevap işlevlerini sunar?",
+    "answer": "MAIN, bakım personelinin bakım adımlarını belirlemesine ve talimatlara erişmesine yardımcı olur; sistem geneli soru-cevap ve doğal dil etkileşimi sunar. Kamuya açık açıklamaya göre kapalı ağlarda ve yerel modellerle çalışacak şekilde tasarlanmıştır [SOURCE 1].",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "advent_ai_kamuya_acik_arastirma.pdf:p1:c1",
+      "advent_ai_kamuya_acik_arastirma.pdf:p1:c2"
+    ],
+    "judge_selected_chunk_ids": [
+      "advent_ai_kamuya_acik_arastirma.pdf:p1:c2"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "bakım",
+      "talimat",
+      "soru-cevap"
+    ],
+    "answer_terms_matched": [
+      "bakım",
+      "talimat",
+      "soru-cevap"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 1.945,
+    "rag_latency_ms": 1.945,
+    "judge_latency_ms": 66243.566,
+    "total_latency_ms": 66245.511,
+    "question_generation": {
+      "chunk_id": "advent_ai_kamuya_acik_arastirma.pdf:p1:c2",
+      "question": "MAIN bakım destek asistanı ADVENT kullanıcılarına hangi bakım ve soru-cevap işlevlerini sunar?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": " bakım adımlarını belirleme, talimatlar bulma, soru-cevap destek",
+    "status": "completed"
+  },
+  {
+    "case_id": "L14",
+    "topic": "Bütünleşik CMS karar zinciri",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c2",
+    "question": "Genel CMS ilkesine göre sensör verisi hangi iki unsurla aynı bilgi zincirinde yönetilmelidir?",
+    "answer": "Genel CMS ilkesine göre sensör verisi aynı bilgi zincirinde yönetilmelidir; bu süreçte sensör verisinin karar desteği ve uygun görev kaynaklarıyla birlikte çalışır. [SOURCE 1]",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c2",
+      "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c4"
+    ],
+    "judge_selected_chunk_ids": [
+      "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c2"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "karar desteği",
+      "görev kaynak"
+    ],
+    "answer_terms_matched": [
+      "karar desteği",
+      "görev kaynak"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 31778.946,
+    "rag_latency_ms": 31778.946,
+    "judge_latency_ms": 69777.65,
+    "total_latency_ms": 101556.596,
+    "question_generation": {
+      "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c2",
+      "question": "Genel CMS ilkesine göre sensör verisi hangi iki unsurla aynı bilgi zincirinde yönetilmelidir?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "sensör verisinin karar desteği ve uygun görev kaynaklarıyla birlikte çalışır",
+    "status": "completed"
+  },
+  {
+    "case_id": "L15",
+    "topic": "Ortak operasyon resmi",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c3",
+    "question": "Ortak operasyon resminde harita ve seyir haritalarına ek olarak hangi dört bilgi katmanı bir araya getirilebilir?",
+    "answer": "Kaynakta soruyla ilgili şu bilgi yer alıyor: merkezî, otomatik bir komuta-kontrol ve silah kontrol sistemi olarak açıklanır. Ortak operasyon resmi ve veri füzyonu ABD Deniz Kuvvetlerinin GCCS-M kamu açıklamasına göre deniz komuta-kontrol sistemi; dost, hasım ve tarafsız kara, deniz ve hava unsurlarının konum ve nitelik bilgisini birleştirir, ilişkilendirir, süzer, sürdürür ve görüntüler. Haritalar, seyir haritaları, topoğrafik ve oşinografik katmanlar, meteoroloji, görüntü ve farklı istihba [SOURCE 1]",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c3",
+      "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c1"
+    ],
+    "judge_selected_chunk_ids": [
+      "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c3"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "topoğrafik",
+      "oşinografik",
+      "meteoroloji",
+      "görüntü"
+    ],
+    "answer_terms_matched": [
+      "topoğrafik",
+      "oşinografik",
+      "meteoroloji",
+      "görüntü"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 37907.611,
+    "rag_latency_ms": 37907.611,
+    "judge_latency_ms": 78744.239,
+    "total_latency_ms": 116651.85,
+    "question_generation": {
+      "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c3",
+      "question": "Ortak operasyon resminde harita ve seyir haritalarına ek olarak hangi dört bilgi katmanı bir araya getirilebilir?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "topoğrafik, oşinografik, meteoroloji ve görüntü",
+    "status": "completed"
+  },
+  {
+    "case_id": "L16",
+    "topic": "NIST AI RMF",
+    "case_type": "Chunk-kökenli pozitif",
+    "source_chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c4",
+    "question": "NIST AI RMF risk yönetimini yaşam döngüsüne yayan dört işlevi nasıl adlandırır?",
+    "answer": "NIST AI RMF, risk yönetimini yaşam döngüsüne yayan dört işlevi Govern, Map, Measure ve Manage olarak adlandırır [SOURCE 1].",
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": true,
+    "predicted_answerable": true,
+    "confusion_cell": "TP",
+    "retrieved_chunk_ids": [
+      "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c4",
+      "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c2"
+    ],
+    "judge_selected_chunk_ids": [
+      "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c4"
+    ],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": true,
+    "expected_answer_terms": [
+      "Govern",
+      "Map",
+      "Measure",
+      "Manage"
+    ],
+    "answer_terms_matched": [
+      "Govern",
+      "Map",
+      "Measure",
+      "Manage"
+    ],
+    "answer_term_coverage": 1.0,
+    "strict_pass": true,
+    "latency_ms": 1.775,
+    "rag_latency_ms": 1.775,
+    "judge_latency_ms": 71388.674,
+    "total_latency_ms": 71390.449,
+    "question_generation": {
+      "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c4",
+      "question": "NIST AI RMF risk yönetimini yaşam döngüsüne yayan dört işlevi nasıl adlandırır?",
+      "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+      "status": "prepared_and_curated"
+    },
+    "judge_rationale": "Govern, Map, Measure ve Manage",
+    "status": "completed"
+  },
+  {
+    "case_id": "L17",
+    "topic": "Kaynakta olmayan kriptografi",
+    "case_type": "Negatif kontrol",
+    "source_chunk_id": "",
+    "question": "ADVENT'in kullandığı gizli haberleşme algoritmasının tam adı ve anahtar uzunluğu nedir?",
+    "answer": "Bu soruyu destekleyecek yeterli kaynak bulunamadı.",
+    "question_generator_model": "Sürümlü manuel kontrol",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": false,
+    "predicted_answerable": false,
+    "confusion_cell": "TN",
+    "retrieved_chunk_ids": [],
+    "judge_selected_chunk_ids": [],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": false,
+    "expected_answer_terms": [],
+    "answer_terms_matched": [],
+    "answer_term_coverage": 1.0,
+    "strict_pass": false,
+    "latency_ms": 2010.748,
+    "rag_latency_ms": 2010.748,
+    "judge_latency_ms": 0.003,
+    "total_latency_ms": 2010.751,
+    "question_generation": {
+      "chunk_id": "",
+      "question": "ADVENT'in kullandığı gizli haberleşme algoritmasının tam adı ve anahtar uzunluğu nedir?",
+      "rationale": "Kaynakta bulunmayan bilgiyi ölçen sürümlü negatif kontrol.",
+      "status": "not_applicable"
+    },
+    "judge_rationale": "Negatif kontrolde beklenen bir kaynak chunk yoktur.",
+    "status": "completed"
+  },
+  {
+    "case_id": "L18",
+    "topic": "Kaynakta olmayan canlı konum",
+    "case_type": "Negatif kontrol",
+    "source_chunk_id": "",
+    "question": "ADVENT kullanan gemilerin şu anki kesin koordinatları nelerdir?",
+    "answer": "Bu soruyu destekleyecek yeterli kaynak bulunamadı.",
+    "question_generator_model": "Sürümlü manuel kontrol",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": false,
+    "predicted_answerable": false,
+    "confusion_cell": "TN",
+    "retrieved_chunk_ids": [],
+    "judge_selected_chunk_ids": [],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": false,
+    "expected_answer_terms": [],
+    "answer_terms_matched": [],
+    "answer_term_coverage": 1.0,
+    "strict_pass": false,
+    "latency_ms": 1624.495,
+    "rag_latency_ms": 1624.495,
+    "judge_latency_ms": 0.002,
+    "total_latency_ms": 1624.496,
+    "question_generation": {
+      "chunk_id": "",
+      "question": "ADVENT kullanan gemilerin şu anki kesin koordinatları nelerdir?",
+      "rationale": "Kaynakta bulunmayan bilgiyi ölçen sürümlü negatif kontrol.",
+      "status": "not_applicable"
+    },
+    "judge_rationale": "Negatif kontrolde beklenen bir kaynak chunk yoktur.",
+    "status": "completed"
+  },
+  {
+    "case_id": "L19",
+    "topic": "Kaynakta olmayan fiyat",
+    "case_type": "Negatif kontrol",
+    "source_chunk_id": "",
+    "question": "Bir ADVENT kurulumunun güncel kesin satın alma fiyatı kaç dolardır?",
+    "answer": "Bu soruyu destekleyecek yeterli kaynak bulunamadı.",
+    "question_generator_model": "Sürümlü manuel kontrol",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": false,
+    "predicted_answerable": false,
+    "confusion_cell": "TN",
+    "retrieved_chunk_ids": [],
+    "judge_selected_chunk_ids": [],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": false,
+    "expected_answer_terms": [],
+    "answer_terms_matched": [],
+    "answer_term_coverage": 1.0,
+    "strict_pass": false,
+    "latency_ms": 2045.756,
+    "rag_latency_ms": 2045.756,
+    "judge_latency_ms": 0.005,
+    "total_latency_ms": 2045.76,
+    "question_generation": {
+      "chunk_id": "",
+      "question": "Bir ADVENT kurulumunun güncel kesin satın alma fiyatı kaç dolardır?",
+      "rationale": "Kaynakta bulunmayan bilgiyi ölçen sürümlü negatif kontrol.",
+      "status": "not_applicable"
+    },
+    "judge_rationale": "Negatif kontrolde beklenen bir kaynak chunk yoktur.",
+    "status": "completed"
+  },
+  {
+    "case_id": "L20",
+    "topic": "Kaynakta olmayan erişim bilgisi",
+    "case_type": "Negatif kontrol",
+    "source_chunk_id": "",
+    "question": "ADVENT operatör konsolunun varsayılan kullanıcı adı ve parolası nedir?",
+    "answer": "Bu soruyu destekleyecek yeterli kaynak bulunamadı.",
+    "question_generator_model": "Sürümlü manuel kontrol",
+    "rag_model": "qwen2.5:3b",
+    "chunk_judge_model": "qwen2.5:7b",
+    "actual_data_available": false,
+    "predicted_answerable": false,
+    "confusion_cell": "TN",
+    "retrieved_chunk_ids": [],
+    "judge_selected_chunk_ids": [],
+    "answer_supported_by_judge": true,
+    "origin_chunk_match": false,
+    "expected_answer_terms": [],
+    "answer_terms_matched": [],
+    "answer_term_coverage": 1.0,
+    "strict_pass": false,
+    "latency_ms": 2759.647,
+    "rag_latency_ms": 2759.647,
+    "judge_latency_ms": 0.002,
+    "total_latency_ms": 2759.649,
+    "question_generation": {
+      "chunk_id": "",
+      "question": "ADVENT operatör konsolunun varsayılan kullanıcı adı ve parolası nedir?",
+      "rationale": "Kaynakta bulunmayan bilgiyi ölçen sürümlü negatif kontrol.",
+      "status": "not_applicable"
+    },
+    "judge_rationale": "Negatif kontrolde beklenen bir kaynak chunk yoktur.",
+    "status": "completed"
+  }
+]
