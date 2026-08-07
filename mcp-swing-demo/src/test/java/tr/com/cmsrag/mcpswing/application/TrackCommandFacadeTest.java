@@ -24,4 +24,17 @@ class TrackCommandFacadeTest {
         assertThrows(IllegalArgumentException.class, () -> facade.setHeading(45.5));
         assertThrows(IllegalArgumentException.class, () -> facade.setShipType("Uzay gemisi"));
     }
+
+    @Test void exposesMcpAuditHistoryAndOperatorWritePolicy() {
+        TrackStateService service = new TrackStateService();
+        TrackCommandFacade facade = new TrackCommandFacade(service);
+
+        facade.setSpeed(12.5);
+        assertEquals(1, facade.getChangeHistory().get("count"));
+        assertEquals("ENABLED", facade.getWritePolicy().get("policy"));
+        service.setMcpWritesEnabled(false);
+
+        assertEquals("LOCKED_BY_OPERATOR", facade.getWritePolicy().get("policy"));
+        assertThrows(IllegalStateException.class, () -> facade.setHeading(45));
+    }
 }

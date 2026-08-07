@@ -32,8 +32,9 @@ class McpProtocolIntegrationTest {
 
             Set<String> toolNames = client.listTools().tools().stream()
                     .map(McpSchema.Tool::name).collect(Collectors.toSet());
-            assertEquals(Set.of("get_track_state", "get_speed", "set_speed", "get_heading",
-                    "set_heading", "get_ship_type", "set_ship_type", "set_track_state"), toolNames);
+            assertEquals(Set.of("get_track_state", "get_write_policy", "get_change_history",
+                    "get_speed", "set_speed", "get_heading", "set_heading", "get_ship_type",
+                    "set_ship_type", "set_track_state"), toolNames);
 
             McpSchema.CallToolResult written = client.callTool(McpSchema.CallToolRequest.builder("set_track_state")
                     .arguments(Map.of("speedKnots", 24.5, "headingDegrees", 270, "shipType", "FIRKATEYN"))
@@ -48,6 +49,12 @@ class McpProtocolIntegrationTest {
             assertEquals(24.5, ((Number) state.get("speedKnots")).doubleValue());
             assertEquals(270, ((Number) state.get("headingDegrees")).intValue());
             assertEquals("FIRKATEYN", state.get("shipType"));
+
+            McpSchema.CallToolResult historyResult = client.callTool(
+                    McpSchema.CallToolRequest.builder("get_change_history").arguments(Map.of()).build());
+            @SuppressWarnings("unchecked")
+            Map<String, Object> history = (Map<String, Object>) historyResult.structuredContent();
+            assertEquals(1, ((Number) history.get("count")).intValue());
 
             McpSchema.CallToolResult rejected = client.callTool(McpSchema.CallToolRequest.builder("set_heading")
                     .arguments(Map.of("headingDegrees", 361)).build());

@@ -2,6 +2,8 @@ package tr.com.cmsrag.mcpswing.application;
 
 import tr.com.cmsrag.mcpswing.domain.ShipType;
 import tr.com.cmsrag.mcpswing.domain.TrackState;
+import tr.com.cmsrag.mcpswing.domain.TrackStateChange;
+import tr.com.cmsrag.mcpswing.domain.UpdateSource;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -10,14 +12,26 @@ public final class TrackCommandFacade {
     private final TrackStateService service;
     public TrackCommandFacade(TrackStateService service) { this.service = service; }
     public Map<String, Object> getTrackState() { return toMap(service.getState()); }
-    public Map<String, Object> setSpeed(Object value) { return toMap(service.setSpeed(asDouble(value, "speedKnots"))); }
-    public Map<String, Object> setHeading(Object value) { return toMap(service.setHeading(asInteger(value, "headingDegrees"))); }
+    public Map<String, Object> getWritePolicy() {
+        return Map.of("mcpWritesEnabled", service.isMcpWritesEnabled(),
+                "policy", service.isMcpWritesEnabled() ? "ENABLED" : "LOCKED_BY_OPERATOR");
+    }
+    public Map<String, Object> getChangeHistory() {
+        return Map.of("count", service.getHistory().size(), "changes",
+                service.getHistory().stream().map(TrackCommandFacade::changeToMap).toList());
+    }
+    public Map<String, Object> setSpeed(Object value) {
+        return toMap(service.setSpeed(asDouble(value, "speedKnots"), UpdateSource.MCP));
+    }
+    public Map<String, Object> setHeading(Object value) {
+        return toMap(service.setHeading(asInteger(value, "headingDegrees"), UpdateSource.MCP));
+    }
     public Map<String, Object> setShipType(Object value) {
-        return toMap(service.setShipType(ShipType.fromExternalValue(asText(value, "shipType"))));
+        return toMap(service.setShipType(ShipType.fromExternalValue(asText(value, "shipType")), UpdateSource.MCP));
     }
     public Map<String, Object> setTrackState(Object speed, Object heading, Object type) {
         return toMap(service.setState(asDouble(speed, "speedKnots"), asInteger(heading, "headingDegrees"),
-                ShipType.fromExternalValue(asText(type, "shipType"))));
+                ShipType.fromExternalValue(asText(type, "shipType")), UpdateSource.MCP));
     }
     private static Map<String, Object> toMap(TrackState state) {
         Map<String, Object> result = new LinkedHashMap<>();
@@ -26,6 +40,11 @@ public final class TrackCommandFacade {
         result.put("shipType", state.shipType().name());
         result.put("shipTypeLabel", state.shipType().displayName());
         return Map.copyOf(result);
+    }
+    private static Map<String, Object> changeToMap(TrackStateChange change) {
+        return Map.of("sequence", change.sequence(), "occurredAt", change.occurredAt().toString(),
+                "source", change.source().name(), "summary", change.summary(),
+                "before", toMap(change.before()), "after", toMap(change.after()));
     }
     private static double asDouble(Object value, String field) {
         if (!(value instanceof Number number)) throw new IllegalArgumentException(field + " sayısal olmalıdır.");

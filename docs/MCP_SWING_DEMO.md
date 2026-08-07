@@ -19,6 +19,8 @@ TrackMcpServer (infrastructure)
 TrackCommandFacade (application)
         ▼
 TrackStateService (application)
+        ├── kaynaklı değişiklik geçmişi
+        ├── operatör MCP yazma kilidi
         ▼
 TrackState + ShipType (domain)
         ▲
@@ -47,6 +49,8 @@ Gemi tipi değerleri: `BELIRSIZ`, `FIRKATEYN`, `KORVET`, `MUHRIP`, `DENIZALTI`,
 | Araç | Girdi | Sonuç |
 |---|---|---|
 | `get_track_state` | Yok | Üç alanın tamamı |
+| `get_write_policy` | Yok | MCP yazma izni ve politika durumu |
+| `get_change_history` | Yok | Son değişikliklerin kaynaklı audit listesi |
 | `get_speed` | Yok | Mevcut hız |
 | `set_speed` | `speedKnots` | Güncellenmiş durum |
 | `get_heading` | Yok | Mevcut yön |
@@ -57,6 +61,15 @@ Gemi tipi değerleri: `BELIRSIZ`, `FIRKATEYN`, `KORVET`, `MUHRIP`, `DENIZALTI`,
 
 Araç girdileri hem MCP JSON Schema doğrulamasından hem alan modeli kurallarından
 geçer. Örneğin `361` derecelik yön, iş mantığına ulaşmadan MCP hata sonucu üretir.
+Arayüzdeki yazma izni kapatıldığında `set_*` araçları uygulama katmanında da
+reddedilir. Bu kilit model tarafından değiştirilemez; yalnız operatör kontrolündedir.
+
+## Canlı işlem geçmişi
+
+Her başarılı değişiklik sıra numarası, UTC zaman damgası, kaynak (`OPERATOR` veya
+`MCP`), önceki durum ve sonraki durumla bellekte kaydedilir. Swing tablosu değişen
+alanların okunabilir özetini gösterir. `get_change_history` aynı kanıtı MCP istemcisine
+geri verir. Bellek sınırı son 100 olaydır ve uygulama kapandığında kayıtlar silinir.
 
 ## Derleme ve çalıştırma
 
@@ -105,13 +118,16 @@ tanılama kayıtlarını STDERR'a yazar.
 2. Atomik üç alan güncellemesi ve dinleyici bildirimi.
 3. MCP biçimindeki girdilerin alan modeline dönüştürülmesi.
 4. Gerçek alt Java süreci üzerinden STDIO bağlantısı ve MCP başlangıç anlaşması.
-5. Sekiz aracın keşfi, `set_track_state` yazma ve `get_track_state` geri okuma.
-6. Şema dışı `361` derece yön çağrısının hata olarak reddedilmesi.
+5. On aracın keşfi, `set_track_state` yazma ve `get_track_state` geri okuma.
+6. MCP değişikliğinin kaynaklı işlem geçmişinde görünmesi.
+7. Operatör kilidi kapalıyken MCP yazmasının reddedilmesi ve operatör yazmasının sürmesi.
+8. Şema dışı `361` derece yön çağrısının hata olarak reddedilmesi.
 
 ## Güvenlik sınırı
 
-- MCP sunucusu yalnız sekiz sabit aracı sunar.
+- MCP sunucusu yalnız on sabit aracı sunar.
 - Dosya sistemi, kabuk, veritabanı ve ağ aracı yoktur.
 - Girdiler kapalı JSON Schema ile doğrulanır; ek alanlara izin verilmez.
+- Model yazma yetkisi arayüzden anında kilitlenebilir; okuma yetkisi korunur.
 - Durum yalnız süreç belleğinde tutulur ve uygulama kapanınca silinir.
 - Bu demonstrasyon operasyonel karar veya gerçek platform kontrolü için değildir.

@@ -27,7 +27,7 @@ public final class TrackMcpServer {
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(false).build())
                 .tools(toolSpecifications())
                 .build();
-        System.err.println("CMS Track MCP Server hazır: STDIO, 8 araç");
+        System.err.println("CMS Track MCP Server hazır: STDIO, 10 araç");
         return server;
     }
 
@@ -35,6 +35,10 @@ public final class TrackMcpServer {
         return List.of(
                 tool("get_track_state", "Hız, yön ve gemi tipini birlikte okur.", EMPTY_SCHEMA,
                         arguments -> commands.getTrackState()),
+                tool("get_write_policy", "Operatörün MCP yazma iznini açık veya kilitli olarak okur.", EMPTY_SCHEMA,
+                        arguments -> commands.getWritePolicy()),
+                tool("get_change_history", "Son iz değişikliklerini zaman, kaynak ve önce/sonra değerleriyle okur.",
+                        EMPTY_SCHEMA, arguments -> commands.getChangeHistory()),
                 tool("get_speed", "İzin mevcut hızını knot cinsinden okur.", EMPTY_SCHEMA,
                         arguments -> Map.of("speedKnots", commands.getTrackState().get("speedKnots"))),
                 tool("set_speed", "İzin hızını 0 ile 100 knot arasında günceller.",
@@ -71,7 +75,7 @@ public final class TrackMcpServer {
             return McpSchema.CallToolResult.builder()
                     .content(List.of(McpSchema.TextContent.builder(result.toString()).build()))
                     .structuredContent(result).build();
-        } catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException | IllegalStateException exception) {
             return McpSchema.CallToolResult.builder().isError(true)
                     .content(List.of(McpSchema.TextContent.builder(exception.getMessage()).build())).build();
         }

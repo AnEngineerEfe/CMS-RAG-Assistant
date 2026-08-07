@@ -3,6 +3,8 @@ package tr.com.cmsrag.mcpswing.application;
 import org.junit.jupiter.api.Test;
 import tr.com.cmsrag.mcpswing.domain.ShipType;
 import tr.com.cmsrag.mcpswing.domain.TrackState;
+import tr.com.cmsrag.mcpswing.domain.TrackStateChange;
+import tr.com.cmsrag.mcpswing.domain.UpdateSource;
 import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,12 +25,27 @@ class TrackStateServiceTest {
     }
     @Test void publishesUpdatesToRegisteredListeners() throws Exception {
         TrackStateService service = new TrackStateService();
-        AtomicReference<TrackState> observed = new AtomicReference<>();
+        AtomicReference<TrackStateChange> observed = new AtomicReference<>();
         AutoCloseable subscription = service.addListener(observed::set);
         TrackState expected = service.setShipType(ShipType.DENIZALTI);
-        assertEquals(expected, observed.get());
+        assertEquals(expected, observed.get().after());
+        assertEquals(UpdateSource.OPERATOR, observed.get().source());
         subscription.close();
         service.setHeading(180);
-        assertEquals(expected, observed.get());
+        assertEquals(expected, observed.get().after());
+    }
+
+    @Test void recordsMcpSourceAndLetsOperatorLockModelWrites() {
+        TrackStateService service = new TrackStateService();
+
+        service.setSpeed(18.5, UpdateSource.MCP);
+        assertEquals(1, service.getHistory().size());
+        assertEquals(UpdateSource.MCP, service.getHistory().getFirst().source());
+        service.setMcpWritesEnabled(false);
+
+        assertThrows(IllegalStateException.class, () -> service.setHeading(90, UpdateSource.MCP));
+        assertEquals(0, service.getState().headingDegrees());
+        assertEquals(1, service.getHistory().size());
+        assertEquals(180, service.setHeading(180, UpdateSource.OPERATOR).headingDegrees());
     }
 }

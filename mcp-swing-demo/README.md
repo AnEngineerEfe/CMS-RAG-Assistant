@@ -15,10 +15,17 @@ demonstrasyondur. Gerçek sistem veya şirket verisi kullanmaz.
 | Araç | İşlev |
 |---|---|
 | `get_track_state` | Tüm iz durumunu okur. |
+| `get_write_policy` | Operatörün MCP yazma iznini okur. |
+| `get_change_history` | Son değişiklikleri kaynak ve zaman bilgisiyle okur. |
 | `get_speed` / `set_speed` | Hızı okur veya günceller. |
 | `get_heading` / `set_heading` | Yönü okur veya günceller. |
 | `get_ship_type` / `set_ship_type` | Gemi tipini okur veya günceller. |
 | `set_track_state` | Üç alanı tek atomik işlemle günceller. |
+
+Arayüzdeki **MCP / model yazma izni** seçimi kapatıldığında bütün `set_*`
+araçları güvenli biçimde reddedilir; `get_*` araçları çalışmaya devam eder. İşlem
+geçmişi, son 100 operatör veya MCP güncellemesini kaynak ve değişiklik özetiyle
+ekranda gösterir.
 
 ## Derleme ve çalıştırma
 

@@ -260,7 +260,8 @@ negatif kontrol içerir; matrisler birbirine eklenmeden ayrı raporlanır.
 
 `mcp-swing-demo/`, RAG uygulamasından bağımsız bir Java 21 modülüdür. Yerel bir
 Swing iz ekranındaki hız, yön ve gemi tipi alanlarını resmî Java MCP SDK üzerinden
-okuyan ve değiştiren sekiz kontrollü araç sunar. Gerçek sistem ya da şirket verisi
+okuyan ve değiştiren on kontrollü araç sunar. Operatör, model yazma yetkisini
+arayüzden kilitleyebilir; son 100 değişiklik kaynak bilgisiyle canlı tabloda izlenir. Gerçek sistem ya da şirket verisi
 kullanmaz; yapay zekâ–operatör arayüzü entegrasyonunu güvenli bir demonstrasyonla
 gösterir.
 

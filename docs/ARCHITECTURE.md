@@ -190,4 +190,7 @@ bağlanmaz. Modül içinde bağımlılık yönü `presentation/infrastructure �
 → domain` şeklindedir. Swing ekranı ve MCP adaptörü aynı `TrackStateService`
 durumunu kullanır; böylece arayüzden ve model aracından gelen değişiklikler tek
 doğrulama hattından geçer. MCP STDIO aktarımı yalnız izinli get/set araçlarını
-açar; genel amaçlı kod, dosya, ağ veya kabuk erişimi sunmaz.
+açar; genel amaçlı kod, dosya, ağ veya kabuk erişimi sunmaz. Değişiklik kaynağı
+`OPERATOR` veya `MCP` olarak son 100 olaylık bellek içi audit listesine yazılır.
+Operatör arayüzündeki yazma kilidi modelin `set_*` araçlarını anında reddederken
+salt okunur araçları kullanılabilir bırakır.
