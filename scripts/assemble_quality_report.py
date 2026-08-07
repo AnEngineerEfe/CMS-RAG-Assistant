@@ -19,13 +19,15 @@ def main() -> int:
         ROOT / "evaluation" / "results" / "quality-latest"
         / "quality_evaluation_report.json"
     )
-    answer_report = _read(
+    answer_report = _read_or_fallback(
         ROOT / "evaluation" / "results" / "expanded-answer-preflight"
-        / "quality_evaluation_report.json"
+        / "quality_evaluation_report.json",
+        base_report,
     )
-    component_report = _read(
+    component_report = _read_or_fallback(
         ROOT / "evaluation" / "results" / "expanded-component-preflight"
-        / "quality_evaluation_report.json"
+        / "quality_evaluation_report.json",
+        base_report,
     )
     pgvector_report = _read(
         ROOT / "evaluation" / "results" / "pgvector-latest.json"
@@ -49,7 +51,11 @@ def main() -> int:
             3,
         ),
     }
-    if report["stage1"]["summary"]["judged_count"] != 67:
+    stage1_summary = report["stage1"]["summary"]
+    if (
+        stage1_summary["judged_count"] != stage1_summary["chunk_count"]
+        or stage1_summary["invalid_judge_outputs"] != 0
+    ):
         raise ValueError("Chunk judge nüfusu tamamlanmadı.")
     if report["stage2"]["summary"]["judge_completed"] != 30:
         raise ValueError("Cevap judge nüfusu tamamlanmadı.")
@@ -84,6 +90,14 @@ def _read(path: Path) -> dict:
     if not path.exists():
         raise FileNotFoundError(f"Deney raporu bulunamadı: {path}")
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _read_or_fallback(path: Path, fallback: dict) -> dict:
+    """Eski ara rapor yoksa güncel birleşik rapordaki aşamayı korur."""
+
+    if not path.exists():
+        return fallback
+    return _read(path)
 
 
 if __name__ == "__main__":

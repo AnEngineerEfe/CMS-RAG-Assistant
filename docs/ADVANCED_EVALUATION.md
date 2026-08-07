@@ -105,23 +105,24 @@ nihai 45 vakalı kabul turunda bu tasarım:
 
 ## 4. Aşama — FAISS ve gerçek pgvector
 
-Docker içindeki PostgreSQL 16 + pgvector üzerinde geçici ve kalıcı olmayan bir
-tablo kurulmuştur. FAISS ve pgvector:
+Yerel `cms_rag_eval` veritabanında etkin pgvector 0.8.6 üzerinde yalnız bağlantı
+oturumuna ait geçici bir tablo kurulmuştur. FAISS ve pgvector:
 
-- karşılaştırma tarihinde kullanılan aynı 67 önceden hesaplanmış embedding,
+- güncel snapshot'taki aynı 77 önceden hesaplanmış embedding,
 - exact cosine,
-- aynı 23 sorgu vektörü,
+- aynı 30 pozitif altın-set sorgu vektörü,
 - aynı koleksiyon filtresi ve K=6
 
 ile karşılaştırılmıştır.
 
 | Backend | Hit@6 | MRR | Ortalama yalnız-arama |
 |---|---:|---:|---:|
-| FAISS | %91,3 | 0,808 | 0,84 ms |
-| pgvector | %91,3 | 0,808 | 3,02 ms |
+| FAISS | %90,0 | 0,7500 | 0,352 ms |
+| pgvector | %90,0 | 0,7500 | 0,581 ms |
 
-İlk altı sonuç sırası 23/23 sorguda aynıdır. Bu küçük ve tek süreçli corpus'ta
-FAISS daha hızlıdır. pgvector; kalıcı merkezi veri, SQL metadata filtreleri,
+İlk altı sonuç sırası 30/30 sorguda aynıdır. Bu küçük ve tek süreçli corpus'ta
+FAISS ölçülen ortalamada yaklaşık 1,65 kat daha hızlıdır; bu fark tek makine ve
+küçük corpus bağlamında yorumlanmalıdır. pgvector; kalıcı merkezi veri, SQL metadata filtreleri,
 eşzamanlı kullanıcılar ve yatay/operasyonel yönetim gerektiğinde anlamlıdır.
 Dolayısıyla mevcut yerel demo için FAISS korunmuş, pgvector kurumsal ölçekleme
 seçeneği olarak doğrulanmıştır.

@@ -93,7 +93,7 @@ birlikte ayağa kalkabildiğini doğrular.
 
 ## Son doğrulama
 
-2026-08-06 tarihinde hazır bilgi tabanı ve bağımsız değerlendirme kabul turunda:
+2026-08-07 tarihinde hazır bilgi tabanı ve bağımsız değerlendirme kabul turunda:
 
 - Python kaynak derlemesi: başarılı
 - Otomatik testler: `82/82` başarılı
@@ -107,7 +107,10 @@ birlikte ayağa kalkabildiğini doğrular.
 - 20-vaka accuracy / F1: `%95,0 / %96,77`
 - Exact chunk-köken katı başarı: `13/16` (`%81,25`)
 - Bağımsız cevap hakemi + altın kaynak kapısı: `30/30`
-- FAISS / gerçek pgvector ilk-6 sıra eşitliği: `23/23`
+- FAISS / gerçek pgvector ilk-6 sıra eşitliği: `30/30`
+- FAISS / pgvector exact-cosine Hit@6: `%90,0 / %90,0`
+- FAISS / pgvector exact-cosine MRR: `0,7500 / 0,7500`
+- FAISS / pgvector ortalama yalnız-arama: `0,352 / 0,581 ms`
 - Genişletilmiş hibrit retrieval MRR: `0,7694`
 - Optimize ortalama retrieval gecikmesi: `1438,3 ms`
 - Hazır PDF kaynağı: `5`

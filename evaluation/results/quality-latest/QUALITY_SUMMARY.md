@@ -31,8 +31,8 @@
 ## 4. Aşama — FAISS / pgvector
 
 - Aynı ilk-K sıralama oranı: **100.0%**
-- FAISS Hit@6 / MRR: **91.3% / 0.808**
-- pgvector Hit@6 / MRR: **91.3% / 0.808**
-- Ortalama yalnız-arama gecikmesi: FAISS **0.84 ms**, pgvector **3.02 ms**
+- FAISS Hit@6 / MRR: **90.0% / 0.750**
+- pgvector Hit@6 / MRR: **90.0% / 0.750**
+- Ortalama yalnız-arama gecikmesi: FAISS **0.35 ms**, pgvector **0.58 ms**
 
 LLM hakemi tek başına mutlak doğruluk değildir; altın belge/sayfa, deterministik terim kontrolleri ve confusion matrix ile birlikte yorumlanır.
