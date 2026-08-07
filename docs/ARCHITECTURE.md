@@ -182,3 +182,12 @@ sonuçları canlı sayaçlara karıştırılmadan ayrı referans sekmesinde gös
 - FAISS bellekte hazır embeddinglerden kurulur. Çok büyük/çok kullanıcılı
   koleksiyonlar için kalıcı ve sunucu tabanlı vektör deposu gerekir.
 - Bu sürüm tek kullanıcılı yerel çalışma istasyonu hedefler.
+
+## 12. MCP Swing demonstrasyon sınırı
+
+`mcp-swing-demo` bağımsız bir Java modülüdür ve Python RAG çalışma zamanına
+bağlanmaz. Modül içinde bağımlılık yönü `presentation/infrastructure → application
+→ domain` şeklindedir. Swing ekranı ve MCP adaptörü aynı `TrackStateService`
+durumunu kullanır; böylece arayüzden ve model aracından gelen değişiklikler tek
+doğrulama hattından geçer. MCP STDIO aktarımı yalnız izinli get/set araçlarını
+açar; genel amaçlı kod, dosya, ağ veya kabuk erişimi sunmaz.

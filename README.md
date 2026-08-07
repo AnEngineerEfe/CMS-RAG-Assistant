@@ -255,3 +255,20 @@ negatif kontrol içerir; matrisler birbirine eklenmeden ayrı raporlanır.
 - Kamuya açık resmî ADVENT broşürü, temiz kurulumda kabul testlerinin
   tekrarlanabilmesi için başlangıç belgesi olarak sürümlenir. Sonradan yüklenen
   PDF'ler ve manifest ise `.gitignore` ile sürüm kontrolü dışında tutulur.
+
+## MCP Swing demonstrasyonu
+
+`mcp-swing-demo/`, RAG uygulamasından bağımsız bir Java 21 modülüdür. Yerel bir
+Swing iz ekranındaki hız, yön ve gemi tipi alanlarını resmî Java MCP SDK üzerinden
+okuyan ve değiştiren sekiz kontrollü araç sunar. Gerçek sistem ya da şirket verisi
+kullanmaz; yapay zekâ–operatör arayüzü entegrasyonunu güvenli bir demonstrasyonla
+gösterir.
+
+```powershell
+cd mcp-swing-demo
+.\mvnw.cmd clean verify
+java -jar target\mcp-swing-demo.jar
+```
+
+Kurulum, mimari, araç kataloğu ve MCP istemci ayarı için
+[docs/MCP_SWING_DEMO.md](docs/MCP_SWING_DEMO.md) belgesine bakın.
