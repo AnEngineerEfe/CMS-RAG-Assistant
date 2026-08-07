@@ -138,11 +138,15 @@ seçeneği olarak doğrulanmıştır.
 # 20 vakalık bağımsız chunk-köken deneyi
 .\.venv\Scripts\python.exe -m scripts.run_chunk_lineage_evaluation
 
-# Geçici gerçek pgvector servisi
-docker compose -f evaluation\pgvector\compose.yaml up -d --wait
+# Yerel PostgreSQL (pgAdmin'de cms_rag_eval ve vector uzantısı hazır olmalı)
 .\.venv\Scripts\python.exe -m scripts.run_pgvector_benchmark
-docker compose -f evaluation\pgvector\compose.yaml down
 ```
+
+Komut varsayılan olarak `postgres@localhost:5432/cms_rag_eval` hedefine bağlanır
+ve parolayı terminalde görünmeden ister. Parola rapora, loga veya Git'e yazılmaz.
+Farklı kullanıcı ya da port için `--user` ve `--port` seçenekleri kullanılabilir.
+Deney yalnız bağlantı oturumuna ait geçici tablo oluşturur; mevcut kullanıcı
+tablolarını silmez veya değiştirmez.
 
 Nihai birleşik çıktılar
 `evaluation/results/quality-latest/` klasöründedir.

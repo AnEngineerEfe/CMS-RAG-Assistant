@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .streamlit/
+.env
+.env.*
+!.env.example
 
 # Kullanıcı tarafından yüklenen çalışma verisi
 data/raw/

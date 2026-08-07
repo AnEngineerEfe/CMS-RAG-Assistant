@@ -192,7 +192,12 @@ Her iki Office dosyası aşağıdaki komutla aynı proje verilerinden yeniden
 .\.venv\Scripts\python.exe -m scripts.run_benchmark
 .\.venv\Scripts\python.exe -m scripts.run_quality_evaluation
 .\.venv\Scripts\python.exe -m scripts.run_chunk_lineage_evaluation
+.\.venv\Scripts\python.exe -m scripts.run_pgvector_benchmark
 ```
+
+Son komut, yerel `cms_rag_eval` veritabanındaki pgvector ile FAISS'i aynı
+embedding ve sorular üzerinde kıyaslar. PostgreSQL parolası terminalde gizli
+olarak istenir ve hiçbir proje dosyasına kaydedilmez.
 
 İkinci komut, sabit kabul sorularının beklenen sayfa/koleksiyon/terimleri getirip
 getirmediğini denetler ve raporu `docs/retrieval_evaluation_report.json`

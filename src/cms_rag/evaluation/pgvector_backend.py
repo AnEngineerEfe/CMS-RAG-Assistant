@@ -42,20 +42,25 @@ class PgVectorBenchmark:
         if len(chunks) != len(vectors):
             raise ValueError("Chunk ve embedding sayıları eşit olmalıdır.")
         try:
-            with psycopg.connect(self.dsn, autocommit=True) as connection:
-                connection.execute("CREATE EXTENSION IF NOT EXISTS vector")
+            with psycopg.connect(self.dsn) as connection:
+                extension = connection.execute(
+                    "SELECT extversion FROM pg_extension WHERE extname = 'vector'"
+                ).fetchone()
+                if extension is None:
+                    raise PgVectorUnavailableError(
+                        "Bağlanılan veritabanında vector uzantısı etkin değil."
+                    )
                 register_vector(connection)
                 dimension = int(vectors.shape[1])
-                connection.execute("DROP TABLE IF EXISTS cms_rag_eval_vectors")
                 connection.execute(
                     f"""
-                    CREATE UNLOGGED TABLE cms_rag_eval_vectors (
+                    CREATE TEMP TABLE cms_rag_eval_vectors (
                         item_id integer PRIMARY KEY,
                         document text NOT NULL,
                         page integer NOT NULL,
                         collection text NOT NULL,
                         embedding vector({dimension}) NOT NULL
-                    )
+                    ) ON COMMIT DROP
                     """
                 )
                 rows = [
@@ -81,7 +86,6 @@ class PgVectorBenchmark:
                     self._query(connection, case_id, scope, vector, limit)
                     for case_id, scope, vector in queries
                 ]
-                connection.execute("DROP TABLE cms_rag_eval_vectors")
                 return output
         except Exception as error:
             raise PgVectorUnavailableError(
