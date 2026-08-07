@@ -25,6 +25,8 @@ veri kullanılmamıştır.
 | İndekslenen anlamlı chunk | 77 |
 | Önceden hesaplanmış embedding | 77 |
 | 20-vaka confusion matrix | 15 TP / 4 TN / 0 FP / 1 FN |
+| İkinci 20-vaka confusion matrix | 15 TP / 4 TN / 0 FP / 1 FN |
+| İkinci exact chunk-köken eşleşmesi | 14/16 (%87,5) |
 | 20-vaka accuracy / F1 | %95,0 / %96,77 |
 | Exact chunk-köken başarı | 13/16 (%81,25) |
 | 80 karakter altı gürültü chunk | 0 |

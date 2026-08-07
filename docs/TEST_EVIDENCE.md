@@ -106,6 +106,9 @@ birlikte ayağa kalkabildiğini doğrular.
 - 20-vaka confusion matrix: `15 TP / 4 TN / 0 FP / 1 FN`
 - 20-vaka accuracy / F1: `%95,0 / %96,77`
 - Exact chunk-köken katı başarı: `13/16` (`%81,25`)
+- İkinci 20-vaka confusion matrix: `15 TP / 4 TN / 0 FP / 1 FN`
+- İkinci 20-vaka accuracy / F1: `%95,0 / %96,77`
+- İkinci exact chunk-köken katı başarı: `14/16` (`%87,5`)
 - Bağımsız cevap hakemi + altın kaynak kapısı: `30/30`
 - FAISS / gerçek pgvector ilk-6 sıra eşitliği: `30/30`
 - FAISS / pgvector exact-cosine Hit@6: `%90,0 / %90,0`

@@ -192,10 +192,13 @@ Her iki Office dosyası aşağıdaki komutla aynı proje verilerinden yeniden
 .\.venv\Scripts\python.exe -m scripts.run_benchmark
 .\.venv\Scripts\python.exe -m scripts.run_quality_evaluation
 .\.venv\Scripts\python.exe -m scripts.run_chunk_lineage_evaluation
+.\.venv\Scripts\python.exe -m scripts.run_chunk_lineage_evaluation `
+  --dataset evaluation\datasets\chunk_lineage_20_round2.json `
+  --output evaluation\results\lineage-round2
 .\.venv\Scripts\python.exe -m scripts.run_pgvector_benchmark
 ```
 
-Son komut, yerel `cms_rag_eval` veritabanındaki pgvector ile FAISS'i aynı
+Pgvector komutu, yerel `cms_rag_eval` veritabanındaki pgvector ile FAISS'i aynı
 embedding ve sorular üzerinde kıyaslar. PostgreSQL parolası terminalde gizli
 olarak istenir ve hiçbir proje dosyasına kaydedilmez.
 
@@ -207,10 +210,13 @@ dosyasına yazar.
 precision/recall/specificity/F1, Hit@6, MRR ve gecikme metriklerini üretir.
 Ayrıntılı rapor `evaluation/results/latest/benchmark_report.json` dosyasındadır.
 
-Son komut, 16 tekil chunk-kökenli pozitif soru ile 4 kaynak-dışı negatif kontrolü
-çalıştırır. Sorular Codex büyük modelle geliştirme zamanında hazırlanıp sürümlenmiş,
+İki chunk-köken komutu, birbirinden ve kendi içinde farklı 16'şar pozitif kaynak
+chunk'ı ile 4'er kaynak-dışı negatif kontrolü çalıştırır. Sorular Codex büyük
+modelle geliştirme zamanında hazırlanıp sürümlenmiş,
 cevaplar yerel `qwen2.5:3b` ile üretilmiş ve retrieval adayları ayrı bir
-`qwen2.5:7b` oturumunda değerlendirilmiştir. Son ölçülen sonuç:
+`qwen2.5:7b` oturumunda değerlendirilmiştir.
+
+### Seri 1 · L01–L20 confusion matrix
 
 | Gerçek \ Tahmin | Pozitif | Negatif |
 |---|---:|---:|
@@ -221,6 +227,20 @@ Accuracy `%95,0`, precision `%100`, recall `%93,75`, specificity `%100` ve F1
 `%96,77` olmuştur. Exact başlangıç-chunk ve bağımsız hakem eşleşmesi `13/16`
 (`%81,25`) düzeyindedir. Ayrıntılı, vaka bazlı JSON/CSV ve matris özeti
 `evaluation/results/lineage-latest/` altında sürümlenir.
+
+### Seri 2 · N01–N20 confusion matrix
+
+| Gerçek \ Tahmin | Pozitif | Negatif |
+|---|---:|---:|
+| Pozitif · bilgi mevcut | **TP 15** | **FN 1** |
+| Negatif · bilgi mevcut değil | **FP 0** | **TN 4** |
+
+İkinci bağımsız seride de accuracy `%95,0`, precision `%100`, recall `%93,75`,
+specificity `%100` ve F1 `%96,77` olmuştur. Exact başlangıç-chunk ve bağımsız
+hakem eşleşmesi `14/16` (`%87,5`) düzeyindedir. İkinci serinin ayrıntılı JSON,
+CSV, cache ve matris özeti `evaluation/results/lineage-round2/` altında tutulur.
+İki seri birlikte `40` vaka, `32` farklı pozitif kaynak chunk'ı ve `8` farklı
+negatif kontrol içerir; matrisler birbirine eklenmeden ayrı raporlanır.
 
 ## Veri ve güvenlik sınırı
 

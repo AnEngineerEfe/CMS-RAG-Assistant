@@ -97,6 +97,13 @@ class PDFIngestorTests(unittest.TestCase):
                 evidence,
             )
         )
+        for question in (
+            "Sahadaki üretim veritabanının IP adresi ve yönetim portu nedir?",
+            "Kamuya açıklanmamış teslimat takvimi nedir?",
+            "Sonar kalibrasyon eşikleri ve ham katsayıları nelerdir?",
+        ):
+            with self.subTest(question=question):
+                self.assertFalse(retriever.is_answerable(question, evidence))
 
     def test_invalid_pdf_is_skipped_without_stopping_ingestion(self):
         from tempfile import TemporaryDirectory

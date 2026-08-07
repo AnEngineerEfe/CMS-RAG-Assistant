@@ -139,6 +139,11 @@ seçeneği olarak doğrulanmıştır.
 # 20 vakalık bağımsız chunk-köken deneyi
 .\.venv\Scripts\python.exe -m scripts.run_chunk_lineage_evaluation
 
+# Farklı 16 chunk ve 4 negatif kontrolden oluşan ikinci bağımsız seri
+.\.venv\Scripts\python.exe -m scripts.run_chunk_lineage_evaluation `
+  --dataset evaluation\datasets\chunk_lineage_20_round2.json `
+  --output evaluation\results\lineage-round2
+
 # Yerel PostgreSQL (pgAdmin'de cms_rag_eval ve vector uzantısı hazır olmalı)
 .\.venv\Scripts\python.exe -m scripts.run_pgvector_benchmark
 ```
@@ -151,3 +156,8 @@ tablolarını silmez veya değiştirmez.
 
 Nihai birleşik çıktılar
 `evaluation/results/quality-latest/` klasöründedir.
+
+İkinci chunk-köken serisinin matrisi `15 TP / 4 TN / 0 FP / 1 FN`; accuracy
+`%95,0`, F1 `%96,77` ve exact başlangıç-chunk eşleşmesi `14/16` (`%87,5`)
+olarak ölçülmüştür. İlk seri korunmuş, iki seri arayüzde ayrı tablolar ve yan yana
+confusion matrix'ler halinde sunulmuştur.

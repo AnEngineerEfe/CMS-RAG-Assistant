@@ -78,6 +78,7 @@ class ChunkLineageEvaluationRunner:
                 case_id not in forced
                 and case_id in cache
                 and cache[case_id].get("status") == "completed"
+                and self._cache_matches_case(cache[case_id], case)
             ):
                 row = cache[case_id]
                 matrix.observe(
@@ -138,6 +139,19 @@ class ChunkLineageEvaluationRunner:
             },
             "cases": rows,
         }
+
+    @staticmethod
+    def _cache_matches_case(row: dict[str, Any], case: dict[str, Any]) -> bool:
+        """Değiştirilen soru veya kaynak chunk için eski sonucu kullanmayı engeller."""
+
+        return bool(
+            str(row.get("question", "")).strip()
+            == str(case.get("question", "")).strip()
+            and str(row.get("source_chunk_id", ""))
+            == str(case.get("source_chunk_id", ""))
+            and bool(row.get("actual_data_available"))
+            == (case.get("kind") == "positive")
+        )
 
     def _run_case(
         self,

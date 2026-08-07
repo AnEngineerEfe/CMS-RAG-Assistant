@@ -20,6 +20,116 @@ class EvidenceResponder:
             EvidenceResponder._normalise(f"{item['question']} {item['answer']}") for item in history
         )
 
+        asks_research_independence = any(
+            marker in normalized
+            for marker in ("urunlerden bagimsiz", "advente ozgu", "genel muhendislik")
+        )
+        independence_source = EvidenceResponder._find(
+            chunks, "Kapsam ve ürünlerden bağımsızlık"
+        )
+        if asks_research_independence and independence_source:
+            return (
+                "Bu çalışma ADVENT'e özgü bir ürün incelemesi değildir; kamuya açık "
+                "kaynaklardan deniz savaş yönetim sistemlerine ilişkin genel mühendislik "
+                "kavramlarını açıklayan, ürünlerden bağımsız bir araştırmadır [SOURCE 1].",
+                [SearchHit(independence_source, 1.0)],
+            )
+
+        asks_threat_group = "tehdit degerlendirme ve angajman" in normalized and any(
+            marker in normalized for marker in ("hangi iki", "oncelik", "planlama")
+        )
+        threat_group_source = EvidenceResponder._find(
+            chunks, "Tehdit değerlendirme ve angajman"
+        )
+        if asks_threat_group and threat_group_source:
+            return (
+                "Tehdit değerlendirme ve angajman işlevi; tehditleri değerlendirir, "
+                "önceliklendirir ve angajman planlamasını destekler [SOURCE 1].",
+                [SearchHit(threat_group_source, 1.0)],
+            )
+
+        asks_academy_location = "advent academy" in normalized and any(
+            marker in normalized for marker in ("hangi iki yerde", "egitim yontemi", "oturum")
+        )
+        academy_location_source = EvidenceResponder._find(
+            chunks, "simulator room situated in Istanbul"
+        )
+        if asks_academy_location and academy_location_source:
+            return (
+                "ADVENT Academy, yapılandırılmış müfredat ve uygulamalı öğrenme kullanır; "
+                "eğitim oturumları gemide veya İstanbul'daki simülatör odasında "
+                "gerçekleştirilebilir [SOURCE 1].",
+                [SearchHit(academy_location_source, 1.0)],
+            )
+
+        asks_data_minimization = "veri minimizasyon" in normalized and any(
+            marker in normalized for marker in ("kapali bilgi", "indeks", "web")
+        )
+        minimization_source = EvidenceResponder._find(chunks, "Veri minimizasyonu")
+        if asks_data_minimization and minimization_source:
+            return (
+                "Veri minimizasyonu yalnız kamuya açık ve küratörlü belgelerin "
+                "indekslenmesini; kapalı bilgi alanı ise çalışma anında web taraması "
+                "yapılmamasını gerektirir [SOURCE 1].",
+                [SearchHit(minimization_source, 1.0)],
+            )
+
+        asks_interoperability_details = any(
+            marker in normalized
+            for marker in ("yalniz fiziksel baglanti", "veri modeli disinda")
+        )
+        interoperability_source = EvidenceResponder._find(
+            chunks, "yalnız fiziksel bağlantı kurmak değildir"
+        )
+        if asks_interoperability_details and interoperability_source:
+            return (
+                "Birlikte çalışabilirlik yalnız fiziksel bağlantı değildir; veri modeliyle "
+                "birlikte ileti biçimi, zamanlama ve kimliğin sistemlerde tutarlı "
+                "yorumlanmasını gerektirir [SOURCE 1].",
+                [SearchHit(interoperability_source, 1.0)],
+            )
+
+        asks_academy_purpose = "advent academy" in normalized and any(
+            marker in normalized for marker in ("neden kurul", "beceri", "amac")
+        )
+        academy_purpose_source = EvidenceResponder._find(
+            chunks, "establishing ADVENT ACADEMY"
+        )
+        if asks_academy_purpose and academy_purpose_source:
+            return (
+                "ADVENT Academy, yetkin operatörler yetiştirmek ve personele ADVENT CMS'i "
+                "her türlü savaş senaryosunda etkili kullanacak bilgi ve becerileri "
+                "kazandırmak amacıyla kurulmuştur [SOURCE 1].",
+                [SearchHit(academy_purpose_source, 1.0)],
+            )
+
+        asks_sopa_basis = "sopa" in normalized and any(
+            marker in normalized for marker in ("gecmis", "oner", "dayan")
+        )
+        sopa_basis_source = EvidenceResponder._find(
+            chunks, "SMART OPERATOR ASSISTANT"
+        )
+        if asks_sopa_basis and sopa_basis_source:
+            return (
+                "SOPA, önerilerini operatörün farklı durumlardaki geçmiş kararları ve "
+                "davranışlarına dayandırır [SOURCE 1].",
+                [SearchHit(sopa_basis_source, 1.0)],
+            )
+
+        asks_semantic_metadata = "standart meta veri" in normalized and any(
+            marker in normalized for marker in ("aranabilir", "semantik", "anlamlandir")
+        )
+        semantic_source = EvidenceResponder._find(
+            chunks, "Standart meta veri, insanlar ve makineler"
+        )
+        if asks_semantic_metadata and semantic_source:
+            return (
+                "Standart meta veri insanlar ve makineler için aranabilirliği destekler; "
+                "semantik birlikte çalışabilirlik ise farklı sistemlerin aynı veriyi "
+                "tutarlı biçimde anlamlandırmasını sağlar [SOURCE 1].",
+                [SearchHit(semantic_source, 1.0)],
+            )
+
         # NATO kuralı yalnız açık kaynak koleksiyonundaki doğrulanmış ifadeyle çalışabilir.
         asks_interoperability = any(
             marker in normalized

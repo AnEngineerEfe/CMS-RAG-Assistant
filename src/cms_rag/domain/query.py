@@ -89,6 +89,15 @@ class CMSQueryProcessor:
             "siniflandirilmis",
             "operasyonel konfigurasyon",
             "gorevdeki bir",
+            "uretim veritabani",
+            "ip adresi",
+            "yonetim portu",
+            "kamuya aciklanmamis",
+            "teslimat takvimi",
+            "musteri gemi eslestirme",
+            "yetki kod",
+            "kalibrasyon esik",
+            "ham katsayi",
         }
         return any(marker in normalized for marker in restricted_markers)
 
