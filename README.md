@@ -196,11 +196,19 @@ Her iki Office dosyası aşağıdaki komutla aynı proje verilerinden yeniden
   --dataset evaluation\datasets\chunk_lineage_20_round2.json `
   --output evaluation\results\lineage-round2
 .\.venv\Scripts\python.exe -m scripts.run_pgvector_benchmark
+.\scripts\run_pgvector_lineage_suite.ps1
 ```
 
 Pgvector komutu, yerel `cms_rag_eval` veritabanındaki pgvector ile FAISS'i aynı
 embedding ve sorular üzerinde kıyaslar. PostgreSQL parolası terminalde gizli
 olarak istenir ve hiçbir proje dosyasına kaydedilmez.
+
+Son komut, mevcut iki bağımsız 20-vaka veri setini değiştirmeden bu kez yoğun
+arama katmanında gerçek PostgreSQL pgvector kullanır. BM25, RRF, reranker, küçük
+RAG modeli ve büyük chunk hakemi sabit tutulur. Böylece FAISS ile pgvector
+arasındaki karşılaştırmada değişen tek deneysel bileşen yoğun vektör backend'idir.
+Parola yalnız çalışan PowerShell sürecinin ortamında tutulur ve iki seri sonunda
+temizlenir.
 
 İkinci komut, sabit kabul sorularının beklenen sayfa/koleksiyon/terimleri getirip
 getirmediğini denetler ve raporu `docs/retrieval_evaluation_report.json`
@@ -241,6 +249,38 @@ hakem eşleşmesi `14/16` (`%87,5`) düzeyindedir. İkinci serinin ayrıntılı 
 CSV, cache ve matris özeti `evaluation/results/lineage-round2/` altında tutulur.
 İki seri birlikte `40` vaka, `32` farklı pozitif kaynak chunk'ı ve `8` farklı
 negatif kontrol içerir; matrisler birbirine eklenmeden ayrı raporlanır.
+
+### pgvector · Seri 1 · L01–L20 confusion matrix
+
+| Gerçek \ Tahmin | Pozitif | Negatif |
+|---|---:|---:|
+| Pozitif · bilgi mevcut | **TP 15** | **FN 1** |
+| Negatif · bilgi mevcut değil | **FP 0** | **TN 4** |
+
+Accuracy `%95,0`, precision `%100`, recall `%93,75`, specificity `%100` ve F1
+`%96,77` ölçülmüştür. Exact başlangıç-chunk/hakem eşleşmesi `13/16` (`%81,25`),
+geçersiz vaka sayısı `0` olmuştur. Ayrıntılı tablo ve kanıtlar
+`evaluation/results/pgvector-lineage-latest/` altındadır.
+
+### pgvector · Seri 2 · N01–N20 confusion matrix
+
+| Gerçek \ Tahmin | Pozitif | Negatif |
+|---|---:|---:|
+| Pozitif · bilgi mevcut | **TP 12** | **FN 4** |
+| Negatif · bilgi mevcut değil | **FP 0** | **TN 4** |
+
+Accuracy `%80,0`, precision `%100`, recall `%75,0`, specificity `%100` ve F1
+`%85,71` ölçülmüştür. Exact başlangıç-chunk/hakem eşleşmesi `14/16` (`%87,5`),
+katı uçtan uca başarı `11/16` ve geçersiz vaka sayısı `0` olmuştur. Ayrıntılı
+çıktılar `evaluation/results/pgvector-lineage-round2/` altındadır.
+
+Her iki pgvector serisinde de retrieval chunk listesi karşılık gelen FAISS
+serisiyle `20/20` aynı kalmıştır. Seri 1'in matris hücreleri de `20/20` aynıyken,
+Seri 2'de `17/20` hücre aynı kalmış; N02, N07 ve N10 cevapları katı beklenen-terim
+kapsamasını tamamlayamadığı için FN olmuştur. Dolayısıyla bu üç fark pgvector'ın
+farklı kanıt getirmesinden değil, aynı kanıt üzerindeki yerel üretim çıktısının
+ifade/tamlık değişkenliğinden kaynaklanır. Tek koşulu bu sonuç, backend hız veya
+doğruluk üstünlüğü olarak genellenmemelidir.
 
 ## Veri ve güvenlik sınırı
 

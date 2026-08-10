@@ -228,8 +228,8 @@ def _render_lineage_workspace(
 ) -> None:
     """Aynı iki 20-vaka serisini FAISS ve pgvector sonuçlarıyla gösterir."""
 
-    faiss_tab, pgvector_tab = st.tabs(
-        ("FAISS · 40 vaka", "pgvector · 40 vaka")
+    faiss_tab, pgvector_tab, comparison_tab = st.tabs(
+        ("FAISS · 40 vaka", "pgvector · 40 vaka", "Backend karşılaştırması")
     )
     with faiss_tab:
         _render_backend_lineage_pair(
@@ -243,6 +243,60 @@ def _render_lineage_workspace(
             pgvector_second_report,
             backend_label="pgvector",
         )
+    with comparison_tab:
+        _render_lineage_backend_comparison(
+            first_report,
+            second_report,
+            pgvector_first_report,
+            pgvector_second_report,
+        )
+
+
+def _render_lineage_backend_comparison(
+    faiss_first: dict[str, Any],
+    faiss_second: dict[str, Any],
+    pgvector_first: dict[str, Any],
+    pgvector_second: dict[str, Any],
+) -> None:
+    """Dört koşunun karar metriklerini tek karşılaştırma tablosunda özetler."""
+
+    reports = (
+        ("Seri 1 · L01–L20", "FAISS", faiss_first),
+        ("Seri 1 · L01–L20", "pgvector", pgvector_first),
+        ("Seri 2 · N01–N20", "FAISS", faiss_second),
+        ("Seri 2 · N01–N20", "pgvector", pgvector_second),
+    )
+    rows = []
+    for series, backend, report in reports:
+        if not report:
+            continue
+        matrix = report.get("confusion_matrix", {})
+        lineage = report.get("lineage", {})
+        rows.append(
+            {
+                "Seri": series,
+                "Backend": backend,
+                "TP": matrix.get("true_positive", 0),
+                "TN": matrix.get("true_negative", 0),
+                "FP": matrix.get("false_positive", 0),
+                "FN": matrix.get("false_negative", 0),
+                "Accuracy": _percent(matrix.get("accuracy")),
+                "F1": _percent(matrix.get("f1")),
+                "Başlangıç chunk eşleşmesi": (
+                    f"{lineage.get('origin_chunk_matches', 0)}/"
+                    f"{lineage.get('evaluated_positive_cases', 0)}"
+                ),
+            }
+        )
+    st.markdown("#### Aynı vakalarda değişen tek bileşen: yoğun vektör backend'i")
+    st.caption(
+        "Sorular, kaynak snapshot'ı, BM25, RRF, reranker, cevap modeli ve bağımsız "
+        "chunk hakemi aynıdır. Bu tablo yalnız FAISS ile pgvector etkisini kıyaslar."
+    )
+    if rows:
+        st.dataframe(rows, hide_index=True, width="stretch")
+    else:
+        st.warning("Backend karşılaştırma raporları henüz bulunamadı.")
 
 
 def _render_backend_lineage_pair(

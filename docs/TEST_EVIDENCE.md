@@ -9,6 +9,7 @@ Bu belge yalnızca tekrar çalıştırılabilir otomasyon sonuçlarını kaydede
 .\.venv\Scripts\python.exe -m scripts.evaluate_retrieval
 .\.venv\Scripts\python.exe -m scripts.evaluate_answers
 .\.venv\Scripts\python.exe -m scripts.run_benchmark
+.\scripts\run_pgvector_lineage_suite.ps1
 ```
 
 ## Otomatik test kapsamı
@@ -93,10 +94,10 @@ birlikte ayağa kalkabildiğini doğrular.
 
 ## Son doğrulama
 
-2026-08-07 tarihinde hazır bilgi tabanı ve bağımsız değerlendirme kabul turunda:
+2026-08-10 tarihinde hazır bilgi tabanı ve bağımsız değerlendirme kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `82/82` başarılı
+- Otomatik testler: `85/85` başarılı
 - Retrieval kabul seti: `8/8` başarılı
 - Gerçek yanıt kabul seti: `7/7` başarılı
 - Altın benchmark: `45/45` başarılı (`30 TP / 15 TN / 0 FP / 0 FN`)
@@ -109,11 +110,17 @@ birlikte ayağa kalkabildiğini doğrular.
 - İkinci 20-vaka confusion matrix: `15 TP / 4 TN / 0 FP / 1 FN`
 - İkinci 20-vaka accuracy / F1: `%95,0 / %96,77`
 - İkinci exact chunk-köken katı başarı: `14/16` (`%87,5`)
+- pgvector birinci 20-vaka matrisi: `15 TP / 4 TN / 0 FP / 1 FN`
+- pgvector ikinci 20-vaka matrisi: `12 TP / 4 TN / 0 FP / 4 FN`
+- pgvector Seri 1 / Seri 2 accuracy: `%95,0 / %80,0`
+- pgvector Seri 1 / Seri 2 exact köken eşleşmesi: `13/16 / 14/16`
+- FAISS–pgvector retrieval chunk listesi eşitliği: `40/40`
 - Bağımsız cevap hakemi + altın kaynak kapısı: `30/30`
 - FAISS / gerçek pgvector ilk-6 sıra eşitliği: `30/30`
 - FAISS / pgvector exact-cosine Hit@6: `%90,0 / %90,0`
 - FAISS / pgvector exact-cosine MRR: `0,7500 / 0,7500`
 - FAISS / pgvector ortalama yalnız-arama: `0,352 / 0,581 ms`
+- Chunk-köken cache kayıtlarının FAISS ve pgvector backend'leri arasında izole edilmesi
 - Genişletilmiş hibrit retrieval MRR: `0,7694`
 - Optimize ortalama retrieval gecikmesi: `1438,3 ms`
 - Hazır PDF kaynağı: `5`

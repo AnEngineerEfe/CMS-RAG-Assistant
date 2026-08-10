@@ -24,6 +24,11 @@ class StreamlitJourneyTests(unittest.TestCase):
         self.assertIn("Canlı test", page)
         self.assertIn("Doğru chunk", page)
         self.assertGreaterEqual(len(app.tabs), 4)
+        tab_labels = [tab.label for tab in app.tabs]
+        self.assertIn("FAISS · 40 vaka", tab_labels)
+        self.assertIn("pgvector · 40 vaka", tab_labels)
+        self.assertIn("Backend karşılaştırması", tab_labels)
+        self.assertGreaterEqual(len(app.dataframe), 5)
         self.assertFalse(app.exception)
 
     def test_source_button_opens_the_exact_pdf_evidence_page(self):

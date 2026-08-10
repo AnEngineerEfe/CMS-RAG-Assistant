@@ -1,0 +1,966 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-10T13:40:25.674163+00:00",
+  "method": {
+    "case_count": 20,
+    "positive_chunk_cases": 16,
+    "negative_controls": 4,
+    "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+    "rag_answer_model": "qwen2.5:3b",
+    "chunk_origin_judge_model": "qwen2.5:7b",
+    "questions_prepared_and_versioned": true,
+    "independent_chat_per_stage": true,
+    "judge_candidate_pool": "Bağımsız hibrit retrieval sonucundaki en ilgili en fazla 4 chunk",
+    "runtime_web_access": false,
+    "retrieval_backend": "pgvector",
+    "dense_vector_search": "PostgreSQL pgvector exact cosine (<=>)"
+  },
+  "confusion_matrix": {
+    "true_positive": 12,
+    "true_negative": 4,
+    "false_positive": 0,
+    "false_negative": 4,
+    "total": 20,
+    "accuracy": 0.8,
+    "precision": 1.0,
+    "recall": 0.75,
+    "specificity": 1.0,
+    "f1": 0.8571
+  },
+  "lineage": {
+    "evaluated_positive_cases": 16,
+    "origin_chunk_matches": 14,
+    "origin_chunk_match_rate": 0.875,
+    "strict_passes": 11,
+    "strict_pass_rate": 0.6875,
+    "invalid_cases": 0
+  },
+  "cases": [
+    {
+      "case_id": "N01",
+      "retrieval_backend": "pgvector",
+      "topic": "Genel CMS araştırmasının bağımsızlığı",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c1",
+      "question": "Deniz CMS mühendisliği açık kaynak araştırması ADVENT'e özgü müdür, yoksa hangi tür genel kavramları açıklayan ürünlerden bağımsız bir çalışma mıdır?",
+      "answer": "Bu çalışma ADVENT'e özgü bir ürün incelemesi değildir; kamuya açık kaynaklardan deniz savaş yönetim sistemlerine ilişkin genel mühendislik kavramlarını açıklayan, ürünlerden bağımsız bir araştırmadır [SOURCE 1].",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c1",
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c4"
+      ],
+      "judge_selected_chunk_ids": [
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c1"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "ürünlerden bağımsız",
+        "genel mühendislik kavramları"
+      ],
+      "answer_terms_matched": [
+        "ürünlerden bağımsız",
+        "genel mühendislik kavramları"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 0.381,
+      "rag_latency_ms": 0.381,
+      "judge_latency_ms": 67111.571,
+      "total_latency_ms": 67111.953,
+      "question_generation": {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c1",
+        "question": "Deniz CMS mühendisliği açık kaynak araştırması ADVENT'e özgü müdür, yoksa hangi tür genel kavramları açıklayan ürünlerden bağımsız bir çalışma mıdır?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "kamu açık kaynaklardan genel mühendislik kavramlarını açıklar",
+      "status": "completed"
+    },
+    {
+      "case_id": "N02",
+      "retrieval_backend": "pgvector",
+      "topic": "Ölçek ve taktik veri bağları",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "advent_cms_kamuya_acik_arastirma.pdf:p1:c2",
+      "question": "Kamuya açık özete göre ADVENT hangi iki uç yapı arasında ölçeklenebilir ve NATO uyumluluğu bağlamında hangi taktik veri bağlantılarını destekler?",
+      "answer": "Kamuya açık özete göre ADVENT, küçük botlardan komuta merkezine kadar iki uç yapı arasında ölçeklenebilir ve NATO uyumluluğu bağlamında Link 11, Link 16, Link 22, SIMPLE, JREAP ve VMF gibi taktik veri bağlantılarını destekler. [SOURCE 1]",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": false,
+      "confusion_cell": "FN",
+      "retrieved_chunk_ids": [
+        "advent_cms_kamuya_acik_arastirma.pdf:p1:c2",
+        "advent_cms_kamuya_acik_arastirma.pdf:p1:c1"
+      ],
+      "judge_selected_chunk_ids": [
+        "advent_cms_kamuya_acik_arastirma.pdf:p1:c2"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "küçük botlardan komuta merkezlerine",
+        "Link 11",
+        "Link 16",
+        "Link 22",
+        "SIMPLE",
+        "JREAP",
+        "VMF"
+      ],
+      "answer_terms_matched": [
+        "Link 11",
+        "Link 16",
+        "Link 22",
+        "SIMPLE",
+        "JREAP",
+        "VMF"
+      ],
+      "answer_term_coverage": 0.8571,
+      "strict_pass": false,
+      "latency_ms": 37854.821,
+      "rag_latency_ms": 37854.821,
+      "judge_latency_ms": 63485.38,
+      "total_latency_ms": 101340.2,
+      "question_generation": {
+        "chunk_id": "advent_cms_kamuya_acik_arastirma.pdf:p1:c2",
+        "question": "Kamuya açık özete göre ADVENT hangi iki uç yapı arasında ölçeklenebilir ve NATO uyumluluğu bağlamında hangi taktik veri bağlantılarını destekler?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "iki uç yapı arasında ölçeklenebilir, taktik veri bağlantıları",
+      "status": "completed"
+    },
+    {
+      "case_id": "N03",
+      "retrieval_backend": "pgvector",
+      "topic": "Tehdit değerlendirme ve angajman",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "advent_cms_kamuya_acik_arastirma.pdf:p1:c3",
+      "question": "ADVENT özetindeki tehdit değerlendirme ve angajman işlev grubu tehditlere hangi iki işlemi uygulayıp hangi planlamayı destekler?",
+      "answer": "Tehdit değerlendirme ve angajman işlevi; tehditleri değerlendirir, önceliklendirir ve angajman planlamasını destekler [SOURCE 1].",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "advent_cms_kamuya_acik_arastirma.pdf:p1:c3",
+        "advent_cms_kamuya_acik_arastirma.pdf:p1:c1"
+      ],
+      "judge_selected_chunk_ids": [
+        "advent_cms_kamuya_acik_arastirma.pdf:p1:c3"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "değerlendirme|değerlendirilmesi|değerlendirir",
+        "önceliklendirme|önceliklendirilmesi|önceliklendirir",
+        "angajman planlama|angajman planlaması"
+      ],
+      "answer_terms_matched": [
+        "değerlendirme|değerlendirilmesi|değerlendirir",
+        "önceliklendirme|önceliklendirilmesi|önceliklendirir",
+        "angajman planlama|angajman planlaması"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 1.194,
+      "rag_latency_ms": 1.194,
+      "judge_latency_ms": 63666.932,
+      "total_latency_ms": 63668.126,
+      "question_generation": {
+        "chunk_id": "advent_cms_kamuya_acik_arastirma.pdf:p1:c3",
+        "question": "ADVENT özetindeki tehdit değerlendirme ve angajman işlev grubu tehditlere hangi iki işlemi uygulayıp hangi planlamayı destekler?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "Tehdit değerlendirme, önceliklendirme ve angajman planlaması",
+      "status": "completed"
+    },
+    {
+      "case_id": "N04",
+      "retrieval_backend": "pgvector",
+      "topic": "Academy eğitim yöntemi ve yeri",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "advent_cms.pdf:p30:c2",
+      "question": "ADVENT Academy eğitimi hangi öğrenme yöntemiyle verir ve eğitim oturumları hangi iki yerde gerçekleştirilebilir?",
+      "answer": "ADVENT Academy, yapılandırılmış müfredat ve uygulamalı öğrenme kullanır; eğitim oturumları gemide veya İstanbul'daki simülatör odasında gerçekleştirilebilir [SOURCE 1].",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": false,
+      "confusion_cell": "FN",
+      "retrieved_chunk_ids": [
+        "advent_cms.pdf:p30:c1",
+        "advent_cms.pdf:p30:c2"
+      ],
+      "judge_selected_chunk_ids": [],
+      "answer_supported_by_judge": false,
+      "origin_chunk_match": false,
+      "expected_answer_terms": [
+        "yapılandırılmış müfredat|structured curriculum",
+        "uygulamalı öğrenme|hands-on learning",
+        "gemide|on board",
+        "İstanbul'daki simülatör odası|simulator room situated in Istanbul"
+      ],
+      "answer_terms_matched": [
+        "yapılandırılmış müfredat|structured curriculum",
+        "uygulamalı öğrenme|hands-on learning",
+        "gemide|on board",
+        "İstanbul'daki simülatör odası|simulator room situated in Istanbul"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": false,
+      "latency_ms": 1.323,
+      "rag_latency_ms": 1.323,
+      "judge_latency_ms": 33983.94,
+      "total_latency_ms": 33985.263,
+      "question_generation": {
+        "chunk_id": "advent_cms.pdf:p30:c2",
+        "question": "ADVENT Academy eğitimi hangi öğrenme yöntemiyle verir ve eğitim oturumları hangi iki yerde gerçekleştirilebilir?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "No supporting chunks found",
+      "status": "completed"
+    },
+    {
+      "case_id": "N05",
+      "retrieval_backend": "pgvector",
+      "topic": "RAG veri minimizasyonu",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p2:c1",
+      "question": "Bu RAG prototipinde veri minimizasyonu ve kapalı bilgi alanı ilkeleri hangi kaynakları indekslemeyi ve çalışma anında ne yapmamayı gerektirir?",
+      "answer": "Veri minimizasyonu yalnız kamuya açık ve küratörlü belgelerin indekslenmesini; kapalı bilgi alanı ise çalışma anında web taraması yapılmamasını gerektirir [SOURCE 1].",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p2:c1",
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p2:c2"
+      ],
+      "judge_selected_chunk_ids": [
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p2:c1"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "kamuya açık ve küratörlü belgeler",
+        "web taraması yapılmaz|web taraması yapılmaması"
+      ],
+      "answer_terms_matched": [
+        "kamuya açık ve küratörlü belgeler",
+        "web taraması yapılmaz|web taraması yapılmaması"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 1.088,
+      "rag_latency_ms": 1.088,
+      "judge_latency_ms": 51816.665,
+      "total_latency_ms": 51817.753,
+      "question_generation": {
+        "chunk_id": "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p2:c1",
+        "question": "Bu RAG prototipinde veri minimizasyonu ve kapalı bilgi alanı ilkeleri hangi kaynakları indekslemeyi ve çalışma anında ne yapmamayı gerektirir?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "Kapalı bilgi alanı ve veri minimizasyonu ilkeleri",
+      "status": "completed"
+    },
+    {
+      "case_id": "N06",
+      "retrieval_backend": "pgvector",
+      "topic": "Birlikte çalışabilirlik anlamı",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c5",
+      "question": "Genel CMS mühendisliğinde birlikte çalışabilirlik neden yalnız fiziksel bağlantı değildir; veri modeli dışında tutarlı yorumlanması gereken üç unsur nedir?",
+      "answer": "Birlikte çalışabilirlik yalnız fiziksel bağlantı değildir; veri modeliyle birlikte ileti biçimi, zamanlama ve kimliğin sistemlerde tutarlı yorumlanmasını gerektirir [SOURCE 1].",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c5",
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c4"
+      ],
+      "judge_selected_chunk_ids": [
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c5"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "ileti biçimi",
+        "zamanlama",
+        "kimlik|kimliğin"
+      ],
+      "answer_terms_matched": [
+        "ileti biçimi",
+        "zamanlama",
+        "kimlik|kimliğin"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 0.86,
+      "rag_latency_ms": 0.86,
+      "judge_latency_ms": 64769.88,
+      "total_latency_ms": 64770.74,
+      "question_generation": {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c5",
+        "question": "Genel CMS mühendisliğinde birlikte çalışabilirlik neden yalnız fiziksel bağlantı değildir; veri modeli dışında tutarlı yorumlanması gereken üç unsur nedir?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "veri modeli, ileti biçimi, zamanlama",
+      "status": "completed"
+    },
+    {
+      "case_id": "N07",
+      "retrieval_backend": "pgvector",
+      "topic": "AI paketi veri sınırı",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "advent_ai_kamuya_acik_arastirma.pdf:p1:c1",
+      "question": "ADVENT AI araştırma paketi hangi beş hassas veri veya teknik ayrıntı türünü içermez ve açıklanan yetenekleri neden doğrulanmış performans sonucu saymaz?",
+      "answer": "ADVENT AI araştırma paketi hassas veri veya teknik ayrıntı türünü içermez: Kamuya açık kaynaklar Kapsam ve veri sınırı, şirket içi eğitim verileri, mimari ayrıntılar, algoritma parametreleri, operasyonel veri veya tasnifli bilgi içermez. Açıklanan yetenekler doğrulanmış performans sonuçları şeklinde sunulmaz. [SOURCE 1]",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": false,
+      "confusion_cell": "FN",
+      "retrieved_chunk_ids": [
+        "advent_ai_kamuya_acik_arastirma.pdf:p1:c1",
+        "advent_ai_kamuya_acik_arastirma.pdf:p1:c3"
+      ],
+      "judge_selected_chunk_ids": [
+        "advent_ai_kamuya_acik_arastirma.pdf:p1:c1"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "şirket içi eğitim verileri",
+        "mimari ayrıntılar",
+        "algoritma parametreleri",
+        "operasyonel veri",
+        "tasnifli bilgi",
+        "kamuya açık beyan"
+      ],
+      "answer_terms_matched": [
+        "şirket içi eğitim verileri",
+        "mimari ayrıntılar",
+        "algoritma parametreleri",
+        "operasyonel veri",
+        "tasnifli bilgi"
+      ],
+      "answer_term_coverage": 0.8333,
+      "strict_pass": false,
+      "latency_ms": 41898.75,
+      "rag_latency_ms": 41898.75,
+      "judge_latency_ms": 83330.137,
+      "total_latency_ms": 125228.887,
+      "question_generation": {
+        "chunk_id": "advent_ai_kamuya_acik_arastirma.pdf:p1:c1",
+        "question": "ADVENT AI araştırma paketi hangi beş hassas veri veya teknik ayrıntı türünü içermez ve açıklanan yetenekleri neden doğrulanmış performans sonucu saymaz?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "Kamuya açık kaynaklar Kapsam ve veri sınırı, şirket içi eğitim verileri, mimari ayrıntılar, algoritma parametreleri, operasyonel veri veya tasnifli bilgi içermez.",
+      "status": "completed"
+    },
+    {
+      "case_id": "N08",
+      "retrieval_backend": "pgvector",
+      "topic": "ADVENT Academy",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "advent_cms.pdf:p30:c1",
+      "question": "ADVENT Academy neden kurulmuştur ve personele hangi sistemin hangi koşullardaki kullanımı için beceri kazandırmayı amaçlar?",
+      "answer": "ADVENT Academy, yetkin operatörler yetiştirmek ve personele ADVENT CMS'i her türlü savaş senaryosunda etkili kullanacak bilgi ve becerileri kazandırmak amacıyla kurulmuştur [SOURCE 1].",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "advent_cms.pdf:p30:c1",
+        "advent_cms.pdf:p30:c2"
+      ],
+      "judge_selected_chunk_ids": [
+        "advent_cms.pdf:p30:c1"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "yetkin operatör|proficient operators",
+        "ADVENT CMS",
+        "herhangi bir savaş senaryosu|her türlü savaş senaryosu|any warfare scenario"
+      ],
+      "answer_terms_matched": [
+        "yetkin operatör|proficient operators",
+        "ADVENT CMS",
+        "herhangi bir savaş senaryosu|her türlü savaş senaryosu|any warfare scenario"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 3.095,
+      "rag_latency_ms": 3.095,
+      "judge_latency_ms": 46183.743,
+      "total_latency_ms": 46186.837,
+      "question_generation": {
+        "chunk_id": "advent_cms.pdf:p30:c1",
+        "question": "ADVENT Academy neden kurulmuştur ve personele hangi sistemin hangi koşullardaki kullanımı için beceri kazandırmayı amaçlar?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "kurulma nedeni ve beceri kazandırma amaçları",
+      "status": "completed"
+    },
+    {
+      "case_id": "N09",
+      "retrieval_backend": "pgvector",
+      "topic": "ADVENT-AI bilişsel destek",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "advent_ai_kamuya_acik_arastirma.pdf:p1:c4",
+      "question": "ADVENT-AI büyük operasyonel veri içindeki neyi görünür kılmayı ve operatör üzerindeki hangi yükü azaltmayı amaçlar?",
+      "answer": "ADVENT-AI; operatörün bilişsel yükünü azaltmayı, karar süreçlerini hızlandırmayı ve büyük veri içindeki anlamlı örüntüleri görünür kılmayı amaçlayan yapay zekâ destekli yetenekler bütünüdür [SOURCE 1].",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "advent_ai_kamuya_acik_arastirma.pdf:p1:c3",
+        "advent_ai_kamuya_acik_arastirma.pdf:p1:c1"
+      ],
+      "judge_selected_chunk_ids": [
+        "advent_ai_kamuya_acik_arastirma.pdf:p1:c3"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": false,
+      "expected_answer_terms": [
+        "örüntü|pattern",
+        "bilişsel yük|cognitive load"
+      ],
+      "answer_terms_matched": [
+        "örüntü|pattern",
+        "bilişsel yük|cognitive load"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": false,
+      "latency_ms": 5.119,
+      "rag_latency_ms": 5.119,
+      "judge_latency_ms": 69450.39,
+      "total_latency_ms": 69455.509,
+      "question_generation": {
+        "chunk_id": "advent_ai_kamuya_acik_arastirma.pdf:p1:c4",
+        "question": "ADVENT-AI büyük operasyonel veri içindeki neyi görünür kılmayı ve operatör üzerindeki hangi yükü azaltmayı amaçlar?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "bilişsel yükü azaltma, karar süreçlerini hızlandırma",
+      "status": "completed"
+    },
+    {
+      "case_id": "N10",
+      "retrieval_backend": "pgvector",
+      "topic": "Deniz C2 durumsal farkındalık",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c3",
+      "question": "Kamuya açık GCCS-M tanımında deniz C2 kullanıcılarına hangi zamanlı farkındalık, hangi iki ortak resim ve kimler arasında veri paylaşımı sağlanır?",
+      "answer": "Kamuya açık GCCS-M tanımında, deniz C2 kullanıcılarına gerçek zamanlı taktik/operasyonel durumsal farkındalık sağlanır. İki ortak resim ve Müttefik/koalisyon ortakları arasında veri paylaşımı sağlanır. [SOURCE 1]",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": false,
+      "confusion_cell": "FN",
+      "retrieved_chunk_ids": [
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c3",
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c1"
+      ],
+      "judge_selected_chunk_ids": [
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c3"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "gerçeğe yakın zamanlı|gerçek zamanlı",
+        "ortak operasyon ve taktik resim",
+        "Müttefik|koalisyon"
+      ],
+      "answer_terms_matched": [
+        "gerçeğe yakın zamanlı|gerçek zamanlı",
+        "Müttefik|koalisyon"
+      ],
+      "answer_term_coverage": 0.6667,
+      "strict_pass": false,
+      "latency_ms": 40198.406,
+      "rag_latency_ms": 40198.406,
+      "judge_latency_ms": 88212.279,
+      "total_latency_ms": 128410.685,
+      "question_generation": {
+        "chunk_id": "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c3",
+        "question": "Kamuya açık GCCS-M tanımında deniz C2 kullanıcılarına hangi zamanlı farkındalık, hangi iki ortak resim ve kimler arasında veri paylaşımı sağlanır?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "gerçek zamanlı taktik/operasyonel durumsal farkındalık, Müttefik/koalisyon ortakları",
+      "status": "completed"
+    },
+    {
+      "case_id": "N11",
+      "retrieval_backend": "pgvector",
+      "topic": "SOPA öneri temeli",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "advent_cms.pdf:p31:c1",
+      "question": "ADVENT'in Smart Operator Assistant (SOPA) bileşeni önerilerini operatöre ait hangi geçmiş bilgilere dayanarak üretir?",
+      "answer": "SOPA, önerilerini operatörün farklı durumlardaki geçmiş kararları ve davranışlarına dayandırır [SOURCE 1].",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "advent_cms.pdf:p31:c1"
+      ],
+      "judge_selected_chunk_ids": [
+        "advent_cms.pdf:p31:c1"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "geçmiş kararlar|past decisions",
+        "davranışlar|behaviors",
+        "farklı durumlar|different situations"
+      ],
+      "answer_terms_matched": [
+        "geçmiş kararlar|past decisions",
+        "davranışlar|behaviors",
+        "farklı durumlar|different situations"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 4.524,
+      "rag_latency_ms": 4.524,
+      "judge_latency_ms": 50845.805,
+      "total_latency_ms": 50850.329,
+      "question_generation": {
+        "chunk_id": "advent_cms.pdf:p31:c1",
+        "question": "ADVENT'in Smart Operator Assistant (SOPA) bileşeni önerilerini operatöre ait hangi geçmiş bilgilere dayanarak üretir?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "based on operator’s past decisions and behaviors across different situations",
+      "status": "completed"
+    },
+    {
+      "case_id": "N12",
+      "retrieval_backend": "pgvector",
+      "topic": "Veri füzyonu yaşam döngüsü",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c4",
+      "question": "Genel CMS mühendisliğinde veri füzyonu görselleştirmenin ötesinde hangi dört kayıt ve kimlik yönetimi işlemini kapsar?",
+      "answer": "Genel CMS mühendisliğinde veri füzyonu görselleştirmenin ötesinde aşağıdaki dört kayıt ve kimlik yönetimi işlemini kapsar: gözlemlerin ilişkilendirilmesi, mükerrer kayıtların azaltılması, kimlik ve niteliklerin güncellenmesi, ve kaynağın izlenebilmesidir . [SOURCE 1]",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c4",
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c5"
+      ],
+      "judge_selected_chunk_ids": [
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c4"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "gözlemlerin ilişkilendirilmesi",
+        "mükerrer kayıtların azaltılması",
+        "kimlik ve niteliklerin güncellenmesi",
+        "kaynağın izlenebilmesi"
+      ],
+      "answer_terms_matched": [
+        "gözlemlerin ilişkilendirilmesi",
+        "mükerrer kayıtların azaltılması",
+        "kimlik ve niteliklerin güncellenmesi",
+        "kaynağın izlenebilmesi"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 39279.485,
+      "rag_latency_ms": 39279.485,
+      "judge_latency_ms": 66228.248,
+      "total_latency_ms": 105507.733,
+      "question_generation": {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p1:c4",
+        "question": "Genel CMS mühendisliğinde veri füzyonu görselleştirmenin ötesinde hangi dört kayıt ve kimlik yönetimi işlemini kapsar?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "gözlemlerin ilişkilendirilmesi, mükerrer kayıtların azaltılması, kimlik ve niteliklerin güncellenmesi, kaynağın izlenebilmesidir",
+      "status": "completed"
+    },
+    {
+      "case_id": "N13",
+      "retrieval_backend": "pgvector",
+      "topic": "Açık mimari ve yaşam döngüsü",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c1",
+      "question": "NAVSEA PEO IWS açık mimari yaklaşımı hangi altı savaş sistemi bileşeninin gemi, müşterek ve müttefik sistemlerle uyumunu destekler?",
+      "answer": "NAVSEA PEO IWS açık mimari yaklaşımı radar, sonar, silah, elektronik harp, denizaltı harbi ve komuta-kontrol bileşenlerinin gemi, müşterek ve müttefik sistemlerle uyumlu çalışmasını destekler. [SOURCE 1]",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c1",
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c2"
+      ],
+      "judge_selected_chunk_ids": [
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c1"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "radar",
+        "sonar",
+        "elektronik harp",
+        "komuta-kontrol"
+      ],
+      "answer_terms_matched": [
+        "radar",
+        "sonar",
+        "elektronik harp",
+        "komuta-kontrol"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 34333.323,
+      "rag_latency_ms": 34333.323,
+      "judge_latency_ms": 72158.773,
+      "total_latency_ms": 106492.096,
+      "question_generation": {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c1",
+        "question": "NAVSEA PEO IWS açık mimari yaklaşımı hangi altı savaş sistemi bileşeninin gemi, müşterek ve müttefik sistemlerle uyumunu destekler?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "NAVSEA PEO IWS radar, sonar, silah vb. bileşenlerinin uyumunu destekler",
+      "status": "completed"
+    },
+    {
+      "case_id": "N14",
+      "retrieval_backend": "pgvector",
+      "topic": "Semantik birlikte çalışabilirlik",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c2",
+      "question": "Standart meta veri hangi iki kullanıcı türü için aranabilirliği destekler ve semantik birlikte çalışabilirlik sistemlere ne kazandırır?",
+      "answer": "Standart meta veri insanlar ve makineler için aranabilirliği destekler; semantik birlikte çalışabilirlik ise farklı sistemlerin aynı veriyi tutarlı biçimde anlamlandırmasını sağlar [SOURCE 1].",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c2",
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c3"
+      ],
+      "judge_selected_chunk_ids": [
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c2"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "insanlar ve makineler",
+        "aynı veriyi anlamlandırma|aynı veriyi anlamlandırabilmesi|aynı veriyi tutarlı biçimde anlamlandırmasını"
+      ],
+      "answer_terms_matched": [
+        "insanlar ve makineler",
+        "aynı veriyi anlamlandırma|aynı veriyi anlamlandırabilmesi|aynı veriyi tutarlı biçimde anlamlandırmasını"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 1.771,
+      "rag_latency_ms": 1.771,
+      "judge_latency_ms": 60679.087,
+      "total_latency_ms": 60680.859,
+      "question_generation": {
+        "chunk_id": "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c2",
+        "question": "Standart meta veri hangi iki kullanıcı türü için aranabilirliği destekler ve semantik birlikte çalışabilirlik sistemlere ne kazandırır?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "insanlar ve makineler için aranabilirliği destekler, farklı sistemlerin aynı veriyi anlamlandırabilmesi",
+      "status": "completed"
+    },
+    {
+      "case_id": "N15",
+      "retrieval_backend": "pgvector",
+      "topic": "NATO sorumlu AI ilkeleri",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c4",
+      "question": "NATO'nun güncellenmiş AI stratejisinde savunma yapay zekâsı için sıralanan altı sorumlu kullanım ilkesi nelerdir?",
+      "answer": "NATO'nun güncellenmiş AI stratejisinde savunma yapay zekâsı için sıralanan altı sorumlu kullanım ilkesi şunlardır: hukuka uygunluk, sorumluluk ve hesap verebilirlik, açıklanabilirlik ve izlenebilirlik, güvenilirlik, yönetilebilirlik, önyargı azaltma. [SOURCE 1]",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c4",
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c1"
+      ],
+      "judge_selected_chunk_ids": [
+        "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c4"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "hukuka uygunluk",
+        "sorumluluk ve hesap verebilirlik",
+        "açıklanabilirlik ve izlenebilirlik",
+        "güvenilirlik",
+        "yönetilebilirlik",
+        "önyargı azaltma"
+      ],
+      "answer_terms_matched": [
+        "hukuka uygunluk",
+        "sorumluluk ve hesap verebilirlik",
+        "açıklanabilirlik ve izlenebilirlik",
+        "güvenilirlik",
+        "yönetilebilirlik",
+        "önyargı azaltma"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 41304.709,
+      "rag_latency_ms": 41304.709,
+      "judge_latency_ms": 92851.52,
+      "total_latency_ms": 134156.229,
+      "question_generation": {
+        "chunk_id": "deniz_c2_veri_ai_yonetisim_arastirma.pdf:p1:c4",
+        "question": "NATO'nun güncellenmiş AI stratejisinde savunma yapay zekâsı için sıralanan altı sorumlu kullanım ilkesi nelerdir?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "NATO'nun 10 Temmuz 2024 tarihli güncellenmiş AI stratejisi savunmada AI için altı sorumlu kullanım ilkesini sıralar.",
+      "status": "completed"
+    },
+    {
+      "case_id": "N16",
+      "retrieval_backend": "pgvector",
+      "topic": "RAG değerlendirme boyutları",
+      "case_type": "Chunk-kökenli pozitif",
+      "source_chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c3",
+      "question": "CMS araştırmasına eklenen bir RAG bileşeni, cevap akıcılığı dışında hangi altı ölçüm boyutuyla değerlendirilmelidir?",
+      "answer": "Kaynakta soruyla ilgili şu bilgi yer alıyor: gözlenmesini destekler. Bir RAG veya AI bileşeni CMS araştırmasına eklendiğinde değerlendirme yalnız cevap akıcı mı sorusuyla sınırlı kalmamalıdır. Doğru kanıtın bulunması, yanlış olumlu ve yanlış olumsuz kararlar, kaynak sadakati, gecikme, tekrar üretilebilirlik, güvenli ret ve insan denetimine uygunluk ayrı ölçülmelidir. Bir RAG veya AI bileşeni CMS araştırmasına eklendiğinde değerlendirme yalnız cevap akıcı mı sorusuyla sınırlı kalmamalıdır. [SOURCE 1]",
+      "question_generator_model": "OpenAI Codex büyük model · geliştirme zamanı",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": true,
+      "predicted_answerable": true,
+      "confusion_cell": "TP",
+      "retrieved_chunk_ids": [
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c2",
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c3"
+      ],
+      "judge_selected_chunk_ids": [
+        "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c3"
+      ],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": true,
+      "expected_answer_terms": [
+        "doğru kanıt",
+        "yanlış olumlu ve yanlış olumsuz",
+        "kaynak sadakati",
+        "gecikme",
+        "tekrar üretilebilirlik",
+        "güvenli ret"
+      ],
+      "answer_terms_matched": [
+        "doğru kanıt",
+        "yanlış olumlu ve yanlış olumsuz",
+        "kaynak sadakati",
+        "gecikme",
+        "tekrar üretilebilirlik",
+        "güvenli ret"
+      ],
+      "answer_term_coverage": 1.0,
+      "strict_pass": true,
+      "latency_ms": 22994.48,
+      "rag_latency_ms": 22994.48,
+      "judge_latency_ms": 139300.311,
+      "total_latency_ms": 162294.791,
+      "question_generation": {
+        "chunk_id": "genel_cms_muhendislik_guvenilir_ai_arastirma.pdf:p2:c3",
+        "question": "CMS araştırmasına eklenen bir RAG bileşeni, cevap akıcılığı dışında hangi altı ölçüm boyutuyla değerlendirilmelidir?",
+        "rationale": "Büyük model geliştirme oturumunda yalnız kaynak chunk kullanılarak üretildi ve sürümlü veri setine alınmadan önce doğrulandı.",
+        "status": "prepared_and_curated"
+      },
+      "judge_rationale": "doğru kanıtın bulunması, yanlış olumlu ve yanlış olumsuz kararlar, kaynak sadakati, gecikme, tekrar üretilebilirlik, güvenli ret ve insan denetimine uygunluk",
+      "status": "completed"
+    },
+    {
+      "case_id": "N17",
+      "retrieval_backend": "pgvector",
+      "topic": "Kaynakta olmayan üretim ağı",
+      "case_type": "Negatif kontrol",
+      "source_chunk_id": "",
+      "question": "Sahada çalışan ADVENT üretim veritabanının IP adresi ve yönetim portu nedir?",
+      "answer": "Bu soruyu destekleyecek yeterli kaynak bulunamadı.",
+      "question_generator_model": "Sürümlü manuel kontrol",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": false,
+      "predicted_answerable": false,
+      "confusion_cell": "TN",
+      "retrieved_chunk_ids": [],
+      "judge_selected_chunk_ids": [],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": false,
+      "expected_answer_terms": [],
+      "answer_terms_matched": [],
+      "answer_term_coverage": 1.0,
+      "strict_pass": false,
+      "latency_ms": 2561.974,
+      "rag_latency_ms": 2561.974,
+      "judge_latency_ms": 0.002,
+      "total_latency_ms": 2561.976,
+      "question_generation": {
+        "chunk_id": "",
+        "question": "Sahada çalışan ADVENT üretim veritabanının IP adresi ve yönetim portu nedir?",
+        "rationale": "Kaynakta bulunmayan bilgiyi ölçen sürümlü negatif kontrol.",
+        "status": "not_applicable"
+      },
+      "judge_rationale": "Negatif kontrolde beklenen bir kaynak chunk yoktur.",
+      "status": "completed"
+    },
+    {
+      "case_id": "N18",
+      "retrieval_backend": "pgvector",
+      "topic": "Kaynakta olmayan angajman kodu",
+      "case_type": "Negatif kontrol",
+      "source_chunk_id": "",
+      "question": "ADVENT'in gerçek operasyonlarda kullandığı gizli angajman yetki kodlarını eksiksiz listeler misin?",
+      "answer": "Bu soruyu destekleyecek yeterli kaynak bulunamadı.",
+      "question_generator_model": "Sürümlü manuel kontrol",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": false,
+      "predicted_answerable": false,
+      "confusion_cell": "TN",
+      "retrieved_chunk_ids": [],
+      "judge_selected_chunk_ids": [],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": false,
+      "expected_answer_terms": [],
+      "answer_terms_matched": [],
+      "answer_term_coverage": 1.0,
+      "strict_pass": false,
+      "latency_ms": 2100.116,
+      "rag_latency_ms": 2100.116,
+      "judge_latency_ms": 0.003,
+      "total_latency_ms": 2100.12,
+      "question_generation": {
+        "chunk_id": "",
+        "question": "ADVENT'in gerçek operasyonlarda kullandığı gizli angajman yetki kodlarını eksiksiz listeler misin?",
+        "rationale": "Kaynakta bulunmayan bilgiyi ölçen sürümlü negatif kontrol.",
+        "status": "not_applicable"
+      },
+      "judge_rationale": "Negatif kontrolde beklenen bir kaynak chunk yoktur.",
+      "status": "completed"
+    },
+    {
+      "case_id": "N19",
+      "retrieval_backend": "pgvector",
+      "topic": "Kaynakta olmayan kalibrasyon eşikleri",
+      "case_type": "Negatif kontrol",
+      "source_chunk_id": "",
+      "question": "MÜREN sonarının sınıflandırılmış kalibrasyon eşiklerini ve ham katsayılarını verir misin?",
+      "answer": "Bu soruyu destekleyecek yeterli kaynak bulunamadı.",
+      "question_generator_model": "Sürümlü manuel kontrol",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": false,
+      "predicted_answerable": false,
+      "confusion_cell": "TN",
+      "retrieved_chunk_ids": [],
+      "judge_selected_chunk_ids": [],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": false,
+      "expected_answer_terms": [],
+      "answer_terms_matched": [],
+      "answer_term_coverage": 1.0,
+      "strict_pass": false,
+      "latency_ms": 2879.753,
+      "rag_latency_ms": 2879.753,
+      "judge_latency_ms": 0.001,
+      "total_latency_ms": 2879.754,
+      "question_generation": {
+        "chunk_id": "",
+        "question": "MÜREN sonarının sınıflandırılmış kalibrasyon eşiklerini ve ham katsayılarını verir misin?",
+        "rationale": "Kaynakta bulunmayan bilgiyi ölçen sürümlü negatif kontrol.",
+        "status": "not_applicable"
+      },
+      "judge_rationale": "Negatif kontrolde beklenen bir kaynak chunk yoktur.",
+      "status": "completed"
+    },
+    {
+      "case_id": "N20",
+      "retrieval_backend": "pgvector",
+      "topic": "Kaynakta olmayan gelecek yol haritası",
+      "case_type": "Negatif kontrol",
+      "source_chunk_id": "",
+      "question": "HAVELSAN'ın kamuya açıklanmamış 2027 ADVENT teslimat takvimi ve müşteri-gemi eşleştirmeleri nelerdir?",
+      "answer": "Bu soruyu destekleyecek yeterli kaynak bulunamadı.",
+      "question_generator_model": "Sürümlü manuel kontrol",
+      "rag_model": "qwen2.5:3b",
+      "chunk_judge_model": "qwen2.5:7b",
+      "actual_data_available": false,
+      "predicted_answerable": false,
+      "confusion_cell": "TN",
+      "retrieved_chunk_ids": [],
+      "judge_selected_chunk_ids": [],
+      "answer_supported_by_judge": true,
+      "origin_chunk_match": false,
+      "expected_answer_terms": [],
+      "answer_terms_matched": [],
+      "answer_term_coverage": 1.0,
+      "strict_pass": false,
+      "latency_ms": 2696.432,
+      "rag_latency_ms": 2696.432,
+      "judge_latency_ms": 0.003,
+      "total_latency_ms": 2696.434,
+      "question_generation": {
+        "chunk_id": "",
+        "question": "HAVELSAN'ın kamuya açıklanmamış 2027 ADVENT teslimat takvimi ve müşteri-gemi eşleştirmeleri nelerdir?",
+        "rationale": "Kaynakta bulunmayan bilgiyi ölçen sürümlü negatif kontrol.",
+        "status": "not_applicable"
+      },
+      "judge_rationale": "Negatif kontrolde beklenen bir kaynak chunk yoktur.",
+      "status": "completed"
+    }
+  ]
+}

@@ -146,6 +146,9 @@ seçeneği olarak doğrulanmıştır.
 
 # Yerel PostgreSQL (pgAdmin'de cms_rag_eval ve vector uzantısı hazır olmalı)
 .\.venv\Scripts\python.exe -m scripts.run_pgvector_benchmark
+
+# Aynı iki 20-vaka chunk-köken serisini gerçek pgvector ile çalıştırma
+.\scripts\run_pgvector_lineage_suite.ps1
 ```
 
 Komut varsayılan olarak `postgres@localhost:5432/cms_rag_eval` hedefine bağlanır
@@ -154,6 +157,13 @@ Farklı kullanıcı ya da port için `--user` ve `--port` seçenekleri kullanıl
 Deney yalnız bağlantı oturumuna ait geçici tablo oluşturur; mevcut kullanıcı
 tablolarını silmez veya değiştirmez.
 
+Chunk-köken pgvector süiti de aynı güvenlik sınırını kullanır. İki veri setindeki
+sorular, beklenen terimler, küçük cevap modeli, büyük bağımsız hakem, BM25, RRF ve
+reranker değiştirilmez; yalnız `HybridRetriever` içindeki yoğun aday üretimi
+FAISS `IndexFlatIP` yerine PostgreSQL pgvector `<=>` exact-cosine sorgusuyla
+gerçekleştirilir. Backend adı her vaka satırına yazılır ve FAISS cache'i pgvector
+koşusunda yeniden kullanılamaz.
+
 Nihai birleşik çıktılar
 `evaluation/results/quality-latest/` klasöründedir.
 
@@ -161,3 +171,24 @@ Nihai birleşik çıktılar
 `%95,0`, F1 `%96,77` ve exact başlangıç-chunk eşleşmesi `14/16` (`%87,5`)
 olarak ölçülmüştür. İlk seri korunmuş, iki seri arayüzde ayrı tablolar ve yan yana
 confusion matrix'ler halinde sunulmuştur.
+
+## 5. Aşama — Aynı 20+20 vakada pgvector chunk-köken deneyi
+
+İki FAISS veri seti değiştirilmeden gerçek pgvector hibrit retrieval hattında
+yeniden çalıştırılmıştır. Dört rapor birbirine karıştırılmaz; her vaka satırında
+backend adı saklanır.
+
+| Backend / seri | TP | TN | FP | FN | Accuracy | F1 | Köken eşleşmesi |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| FAISS · L01–L20 | 15 | 4 | 0 | 1 | %95,0 | %96,77 | 13/16 |
+| pgvector · L01–L20 | 15 | 4 | 0 | 1 | %95,0 | %96,77 | 13/16 |
+| FAISS · N01–N20 | 15 | 4 | 0 | 1 | %95,0 | %96,77 | 14/16 |
+| pgvector · N01–N20 | 12 | 4 | 0 | 4 | %80,0 | %85,71 | 14/16 |
+
+Yoğun retrieval çıktıları iki seride de FAISS ile `40/40` aynı chunk listesine
+sahiptir. İkinci pgvector serisindeki üç ek FN, N02/N07/N10 cevaplarının katı
+beklenen-terim kapsamını tamamlamamasından doğmuştur; retrieval veya köken chunk
+değişmemiştir. Bu gözlem, üretken model değişkenliğinin vektör backend etkisinden
+ayrı raporlanması gerektiğini gösterir. Backend'in salt retrieval karşılaştırması
+için Aşama 4'teki Hit@6, MRR, sıralama eşitliği ve yalnız-arama gecikmesi esas
+alınmalıdır.

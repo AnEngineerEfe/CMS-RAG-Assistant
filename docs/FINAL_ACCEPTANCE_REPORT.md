@@ -1,6 +1,6 @@
 # Nihai Kabul Raporu
 
-Tarih: 2026-08-06
+Tarih: 2026-08-10
 
 ## Sonuç
 
@@ -18,7 +18,7 @@ veri kullanılmamıştır.
 
 | Kontrol | Sonuç |
 |---|---:|
-| Otomatik test | 82/82 başarılı |
+| Otomatik test | 85/85 başarılı |
 | Retrieval kabul vakası | 8/8 başarılı |
 | Gerçek yanıt kabul vakası | 7/7 başarılı |
 | Hazır PDF kaynağı | 5 |
@@ -29,6 +29,9 @@ veri kullanılmamıştır.
 | İkinci exact chunk-köken eşleşmesi | 14/16 (%87,5) |
 | 20-vaka accuracy / F1 | %95,0 / %96,77 |
 | Exact chunk-köken başarı | 13/16 (%81,25) |
+| pgvector Seri 1 confusion matrix | 15 TP / 4 TN / 0 FP / 1 FN |
+| pgvector Seri 2 confusion matrix | 12 TP / 4 TN / 0 FP / 4 FN |
+| FAISS–pgvector retrieval listesi eşitliği | 40/40 |
 | 80 karakter altı gürültü chunk | 0 |
 | PDF sayfası | 42/42 metinli |
 | PDF metin karakteri | 50.802 |
@@ -115,6 +118,8 @@ Normal kullanıcı bu komutu çalıştırmak zorunda değildir.
 - Yerel model kalitesi donanım ve seçilen Ollama modeline bağlıdır.
 - FAISS bellekte hazır embeddinglerden kurulur; çok kullanıcılı kurumsal kullanım
   için kalıcı ve sunucu tabanlı vektör deposu gerekir.
+- Gerçek PostgreSQL pgvector, aynı iki 20-vaka setinde ayrı backend olarak
+  doğrulanmıştır; üretim varsayılanı değiştirilmeden kurumsal geçiş yolu hazırdır.
 - Bu sürüm tek kullanıcılı yerel çalışma istasyonunu hedefler.
 - Kaynak güncellemesi otomatik değildir; kürasyon ve snapshot hazırlama hattı
   kontrollü biçimde yeniden çalıştırılmalıdır.
