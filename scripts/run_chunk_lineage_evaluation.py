@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import getpass
 import json
 import os
 from pathlib import Path
@@ -26,8 +27,19 @@ def main() -> int:
     parser.add_argument(
         "--output",
         type=Path,
-        default=ROOT / "evaluation" / "results" / "lineage-latest",
+        default=None,
     )
+    parser.add_argument(
+        "--backend",
+        choices=("faiss", "pgvector"),
+        default="faiss",
+        help="Yoğun retrieval katmanı; diğer RAG bileşenleri aynı kalır.",
+    )
+    parser.add_argument("--dsn", default=os.getenv("PGVECTOR_DSN"))
+    parser.add_argument("--host", default="localhost")
+    parser.add_argument("--port", type=int, default=5432)
+    parser.add_argument("--database", default="cms_rag_eval")
+    parser.add_argument("--user", default="postgres")
     parser.add_argument(
         "--rag-model",
         default=os.getenv("CMS_RAG_MODEL", "qwen2.5:3b"),
@@ -52,6 +64,16 @@ def main() -> int:
         help="Cache'de tamamlansa da yalnız bu vakaları yeniden çalıştırır.",
     )
     args = parser.parse_args()
+    if args.output is None:
+        directory = (
+            "pgvector-lineage-latest"
+            if args.backend == "pgvector"
+            else "lineage-latest"
+        )
+        args.output = ROOT / "evaluation" / "results" / directory
+    pgvector_dsn = None
+    if args.backend == "pgvector":
+        pgvector_dsn = args.dsn or _local_dsn(args)
     args.output.mkdir(parents=True, exist_ok=True)
     runner = ChunkLineageEvaluationRunner(
         ROOT / "data",
@@ -59,6 +81,8 @@ def main() -> int:
         evaluator=OllamaJudge(args.large_model, timeout=180.0),
         rag_model=args.rag_model,
         regenerate_questions=args.regenerate_questions,
+        retrieval_backend=args.backend,
+        pgvector_dsn=pgvector_dsn,
     )
     if args.case_ids:
         runner.select_cases(args.case_ids)
@@ -85,6 +109,29 @@ def main() -> int:
         flush=True,
     )
     return 1 if report["lineage"]["invalid_cases"] else 0
+
+
+def _local_dsn(args: argparse.Namespace) -> str:
+    """Yerel PostgreSQL parolasını terminale yansıtmadan DSN üretir."""
+
+    try:
+        from psycopg.conninfo import make_conninfo
+    except ImportError as error:
+        raise SystemExit(
+            "Önce değerlendirme bağımlılıklarını kurun: "
+            "pip install -r requirements-evaluation.txt"
+        ) from error
+    password = os.getenv("PGVECTOR_PASSWORD") or getpass.getpass(
+        f"PostgreSQL parolası ({args.user}@{args.host}:{args.port}/{args.database}): "
+    )
+    return make_conninfo(
+        host=args.host,
+        port=args.port,
+        dbname=args.database,
+        user=args.user,
+        password=password,
+        connect_timeout=10,
+    )
 
 
 def _write_json(path: Path, payload: dict) -> None:
@@ -131,6 +178,8 @@ def _markdown_summary(report: dict) -> str:
 - Soru üreten büyük model: `{method['question_generator_model']}`
 - RAG cevabını üreten küçük/kapalı model: `{method['rag_answer_model']}`
 - Chunk kökenini bağımsız oturumda değerlendiren büyük model: `{method['chunk_origin_judge_model']}`
+- Yoğun retrieval backend'i: `{method['retrieval_backend']}`
+- Yoğun vektör araması: `{method['dense_vector_search']}`
 - Çalışma anında internet: `kapalı`
 
 ## Confusion matrix

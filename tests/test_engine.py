@@ -14,6 +14,22 @@ from src.cms_rag.domain import (
 
 
 class CMSRAGEngineTests(unittest.TestCase):
+    def test_pgvector_backend_requires_connection_dsn(self):
+        with TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "DSN"):
+                CMSRAGEngine(
+                    Path(directory),
+                    retrieval_backend="pgvector",
+                )
+
+    def test_unknown_retrieval_backend_is_rejected(self):
+        with TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "backend"):
+                CMSRAGEngine(
+                    Path(directory),
+                    retrieval_backend="unknown",
+                )
+
     def test_repeated_model_sentence_is_emitted_only_once(self):
         """Model aynı cümleyi iki kez üretse bile kullanıcı tek kopya görmelidir."""
 

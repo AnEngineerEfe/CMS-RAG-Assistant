@@ -10,6 +10,7 @@ from .knowledge import (
 )
 from .live_evaluation import LiveEvaluationStore
 from .retrieval import HybridRetriever
+from .pgvector_retrieval import PgVectorHybridRetriever, PgVectorRetrieverError
 from .storage import DocumentStore
 
 __all__ = [
@@ -22,5 +23,7 @@ __all__ = [
     "manifest_paths",
     "MarkdownIngestor",
     "PDFIngestor",
+    "PgVectorHybridRetriever",
+    "PgVectorRetrieverError",
     "supplemental_document_paths",
 ]

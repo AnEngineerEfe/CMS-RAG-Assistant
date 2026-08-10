@@ -17,6 +17,25 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class EvaluationDatasetTests(unittest.TestCase):
+    def test_lineage_cache_isolated_by_vector_backend(self):
+        runner = object.__new__(ChunkLineageEvaluationRunner)
+        runner.retrieval_backend = "pgvector"
+        case = {
+            "question": "ADVENT nedir?",
+            "source_chunk_id": "doc:p1:c1",
+            "kind": "positive",
+        }
+        row = {
+            "question": "ADVENT nedir?",
+            "source_chunk_id": "doc:p1:c1",
+            "actual_data_available": True,
+            "retrieval_backend": "faiss",
+        }
+
+        self.assertFalse(runner._cache_matches_case(row, case))
+        row["retrieval_backend"] = "pgvector"
+        self.assertTrue(runner._cache_matches_case(row, case))
+
     def test_gold_dataset_has_balanced_positive_and_negative_cases(self):
         cases = load_cases(ROOT / "evaluation" / "datasets" / "gold_cases.json")
         self.assertEqual(len(cases), 45)

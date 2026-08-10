@@ -179,17 +179,11 @@ class HybridRetriever:
         candidate_count = min(len(allowed_ids), 12)
         if candidate_count == 0:
             return []
-        query_vector = self._embedder.encode([query], normalize_embeddings=True)
-        _, semantic_all = self._index.search(
-            np.asarray(query_vector, dtype=np.float32),
-            len(self.chunks),
+        semantic_ids = self._semantic_candidate_ids(
+            query,
+            allowed_ids,
+            candidate_count,
         )
-        allowed = set(allowed_ids)
-        semantic_ids = [
-            item_id
-            for item_id in semantic_all[0].tolist()
-            if item_id in allowed
-        ][:candidate_count]
         lexical_scores = self._bm25.get_scores(self._tokenise(query))
         lexical_ids = sorted(
             allowed_ids,
@@ -260,6 +254,26 @@ class HybridRetriever:
             ],
             limit,
         )
+
+    def _semantic_candidate_ids(
+        self,
+        query: str,
+        allowed_ids: list[int],
+        candidate_count: int,
+    ) -> list[int]:
+        """FAISS üzerinden kapsama uyan yoğun aday kimliklerini sıralı döndürür."""
+
+        query_vector = self._embedder.encode([query], normalize_embeddings=True)
+        _, semantic_all = self._index.search(
+            np.asarray(query_vector, dtype=np.float32),
+            len(self.chunks),
+        )
+        allowed = set(allowed_ids)
+        return [
+            item_id
+            for item_id in semantic_all[0].tolist()
+            if item_id in allowed
+        ][:candidate_count]
 
     def dense_search(
         self,

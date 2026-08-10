@@ -6,7 +6,6 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import re
-import re
 from time import perf_counter
 from typing import Any
 
@@ -29,6 +28,8 @@ class ChunkLineageEvaluationRunner:
         evaluator: OllamaJudge,
         rag_model: str = "qwen2.5:3b",
         regenerate_questions: bool = False,
+        retrieval_backend: str = "faiss",
+        pgvector_dsn: str | None = None,
     ) -> None:
         """Veri setini, snapshot chunklarını ve birbirinden farklı model rollerini yükler."""
 
@@ -37,6 +38,12 @@ class ChunkLineageEvaluationRunner:
         self.evaluator = evaluator
         self.rag_model = rag_model
         self.regenerate_questions = regenerate_questions
+        if retrieval_backend not in {"faiss", "pgvector"}:
+            raise ValueError("Retrieval backend 'faiss' veya 'pgvector' olmalıdır.")
+        if retrieval_backend == "pgvector" and not pgvector_dsn:
+            raise ValueError("Pgvector lineage değerlendirmesi için DSN gereklidir.")
+        self.retrieval_backend = retrieval_backend
+        self.pgvector_dsn = pgvector_dsn
         self.cases = self._load_cases(dataset_path)
         self.chunk_records = self._snapshot_chunk_records(data_dir)
         self.chunks_by_id = {
@@ -68,6 +75,8 @@ class ChunkLineageEvaluationRunner:
             self.data_dir,
             model=self.rag_model,
             record_runtime_events=False,
+            retrieval_backend=self.retrieval_backend,
+            pgvector_dsn=self.pgvector_dsn,
         )
         engine.rebuild()
         matrix = ConfusionMatrix()
@@ -100,6 +109,7 @@ class ChunkLineageEvaluationRunner:
                 f"({case_id} · {row['confusion_cell']} · {row['status']})",
                 flush=True,
             )
+        engine.close()
         positives = [row for row in rows if row["actual_data_available"]]
         origin_matches = sum(bool(row["origin_chunk_match"]) for row in positives)
         strict_passes = sum(bool(row["strict_pass"]) for row in positives)
@@ -123,6 +133,12 @@ class ChunkLineageEvaluationRunner:
                     "Bağımsız hibrit retrieval sonucundaki en ilgili en fazla 4 chunk"
                 ),
                 "runtime_web_access": False,
+                "retrieval_backend": self.retrieval_backend,
+                "dense_vector_search": (
+                    "PostgreSQL pgvector exact cosine (<=>)"
+                    if self.retrieval_backend == "pgvector"
+                    else "FAISS IndexFlatIP exact cosine"
+                ),
             },
             "confusion_matrix": matrix.as_dict(),
             "lineage": {
@@ -140,8 +156,7 @@ class ChunkLineageEvaluationRunner:
             "cases": rows,
         }
 
-    @staticmethod
-    def _cache_matches_case(row: dict[str, Any], case: dict[str, Any]) -> bool:
+    def _cache_matches_case(self, row: dict[str, Any], case: dict[str, Any]) -> bool:
         """Değiştirilen soru veya kaynak chunk için eski sonucu kullanmayı engeller."""
 
         return bool(
@@ -151,6 +166,8 @@ class ChunkLineageEvaluationRunner:
             == str(case.get("source_chunk_id", ""))
             and bool(row.get("actual_data_available"))
             == (case.get("kind") == "positive")
+            and str(row.get("retrieval_backend", "faiss"))
+            == self.retrieval_backend
         )
 
     def _run_case(
@@ -298,6 +315,7 @@ class ChunkLineageEvaluationRunner:
         )
         return {
             "case_id": case_id,
+            "retrieval_backend": self.retrieval_backend,
             "topic": case.get("topic", ""),
             "case_type": "Chunk-kökenli pozitif" if actual_positive else "Negatif kontrol",
             "source_chunk_id": source_chunk_id,
@@ -406,13 +424,13 @@ class ChunkLineageEvaluationRunner:
             return "FP"
         return "FN"
 
-    @staticmethod
-    def _invalid_row(case: dict[str, Any], reason: str) -> dict[str, Any]:
+    def _invalid_row(self, case: dict[str, Any], reason: str) -> dict[str, Any]:
         """Eksik kaynak veya üretim hatasını başarı gibi göstermeyen vaka kaydı üretir."""
 
         actual_positive = case.get("kind") == "positive"
         return {
             "case_id": case.get("id", ""),
+            "retrieval_backend": self.retrieval_backend,
             "topic": case.get("topic", ""),
             "case_type": "Chunk-kökenli pozitif" if actual_positive else "Negatif kontrol",
             "source_chunk_id": case.get("source_chunk_id", ""),

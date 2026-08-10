@@ -41,6 +41,20 @@ REPORT_PATHS = {
         / "lineage-round2"
         / "lineage_evaluation_report.json"
     ),
+    "pgvector_lineage": (
+        PROJECT_ROOT
+        / "evaluation"
+        / "results"
+        / "pgvector-lineage-latest"
+        / "lineage_evaluation_report.json"
+    ),
+    "pgvector_lineage_round2": (
+        PROJECT_ROOT
+        / "evaluation"
+        / "results"
+        / "pgvector-lineage-round2"
+        / "lineage_evaluation_report.json"
+    ),
 }
 
 
@@ -72,6 +86,8 @@ def render_evaluation_dashboard() -> None:
     pgvector = reports["pgvector"]
     lineage = reports["lineage"]
     lineage_round2 = reports["lineage_round2"]
+    pgvector_lineage = reports["pgvector_lineage"]
+    pgvector_lineage_round2 = reports["pgvector_lineage_round2"]
     live_store = LiveEvaluationStore(DATA_DIR / "evaluation")
     live = live_store.summary()
     st.markdown(
@@ -94,7 +110,7 @@ def render_evaluation_dashboard() -> None:
 
     lineage_tab, tests, matrix, references, operations = st.tabs(
         (
-            "40 vaka · iki bağımsız deney",
+            "80 backend koşusu · FAISS + pgvector",
             "Canlı test tablosu",
             "Canlı TP · TN · FP · FN",
             "Referans raporlar",
@@ -102,7 +118,12 @@ def render_evaluation_dashboard() -> None:
         )
     )
     with lineage_tab:
-        _render_lineage_workspace(lineage, lineage_round2)
+        _render_lineage_workspace(
+            lineage,
+            lineage_round2,
+            pgvector_lineage,
+            pgvector_lineage_round2,
+        )
     with tests:
         _render_live_tests(live, live_store)
     with matrix:
@@ -200,41 +221,74 @@ def _render_live_matrix(summary: dict[str, Any]) -> None:
 
 
 def _render_lineage_workspace(
-    first_report: dict[str, Any], second_report: dict[str, Any]
+    first_report: dict[str, Any],
+    second_report: dict[str, Any],
+    pgvector_first_report: dict[str, Any],
+    pgvector_second_report: dict[str, Any],
 ) -> None:
-    """İki bağımsız 20-vaka serisini matris ve tablolarıyla birlikte gösterir."""
+    """Aynı iki 20-vaka serisini FAISS ve pgvector sonuçlarıyla gösterir."""
+
+    faiss_tab, pgvector_tab = st.tabs(
+        ("FAISS · 40 vaka", "pgvector · 40 vaka")
+    )
+    with faiss_tab:
+        _render_backend_lineage_pair(
+            first_report,
+            second_report,
+            backend_label="FAISS",
+        )
+    with pgvector_tab:
+        _render_backend_lineage_pair(
+            pgvector_first_report,
+            pgvector_second_report,
+            backend_label="pgvector",
+        )
+
+
+def _render_backend_lineage_pair(
+    first_report: dict[str, Any],
+    second_report: dict[str, Any],
+    *,
+    backend_label: str,
+) -> None:
+    """Tek backend'e ait iki bağımsız serinin matrislerini ve tablolarını çizer."""
 
     if not second_report:
-        _render_lineage_evaluation(first_report, series_label="Seri 1 · L01–L20")
+        _render_lineage_evaluation(
+            first_report,
+            series_label=f"{backend_label} · Seri 1 · L01–L20",
+        )
         st.info(
-            "İkinci 20-vaka serisi henüz çalıştırılmadı; ilk doğrulanmış seri korunuyor."
+            f"{backend_label} ikinci 20-vaka serisi henüz çalıştırılmadı."
         )
         return
-    st.markdown("#### İki bağımsız serinin confusion matrix karşılaştırması")
+    st.markdown(
+        f"#### {backend_label} · iki bağımsız serinin confusion matrix karşılaştırması"
+    )
     matrices = st.columns(2)
     with matrices[0]:
         _render_confusion_grid(
             first_report.get("confusion_matrix", {}),
-            title="Seri 1 · L01–L20",
+            title=f"{backend_label} · Seri 1 · L01–L20",
         )
     with matrices[1]:
         _render_confusion_grid(
             second_report.get("confusion_matrix", {}),
-            title="Seri 2 · N01–N20",
+            title=f"{backend_label} · Seri 2 · N01–N20",
         )
     first_tab, second_tab = st.tabs(
-        ("Seri 1 vaka tablosu", "Seri 2 vaka tablosu")
+        (f"{backend_label} · Seri 1 tablosu", f"{backend_label} · Seri 2 tablosu")
     )
     with first_tab:
         _render_lineage_evaluation(
             first_report,
-            series_label="Seri 1 · L01–L20",
+            series_label=f"{backend_label} · Seri 1 · L01–L20",
             show_matrix=False,
         )
     with second_tab:
         _render_lineage_evaluation(
             second_report,
-            series_label="Seri 2 · N01–N20",
+            series_label=f"{backend_label} · Seri 2 · N01–N20",
             show_matrix=False,
         )
 
@@ -323,6 +377,7 @@ def _lineage_row(case: dict[str, Any]) -> dict[str, Any]:
 
     return {
         "Vaka": case.get("case_id", ""),
+        "Vektör backend'i": case.get("retrieval_backend", "faiss"),
         "Tür": case.get("case_type", ""),
         "Konu": case.get("topic", ""),
         "Üretilen soru / input": case.get("question", ""),

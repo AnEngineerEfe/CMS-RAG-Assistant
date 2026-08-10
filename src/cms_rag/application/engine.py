@@ -39,6 +39,8 @@ class CMSRAGEngine:
         model: str | None = None,
         *,
         record_runtime_events: bool = True,
+        retrieval_backend: str = "faiss",
+        pgvector_dsn: str | None = None,
     ) -> None:
         """Veri deposunu ve Ollama istemcisini hazırlar; indekslemeyi tembel bırakır."""
 
@@ -50,6 +52,12 @@ class CMSRAGEngine:
         self.live_evaluations = LiveEvaluationStore(data_dir / "evaluation")
         self.live_assessor = LiveEvaluationAssessor(data_dir.parent)
         self.record_runtime_events = record_runtime_events
+        if retrieval_backend not in {"faiss", "pgvector"}:
+            raise ValueError("Retrieval backend 'faiss' veya 'pgvector' olmalıdır.")
+        if retrieval_backend == "pgvector" and not pgvector_dsn:
+            raise ValueError("Pgvector backend için PostgreSQL DSN gereklidir.")
+        self.retrieval_backend = retrieval_backend
+        self.pgvector_dsn = pgvector_dsn
         self.retriever: HybridRetriever | None = None
         self.history: list[dict[str, str]] = []
         self.snapshot_loaded = False
@@ -65,10 +73,21 @@ class CMSRAGEngine:
                 collection="official",
                 authority="user_uploaded_public_document",
             )
-            self.retriever = HybridRetriever.from_snapshot(
-                snapshot_dir,
-                supplemental_chunks=supplemental,
-            )
+            if self.retrieval_backend == "pgvector":
+                from ..infrastructure.pgvector_retrieval import (
+                    PgVectorHybridRetriever,
+                )
+
+                self.retriever = PgVectorHybridRetriever.from_snapshot(
+                    snapshot_dir,
+                    dsn=str(self.pgvector_dsn),
+                    supplemental_chunks=supplemental,
+                )
+            else:
+                self.retriever = HybridRetriever.from_snapshot(
+                    snapshot_dir,
+                    supplemental_chunks=supplemental,
+                )
             self.snapshot_loaded = True
         else:
             chunks = []
@@ -91,6 +110,13 @@ class CMSRAGEngine:
             self.snapshot_loaded = False
         self.history.clear()
         return len(self.retriever.chunks) if self.retriever else 0
+
+    def close(self) -> None:
+        """Retriever tarafından tutulan haricî bağlantıları varsa serbest bırakır."""
+
+        close = getattr(self.retriever, "close", None)
+        if callable(close):
+            close()
 
     def prepared_document_count(self) -> int:
         """Önceden hazırlanmış bilgi tabanındaki benzersiz belge sayısını döndürür."""
