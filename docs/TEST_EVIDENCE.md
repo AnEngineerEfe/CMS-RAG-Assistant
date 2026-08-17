@@ -92,12 +92,30 @@ Uygulama ayrı bir Streamlit sürecinde başlatılır ve sağlık endpoint'inin 
 döndürmesi denetlenir. Bu kontrol; import, başlangıç indeksleme ve web sunucusunun
 birlikte ayağa kalkabildiğini doğrular.
 
+## CMS asistanı–MCP Swing kabul senaryosu
+
+Python CMS asistanı ile gerçek Java MCP sunucusu arasındaki yerel STDIO hattı şu
+adımlarla otomatik doğrulanır:
+
+1. MCP başlangıç anlaşması ve araç çağrısı
+2. `set_track_state` ile atomik hız, yön ve gemi tipi yazma
+3. `get_track_state` ile geri-okuma ve bire bir hedef doğrulaması
+4. Java değişiklik geçmişinde işlemin görünmesi
+5. Streamlit'te onay düğmesinden önce hiç yazma yapılmaması
+6. Onaydan sonra yalnız bir atomik yazma yapılması
+7. Yazma kilidinde okumanın çalışması ve değişikliğin reddedilmesi
+8. Onay beklerken durum değişirse eski planın iptal edilmesi
+9. Audit kaydında serbest kullanıcı soru/komut metni bulunmaması
+
 ## Son doğrulama
 
-2026-08-10 tarihinde hazır bilgi tabanı ve bağımsız değerlendirme kabul turunda:
+2026-08-17 tarihinde hazır bilgi tabanı, MCP entegrasyonu ve bağımsız değerlendirme kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Otomatik testler: `85/85` başarılı
+- Python otomatik testleri: `95/95` başarılı
+- Java MCP otomatik testleri: `9/9` başarılı
+- Gerçek Python–Java MCP tur testi: başarılı
+- Streamlit onaylı MCP yazma testi: başarılı
 - Retrieval kabul seti: `8/8` başarılı
 - Gerçek yanıt kabul seti: `7/7` başarılı
 - Altın benchmark: `45/45` başarılı (`30 TP / 15 TN / 0 FP / 0 FN`)

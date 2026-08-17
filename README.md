@@ -44,11 +44,14 @@ anında web taraması gerekmez.
 - Normal kullanımda belge embeddinglerini yeniden hesaplamayan hızlı açılış
 - Çalışma anında kapalı web erişimi ve yalnız yerel üretim
 - Belge silme, yeniden indeksleme ve güvenli boş-bilgi-tabani davranışı
+- Aynı sohbetten canlı Swing iz durumu okuma ve açık kullanıcı onaylı MCP güncellemesi
+- MCP yazma kilidi, atomik işlem, geri-okuma doğrulaması ve metinsiz yerel audit
 
 ## Gereksinimler
 
 - Python 3.11 veya üzeri
 - Ollama
+- MCP iz kontrolü için Java 21 JDK
 - En az 8 GB RAM
 - Yalnız ilk geliştirici hazırlığında model ağırlıklarını kurmak için internet;
   normal soru-cevap çalışmasında internet gerekmez
@@ -71,6 +74,16 @@ ollama serve
 ```powershell
 .\.venv\Scripts\Activate.ps1
 streamlit run app.py
+```
+
+MCP Swing entegrasyonu da kullanılacaksa Java modülünü temiz kurulumda bir kez
+derleyin veya tüm yerel başlangıç kontrollerini yapan yardımcı komutu kullanın:
+
+```powershell
+cd mcp-swing-demo
+.\mvnw.cmd clean verify
+cd ..
+.\scripts\run_local.ps1
 ```
 
 Uygulama varsayılan olarak `http://localhost:8501` adresinde açılır.
@@ -99,6 +112,8 @@ streamlit run app.py
    canlı test tablosunu, confusion matrix'i ve sürümlü referans raporlarını inceleyin.
 7. Canlı tabloyu gerektiğinde UTF-8 CSV olarak indirin veya yalnız bu deney kayıtlarını
    `Canlı kayıtları sıfırla` düğmesiyle temizleyin.
+8. `İz durumunu göster` ile canlı Swing değerlerini okuyun. Değişiklik için örneğin
+   `Hızı 24,5 knot yap` yazın ve gösterilen işlem planını ayrıca onaylayın.
 
 Ek PDF zorunlu değildir. Gerektiğinde `İsteğe bağlı ek belge` alanından yalnızca
 kamuya açık veya kullanım yetkiniz bulunan PDF eklenebilir. Aynı içerik ikinci
@@ -313,3 +328,6 @@ java -jar target\mcp-swing-demo.jar
 
 Kurulum, mimari, araç kataloğu ve MCP istemci ayarı için
 [docs/MCP_SWING_DEMO.md](docs/MCP_SWING_DEMO.md) belgesine bakın.
+CMS-RAG sohbetinden yapılan onaylı entegrasyonun niyet ayrımı, güvenlik kararları,
+örnekleri ve ölçek sınırı [docs/MCP_ASSISTANT_INTEGRATION.md](docs/MCP_ASSISTANT_INTEGRATION.md)
+içinde açıklanır.

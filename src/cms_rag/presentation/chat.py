@@ -7,6 +7,7 @@ import streamlit as st
 from ..application import CMSRAGEngine
 from .components import render_message, show_sources, source_payload
 from .config import UNSUPPORTED_ANSWER_MARKERS
+from .track_chat import handle_track_question, render_pending_track_action
 
 
 def initialize_index(engine: CMSRAGEngine) -> None:
@@ -24,9 +25,13 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
     for index, message in enumerate(st.session_state.messages):
         render_message(message, key_prefix=f"history_{index}")
 
+    has_pending_action = render_pending_track_action()
+
     question = st.chat_input(
-        "CMS / ADVENT hakkında kanıta dayalı soru sorun...",
-        disabled=engine.retriever is None,
+        "CMS sorusu sorun veya iz durumunu okuyup değiştirmek için komut verin...",
+        # MCP canlı kontrolü RAG indeksinden bağımsızdır; yalnız bekleyen onay yeni
+        # bir iletinin aynı anda işlenmesini engeller.
+        disabled=has_pending_action,
     )
     if not question:
         return
@@ -34,6 +39,9 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
     user_message: dict[str, Any] = {"role": "user", "content": question}
     st.session_state.messages.append(user_message)
     render_message(user_message, key_prefix=f"user_{len(st.session_state.messages)}")
+    if handle_track_question(question):
+        st.rerun()
+        return
     answer, sources = _render_answer(engine, question, scope)
     st.session_state.messages.append(
         {"role": "assistant", "content": answer, "sources": sources}

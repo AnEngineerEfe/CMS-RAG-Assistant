@@ -62,9 +62,13 @@ def render_message(message: dict[str, Any], *, key_prefix: str = "message") -> N
     with st.chat_message(message["role"]):
         if message["role"] == "assistant":
             label = (
-                "KAYNAKLI YANIT"
-                if message.get("sources")
-                else "GÜVENLİ YANIT"
+                str(message["label"])
+                if message.get("label")
+                else (
+                    "KAYNAKLI YANIT"
+                    if message.get("sources")
+                    else "GÜVENLİ YANIT"
+                )
             )
             st.markdown(
                 f"<div class='answer-label'>{label}</div>",
@@ -106,9 +110,9 @@ def render_empty_state(has_documents: bool, has_messages: bool) -> None:
         )
         return
     st.markdown(
-        "<div class='prompt-guide'>Örnek sorular · “ADVENT nedir?” &nbsp;·&nbsp; "
-        "“Savaş gemisinde ne yapar?” &nbsp;·&nbsp; "
-        "“Taktik veri bağlantısı nedir?”</div>",
+        "<div class='prompt-guide'>Bilgi · “ADVENT nedir?” &nbsp;·&nbsp; "
+        "Canlı durum · “İz durumunu göster” &nbsp;·&nbsp; "
+        "Onaylı işlem · “Hızı 24,5 knot yap”</div>",
         unsafe_allow_html=True,
     )
 

@@ -6,10 +6,60 @@ from unittest.mock import patch
 from streamlit.testing.v1 import AppTest
 
 from src.cms_rag.application import CMSRAGEngine
+from src.cms_rag.application.track_control import TrackControlService
 from src.cms_rag.domain import Chunk, SearchHit
+from src.cms_rag.domain.track_control import TrackState
+
+
+class _UiTrackGateway:
+    """Streamlit testinde gerçek pencere açmadan onay davranışını izleyen kapı."""
+
+    def __init__(self):
+        """Sabit başlangıç durumu ve yazma sayacı oluşturur."""
+
+        self.state = TrackState(10.0, 90, "KORVET", "Korvet")
+        self.write_count = 0
+
+    def get_state(self):
+        """Canlı durumu taklit eder."""
+
+        return self.state
+
+    def get_write_policy(self):
+        """Test operatörünün yazmaya izin verdiğini bildirir."""
+
+        return True
+
+    def set_state(self, state):
+        """Onaylı yazmayı kaydedip yeni durumu döndürür."""
+
+        self.write_count += 1
+        self.state = state
+        return state
 
 
 class StreamlitJourneyTests(unittest.TestCase):
+    def test_mcp_write_requires_confirmation_and_verifies_result(self):
+        """Serbest metin komutunun onaysız yazmadığını ve onayla bir kez uygulandığını sınar."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        with patch(
+            "src.cms_rag.presentation.track_chat.get_track_control_service",
+            return_value=service,
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            app.chat_input[0].set_value("İzin hızını 24,5 knot yap").run()
+            self.assertEqual(gateway.write_count, 0)
+            approve = next(button for button in app.button if button.label == "Onayla ve uygula")
+            approve.click().run()
+
+        page = "\n".join(item.value for item in app.markdown)
+        self.assertEqual(gateway.write_count, 1)
+        self.assertIn("MCP · DOĞRULANMIŞ İŞLEM", page)
+        self.assertIn("24.5 knot", page)
+        self.assertFalse(app.exception)
+
     def test_scope_control_defaults_to_combined_collection(self):
         app = AppTest.from_file("app.py", default_timeout=180).run()
         self.assertFalse(app.exception)

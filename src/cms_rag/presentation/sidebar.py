@@ -85,6 +85,7 @@ def _render_session_actions(engine: CMSRAGEngine) -> None:
     if st.button("Oturumu temizle", use_container_width=True):
         engine.clear_chat()
         st.session_state.messages = []
+        st.session_state.pop("pending_track_action", None)
         st.rerun()
 
 
@@ -100,6 +101,7 @@ def _render_status(engine: CMSRAGEngine, scope: str) -> None:
         f"Snapshot · {'Hazır' if engine.snapshot_loaded else 'Yeniden oluşturuldu'}"
     )
     st.caption("Çalışma anında web erişimi · Kapalı")
+    st.caption("MCP iz kontrolü · İstek üzerine yerel başlatılır")
     st.caption(f"Koleksiyon · {scope}")
     st.caption("Arama · Semantic + BM25 + Reranking")
     for record in engine.supplemental_records():

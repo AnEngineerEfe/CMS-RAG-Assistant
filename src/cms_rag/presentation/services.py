@@ -1,8 +1,13 @@
 """Ağır RAG motorunun Streamlit yaşam döngüsünü yöneten servis erişimi."""
 
+import atexit
+
 import streamlit as st
 
 from ..application import CMSRAGEngine
+from ..application.track_control import TrackControlService
+from ..infrastructure.mcp_audit import McpAuditStore
+from ..infrastructure.mcp_track_client import StdioMcpTrackClient
 from .config import DATA_DIR, PROJECT_ROOT
 
 
@@ -24,3 +29,12 @@ def get_engine() -> CMSRAGEngine:
     """Geçerli kaynak sürümüyle eşleşen tek RAG motoru örneğini döndürür."""
 
     return _cached_engine(_ENGINE_CACHE_VERSION)
+
+
+@st.cache_resource
+def get_track_control_service() -> TrackControlService:
+    """Tek Swing/MCP sürecini Streamlit yeniden çalıştırmaları arasında korur."""
+
+    client = StdioMcpTrackClient(PROJECT_ROOT)
+    atexit.register(client.close)
+    return TrackControlService(client, McpAuditStore(DATA_DIR / "audit"))
