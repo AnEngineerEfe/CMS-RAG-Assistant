@@ -24,8 +24,9 @@ def handle_track_question(question: str) -> bool:
     if request.intent == TrackIntent.AMBIGUOUS:
         _append_assistant(
             request.reason
-            + " Örnek: “İzin hızını 24,5 knot, yönünü 270 derece yap.”",
-            "MCP · NETLEŞTİRME GEREKİYOR",
+            + " Geçerli örnekler: “Hızı 24,5 knot yap”, “Yönü 270 derece yap” "
+            "veya “Gemi tipini fırkateyn yap” şeklindedir.",
+            "MCP · KOMUT DOĞRULAMA",
         )
         return True
     try:
@@ -35,8 +36,12 @@ def handle_track_question(question: str) -> bool:
             _append_assistant(_state_text(state), "MCP · CANLI DURUM")
         else:
             st.session_state[PENDING_ACTION_KEY] = service.prepare(request)
-    except (McpTrackError, OSError, ValueError, RuntimeError) as exception:
+    except ValueError as exception:
+        _append_assistant(_safe_error(exception), "MCP · GEÇERSİZ DEĞER")
+    except (McpTrackError, OSError) as exception:
         _append_assistant(_safe_error(exception), "MCP · BAĞLANTI HATASI")
+    except RuntimeError as exception:
+        _append_assistant(_safe_error(exception), "MCP · İŞLEM HATASI")
     return True
 
 

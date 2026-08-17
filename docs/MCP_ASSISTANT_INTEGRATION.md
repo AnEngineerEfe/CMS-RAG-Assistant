@@ -28,6 +28,8 @@ kendini yeniler.
 
 - Genel CMS soruları MCP kanalına yönlendirilmez.
 - Belirsiz komutlar çalıştırılmaz; kullanıcıdan açık değer istenir.
+- Birleşik komutta tek bir alan geçersizse kalan alanlar kısmen uygulanmaz; komutun
+  tamamı reddedilir ve izin verilen değerler gösterilir.
 - Yazma isteği onaydan önce yalnız bir işlem planıdır ve yan etkisi yoktur.
 - Onay beklerken canlı durum değişirse eski plan iptal edilir.
 - Operatörün Swing ekranındaki yazma kilidi her işlemde yeniden okunur.
@@ -94,4 +96,3 @@ kalıcı durum ve merkezi audit eklenmelidir. Yerel STDIO demonstrasyonu bu ağ
 - Gerçek Python–Java STDIO MCP başlatma, yazma, geri okuma ve geçmiş testi
 - Streamlit onay düğmesi üzerinden tek atomik yazma
 - Audit kaydında serbest kullanıcı metni bulunmaması
-
