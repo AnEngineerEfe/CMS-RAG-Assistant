@@ -54,13 +54,20 @@ def render_pending_track_action() -> bool:
     with st.container(border=True):
         st.markdown("<div class='answer-label'>MCP · İŞLEM ONAYI</div>", unsafe_allow_html=True)
         st.markdown(f"**Planlanan değişiklik:** {action.summary()}")
+        for warning in action.warnings:
+            st.warning(warning)
         st.caption(
             "Henüz hiçbir değer değiştirilmedi. Onay sırasında yazma izni ve mevcut "
             "durum yeniden kontrol edilecektir."
         )
         approve, cancel, remainder = st.columns([1, 1, 3])
         with approve:
-            if st.button("Onayla ve uygula", type="primary", use_container_width=True):
+            approve_label = (
+                "Geçerli değişiklikleri uygula"
+                if action.partial
+                else "Onayla ve uygula"
+            )
+            if st.button(approve_label, type="primary", use_container_width=True):
                 _execute(action)
         with cancel:
             if st.button("İptal et", use_container_width=True):
@@ -82,6 +89,9 @@ def _execute(action: PendingTrackAction) -> None:
             "İşlem uygulandı ve MCP üzerinden geri okunarak doğrulandı.\n\n"
             + _state_text(verified)
         )
+        if action.warnings:
+            notes = "\n".join(f"- {warning}" for warning in action.warnings)
+            content += f"\n\n**İşlem notları:**\n{notes}"
         label = "MCP · DOĞRULANMIŞ İŞLEM"
     except PermissionError as exception:
         content = f"İşlem uygulanmadı: {exception}"

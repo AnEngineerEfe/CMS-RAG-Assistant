@@ -39,8 +39,8 @@ class _UiTrackGateway:
 
 
 class StreamlitJourneyTests(unittest.TestCase):
-    def test_unknown_ship_type_rejects_the_whole_command_with_allowed_values(self):
-        """Geçersiz gemi tipinde kısmi yazma yapmadan anlaşılır seçenekleri gösterir."""
+    def test_unknown_ship_type_requires_confirmation_for_valid_subset(self):
+        """Geçerli alanları onaya sunar, tanınmayan gemi tipini değiştirmeden korur."""
 
         gateway = _UiTrackGateway()
         service = TrackControlService(gateway)
@@ -52,13 +52,22 @@ class StreamlitJourneyTests(unittest.TestCase):
             app.chat_input[0].set_value(
                 "İzin hızını 100 knot, yönünü 270 derece ve tipini sancar yap"
             ).run()
+            page = "\n".join(item.value for item in app.markdown)
+            self.assertEqual(gateway.write_count, 0)
+            self.assertEqual(gateway.state, TrackState(10.0, 90, "KORVET", "Korvet"))
+            self.assertIn("MCP · İŞLEM ONAYI", page)
+            self.assertIn("sancar", page)
+            apply_valid = next(
+                button
+                for button in app.button
+                if button.label == "Geçerli değişiklikleri uygula"
+            )
+            apply_valid.click().run()
 
         page = "\n".join(item.value for item in app.markdown)
-        self.assertEqual(gateway.write_count, 0)
-        self.assertEqual(gateway.state, TrackState(10.0, 90, "KORVET", "Korvet"))
-        self.assertIn("MCP · KOMUT DOĞRULAMA", page)
-        self.assertIn("sancar", page)
-        self.assertIn("Fırkateyn", page)
+        self.assertEqual(gateway.write_count, 1)
+        self.assertEqual(gateway.state, TrackState(100.0, 270, "KORVET", "Korvet"))
+        self.assertIn("Gemi tipi değiştirilmeyecek", page)
         self.assertFalse(app.exception)
 
     def test_mcp_write_requires_confirmation_and_verifies_result(self):

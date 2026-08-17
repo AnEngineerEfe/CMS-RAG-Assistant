@@ -28,8 +28,13 @@ kendini yeniler.
 
 - Genel CMS soruları MCP kanalına yönlendirilmez.
 - Belirsiz komutlar çalıştırılmaz; kullanıcıdan açık değer istenir.
-- Birleşik komutta tek bir alan geçersizse kalan alanlar kısmen uygulanmaz; komutun
-  tamamı reddedilir ve izin verilen değerler gösterilir.
+- Birleşik komutta bir alan geçersizse uygun alanlar ayrı bir işlem planına alınır;
+  sorunlu alanın korunacağı açıkça gösterilir ve geçerli alt küme de kullanıcı
+  onayı olmadan uygulanmaz.
+- Küçük gemi tipi yazım hatalarında en yakın izinli değer yalnız önerilir; kullanıcı
+  onayı veya düzeltilmiş yeni komut olmadan otomatik tipe dönüştürülmez.
+- Negatif veya 360'tan büyük tam sayı yönler döngüsel esas açıya çevrilir
+  (`-10° → 350°`, `370° → 10°`) ve dönüşüm onay ekranında gösterilir.
 - Yazma isteği onaydan önce yalnız bir işlem planıdır ve yan etkisi yoktur.
 - Onay beklerken canlı durum değişirse eski plan iptal edilir.
 - Operatörün Swing ekranındaki yazma kilidi her işlemde yeniden okunur.
@@ -49,10 +54,13 @@ Hızı 24,5 knot yap.
 Yönü 270 derece yap.
 Gemi tipini fırkateyn yap.
 İzin hızını 24,5 knot, yönünü 270 derece ve tipini fırkateyn yap.
+Yönü -10 derece yap.
 ```
 
 Yazma isteklerinde asistan önce değişiklik özetini gösterir. Kullanıcı
 `Onayla ve uygula` düğmesine basmadıkça MCP yazma aracı çağrılmaz.
+Birleşik komutun yalnız bir bölümü geçerliyse düğme `Geçerli değişiklikleri uygula`
+olarak görünür ve uygulanmayacak alanlar ayrıca listelenir.
 
 ## Kurulum ve çalıştırma
 

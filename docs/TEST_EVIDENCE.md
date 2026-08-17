@@ -106,13 +106,16 @@ adımlarla otomatik doğrulanır:
 7. Yazma kilidinde okumanın çalışması ve değişikliğin reddedilmesi
 8. Onay beklerken durum değişirse eski planın iptal edilmesi
 9. Audit kaydında serbest kullanıcı soru/komut metni bulunmaması
+10. Tanınmayan gemi tipinde yalnız geçerli alanların ayrıca onaya sunulması
+11. Yakın gemi tipi yazım hatasında otomatik değişiklik yerine öneri verilmesi
+12. Negatif ve 360'tan büyük yönlerin esas açıya dönüştürülüp onayda gösterilmesi
 
 ## Son doğrulama
 
 2026-08-17 tarihinde hazır bilgi tabanı, MCP entegrasyonu ve bağımsız değerlendirme kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Python otomatik testleri: `99/99` başarılı
+- Python otomatik testleri: `101/101` başarılı
 - Java MCP otomatik testleri: `9/9` başarılı
 - Gerçek Python–Java MCP tur testi: başarılı
 - Streamlit onaylı MCP yazma testi: başarılı

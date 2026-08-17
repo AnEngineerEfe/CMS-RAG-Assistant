@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Protocol
 
-from ..domain.track_control import TrackRequest, TrackState
+from ..domain.track_control import TrackIntent, TrackRequest, TrackState
 
 
 class TrackGateway(Protocol):
@@ -41,6 +41,8 @@ class PendingTrackAction:
 
     before: TrackState
     after: TrackState
+    warnings: tuple[str, ...] = ()
+    partial: bool = False
 
     def summary(self) -> str:
         """Arayüzde açıkça gösterilecek değişiklik özetini üretir."""
@@ -93,7 +95,12 @@ class TrackControlService:
         )
         if before == after:
             raise ValueError("İstenen değerler zaten uygulanmış durumda.")
-        return PendingTrackAction(before, after)
+        return PendingTrackAction(
+            before,
+            after,
+            warnings=request.warnings,
+            partial=request.intent == TrackIntent.PARTIAL_WRITE,
+        )
 
     def execute(self, action: PendingTrackAction) -> TrackState:
         """Onaylı planı izin kontrolüyle uygular ve geri okuyarak sonucunu doğrular."""

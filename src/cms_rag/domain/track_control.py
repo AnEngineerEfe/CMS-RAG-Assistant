@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from difflib import get_close_matches
 from enum import Enum
 import re
 import unicodedata
@@ -14,6 +15,7 @@ class TrackIntent(str, Enum):
     NOT_TRACK = "not_track"
     READ = "read"
     WRITE = "write"
+    PARTIAL_WRITE = "partial_write"
     AMBIGUOUS = "ambiguous"
 
 
@@ -67,6 +69,7 @@ class TrackRequest:
     heading_degrees: int | None = None
     ship_type: str | None = None
     reason: str = ""
+    warnings: tuple[str, ...] = ()
 
 
 SHIP_TYPE_LABELS = {
@@ -125,7 +128,7 @@ def parse_track_request(text: str) -> TrackRequest:
 
     speed = _extract_decimal(normalized, ("hiz", "surat"))
     heading_decimal = _extract_decimal(normalized, ("yon", "rota"))
-    heading = None
+    heading: int | None = None
     heading_integer_error = False
     if heading_decimal is not None:
         if not heading_decimal.is_integer():
@@ -133,43 +136,72 @@ def parse_track_request(text: str) -> TrackRequest:
         else:
             heading = int(heading_decimal)
     ship_type = _extract_ship_type(normalized)
-    has_values = any(value is not None for value in (speed, heading, ship_type))
 
-    # Birleşik komutta tek bir alan bile çözümlenemiyorsa kalan alanları sessizce
-    # uygulamayız. Kullanıcı ya tüm komutu düzeltir ya da açıkça tek alan ister.
+    # Geçersiz alanlar sessizce yok sayılmaz. Birleşik komutta başka geçerli alanlar
+    # varsa bunlar ayrıca onaya sunulur; sorunlu alanlar değişmeden korunur.
     validation_errors: list[str] = []
+    transformation_warnings: list[str] = []
     if write_signal and speed_requested and speed is None:
         validation_errors.append(
-            "Hız için 0 ile 100 arasında sayısal bir knot değeri belirtin."
+            "Hız değiştirilmeyecek: 0 ile 100 arasında sayısal bir knot değeri belirtin."
         )
     if write_signal and heading_requested and heading_decimal is None:
         validation_errors.append(
-            "Yön için 0 ile 360 arasında tam sayı derece belirtin."
+            "Yön değiştirilmeyecek: tam sayı derece belirtin."
         )
     if heading_integer_error:
-        validation_errors.append("Yön ondalıklı olamaz; tam sayı derece belirtin.")
+        validation_errors.append(
+            "Yön değiştirilmeyecek: ondalıklı açı yerine tam sayı derece belirtin."
+        )
+        heading = None
     if write_signal and ship_requested and ship_type is None:
         candidate = _extract_unknown_ship_candidate(normalized)
         prefix = f"‘{candidate}’ " if candidate else "Belirtilen değer "
+        suggestion = _suggest_ship_type(candidate)
+        suggestion_text = (
+            f" “{SHIP_TYPE_LABELS[suggestion]}” demek istemiş olabilir misiniz?"
+            if suggestion
+            else ""
+        )
         validation_errors.append(
-            f"{prefix}tanımlı bir gemi tipi değil. İzin verilen tipler: "
+            f"Gemi tipi değiştirilmeyecek: {prefix}tanımlı bir tip değil."
+            f"{suggestion_text} İzin verilen tipler: "
             f"{', '.join(SHIP_TYPE_LABELS.values())}."
         )
     if speed is not None and not 0 <= speed <= 100:
         validation_errors.append(
-            f"Hız {speed:g} knot olamaz; izin verilen aralık 0–100 knottur."
+            f"Hız değiştirilmeyecek: {speed:g} knot, izin verilen 0–100 aralığının dışında."
         )
-    if heading is not None and not 0 <= heading <= 360:
-        validation_errors.append(
-            f"Yön {heading}° olamaz; izin verilen aralık 0–360 derecedir."
+        speed = None
+    if heading is not None and (heading < 0 or heading > 360):
+        original_heading = heading
+        heading %= 360
+        transformation_warnings.append(
+            f"Yön {original_heading}° değeri esas açıya dönüştürüldü: {heading}°."
         )
+    has_values = any(value is not None for value in (speed, heading, ship_type))
     if validation_errors:
+        if write_signal and has_values and (field_signal or explicit_track):
+            return TrackRequest(
+                TrackIntent.PARTIAL_WRITE,
+                speed,
+                heading,
+                ship_type,
+                reason="Geçerli alanlar onayınıza sunulacak; uygun olmayan alanlar korunacak.",
+                warnings=tuple(validation_errors + transformation_warnings),
+            )
         return TrackRequest(
             TrackIntent.AMBIGUOUS,
             reason="Komutun tamamı uygulanmadı. " + " ".join(validation_errors),
         )
     if write_signal and has_values and (field_signal or explicit_track):
-        return TrackRequest(TrackIntent.WRITE, speed, heading, ship_type)
+        return TrackRequest(
+            TrackIntent.WRITE,
+            speed,
+            heading,
+            ship_type,
+            warnings=tuple(transformation_warnings),
+        )
     if write_signal and (field_signal or explicit_track):
         return TrackRequest(
             TrackIntent.AMBIGUOUS,
@@ -226,6 +258,15 @@ def _extract_unknown_ship_candidate(text: str) -> str:
         text,
     )
     return match.group(1).strip() if match else ""
+
+
+def _suggest_ship_type(candidate: str) -> str | None:
+    """Küçük yazım hatalarında en yakın izinli tipi yalnız öneri olarak döndürür."""
+
+    if not candidate:
+        return None
+    matches = get_close_matches(candidate, list(_SHIP_ALIASES), n=1, cutoff=0.68)
+    return _SHIP_ALIASES[matches[0]] if matches else None
 
 
 def _normalize(text: str) -> str:

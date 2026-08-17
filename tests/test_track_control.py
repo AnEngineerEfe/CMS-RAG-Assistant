@@ -69,15 +69,18 @@ class TrackRequestTests(unittest.TestCase):
         request = parse_track_request("Uygulamadaki iz hızını değiştir")
         self.assertEqual(request.intent, TrackIntent.AMBIGUOUS)
 
-    def test_rejects_entire_combined_command_when_ship_type_is_unknown(self):
-        """Tanınmayan tipin geçerli hız ve yönün kısmen uygulanmasına yol açmasını engeller."""
+    def test_separates_valid_fields_when_ship_type_is_unknown(self):
+        """Tanınmayan tipi dışarıda bırakıp geçerli hız ve yönü ayrıca onaya sunar."""
 
         request = parse_track_request(
             "İzin hızını 100 knot, yönünü 270 derece ve tipini sancar yap"
         )
-        self.assertEqual(request.intent, TrackIntent.AMBIGUOUS)
-        self.assertIn("sancar", request.reason)
-        self.assertIn("Fırkateyn", request.reason)
+        self.assertEqual(request.intent, TrackIntent.PARTIAL_WRITE)
+        self.assertEqual(request.speed_knots, 100)
+        self.assertEqual(request.heading_degrees, 270)
+        self.assertIsNone(request.ship_type)
+        self.assertIn("sancar", " ".join(request.warnings))
+        self.assertIn("Fırkateyn", " ".join(request.warnings))
 
     def test_reports_every_invalid_field_in_one_response(self):
         """Birleşik komuttaki hız ve gemi tipi hatalarını birlikte açıklar."""
@@ -85,9 +88,12 @@ class TrackRequestTests(unittest.TestCase):
         request = parse_track_request(
             "İzin hızını 300 knot, yönünü 270 derece ve tipini sancar yap"
         )
-        self.assertEqual(request.intent, TrackIntent.AMBIGUOUS)
-        self.assertIn("300 knot", request.reason)
-        self.assertIn("sancar", request.reason)
+        self.assertEqual(request.intent, TrackIntent.PARTIAL_WRITE)
+        self.assertIsNone(request.speed_knots)
+        self.assertEqual(request.heading_degrees, 270)
+        warnings = " ".join(request.warnings)
+        self.assertIn("300 knot", warnings)
+        self.assertIn("sancar", warnings)
 
     def test_individual_ship_type_update_is_supported(self):
         """Üç alanı birlikte yazma zorunluluğu olmadan yalnız gemi tipini çözümler."""
@@ -97,6 +103,25 @@ class TrackRequestTests(unittest.TestCase):
         self.assertIsNone(request.speed_knots)
         self.assertIsNone(request.heading_degrees)
         self.assertEqual(request.ship_type, "FIRKATEYN")
+
+    def test_typo_suggests_nearest_ship_type_without_applying_it(self):
+        """Yakın yazım hatasında kullanıcıya seçenek önerir fakat otomatik düzeltme yapmaz."""
+
+        request = parse_track_request("Gemi tipini firakteyn yap")
+        self.assertEqual(request.intent, TrackIntent.AMBIGUOUS)
+        self.assertIn("Fırkateyn", request.reason)
+        self.assertIn("demek istemiş olabilir misiniz", request.reason)
+
+    def test_heading_is_normalized_to_its_principal_angle(self):
+        """Negatif ve bir turdan büyük yönleri eşdeğer 0–359 esas açısına dönüştürür."""
+
+        negative = parse_track_request("Yönü -10 derece yap")
+        overflow = parse_track_request("Yönü 725 derece yap")
+        self.assertEqual(negative.intent, TrackIntent.WRITE)
+        self.assertEqual(negative.heading_degrees, 350)
+        self.assertIn("-10°", " ".join(negative.warnings))
+        self.assertEqual(overflow.heading_degrees, 5)
+        self.assertIn("725°", " ".join(overflow.warnings))
 
     def test_domain_rejects_values_outside_safe_ranges(self):
         """MCP çağrısından önce hız ve yön sınırlarını uygular."""

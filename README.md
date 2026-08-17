@@ -46,6 +46,7 @@ anında web taraması gerekmez.
 - Belge silme, yeniden indeksleme ve güvenli boş-bilgi-tabani davranışı
 - Aynı sohbetten canlı Swing iz durumu okuma ve açık kullanıcı onaylı MCP güncellemesi
 - MCP yazma kilidi, atomik işlem, geri-okuma doğrulaması ve metinsiz yerel audit
+- Geçerli komut alt kümeleri için ayrı onay, gemi tipi yazım önerisi ve yön esas-açı dönüşümü
 
 ## Gereksinimler
 
