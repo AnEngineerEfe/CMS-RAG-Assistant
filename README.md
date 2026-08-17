@@ -47,6 +47,7 @@ anında web taraması gerekmez.
 - Aynı sohbetten canlı Swing iz durumu okuma ve açık kullanıcı onaylı MCP güncellemesi
 - MCP yazma kilidi, atomik işlem, geri-okuma doğrulaması ve metinsiz yerel audit
 - Geçerli komut alt kümeleri için ayrı onay, gemi tipi yazım önerisi ve yön esas-açı dönüşümü
+- Gemi tipi önerilerinde konuşma bağlamlı evet/hayır takibi ve kısa tip komutları
 
 ## Gereksinimler
 

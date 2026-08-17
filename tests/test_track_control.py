@@ -5,7 +5,12 @@ from tempfile import TemporaryDirectory
 from pathlib import Path
 
 from src.cms_rag.application.track_control import TrackControlService
-from src.cms_rag.domain.track_control import TrackIntent, TrackState, parse_track_request
+from src.cms_rag.domain.track_control import (
+    TrackIntent,
+    TrackState,
+    parse_confirmation,
+    parse_track_request,
+)
 from src.cms_rag.infrastructure.mcp_audit import McpAuditStore
 
 
@@ -111,6 +116,22 @@ class TrackRequestTests(unittest.TestCase):
         self.assertEqual(request.intent, TrackIntent.AMBIGUOUS)
         self.assertIn("Fırkateyn", request.reason)
         self.assertIn("demek istemiş olabilir misiniz", request.reason)
+        self.assertEqual(request.suggested_ship_type, "FIRKATEYN")
+
+    def test_known_ship_type_is_an_unambiguous_shorthand_command(self):
+        """Alan adını tekrar yazmadan `muhrip yap` ifadesini gemi tipi komutu kabul eder."""
+
+        request = parse_track_request("muhrip yap")
+        self.assertEqual(request.intent, TrackIntent.WRITE)
+        self.assertEqual(request.ship_type, "MUHRIP")
+
+    def test_short_confirmation_answers_are_statefully_recognized(self):
+        """Bekleyen öneri için doğal kısa onay ve ret sözcüklerini ayırır."""
+
+        self.assertIs(parse_confirmation("evet"), True)
+        self.assertIs(parse_confirmation("Aynen!"), True)
+        self.assertIs(parse_confirmation("hayır"), False)
+        self.assertIsNone(parse_confirmation("ADVENT nedir?"))
 
     def test_heading_is_normalized_to_its_principal_angle(self):
         """Negatif ve bir turdan büyük yönleri eşdeğer 0–359 esas açısına dönüştürür."""

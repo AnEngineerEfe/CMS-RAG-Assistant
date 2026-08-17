@@ -33,6 +33,10 @@ kendini yeniler.
   onayı olmadan uygulanmaz.
 - Küçük gemi tipi yazım hatalarında en yakın izinli değer yalnız önerilir; kullanıcı
   onayı veya düzeltilmiş yeni komut olmadan otomatik tipe dönüştürülmez.
+- Öneriden sonra verilen kısa `evet`/`hayır` cevabı aynı konuşma bağlamında tutulur.
+  `Evet`, önerilen tip için yalnız işlem planı hazırlar; nihai yazma yine ayrı onay ister.
+- `Muhrip yap` ve `Korvet yap` gibi tek başına açık olan izinli tip kısaltmaları da
+  gemi tipi komutu olarak anlaşılır.
 - Negatif veya 360'tan büyük tam sayı yönler döngüsel esas açıya çevrilir
   (`-10° → 350°`, `370° → 10°`) ve dönüşüm onay ekranında gösterilir.
 - Yazma isteği onaydan önce yalnız bir işlem planıdır ve yan etkisi yoktur.

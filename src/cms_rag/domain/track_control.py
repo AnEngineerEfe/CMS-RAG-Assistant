@@ -70,6 +70,7 @@ class TrackRequest:
     ship_type: str | None = None
     reason: str = ""
     warnings: tuple[str, ...] = ()
+    suggested_ship_type: str | None = None
 
 
 SHIP_TYPE_LABELS = {
@@ -141,6 +142,7 @@ def parse_track_request(text: str) -> TrackRequest:
     # varsa bunlar ayrıca onaya sunulur; sorunlu alanlar değişmeden korunur.
     validation_errors: list[str] = []
     transformation_warnings: list[str] = []
+    suggested_ship_type: str | None = None
     if write_signal and speed_requested and speed is None:
         validation_errors.append(
             "Hız değiştirilmeyecek: 0 ile 100 arasında sayısal bir knot değeri belirtin."
@@ -158,6 +160,7 @@ def parse_track_request(text: str) -> TrackRequest:
         candidate = _extract_unknown_ship_candidate(normalized)
         prefix = f"‘{candidate}’ " if candidate else "Belirtilen değer "
         suggestion = _suggest_ship_type(candidate)
+        suggested_ship_type = suggestion
         suggestion_text = (
             f" “{SHIP_TYPE_LABELS[suggestion]}” demek istemiş olabilir misiniz?"
             if suggestion
@@ -189,12 +192,14 @@ def parse_track_request(text: str) -> TrackRequest:
                 ship_type,
                 reason="Geçerli alanlar onayınıza sunulacak; uygun olmayan alanlar korunacak.",
                 warnings=tuple(validation_errors + transformation_warnings),
+                suggested_ship_type=suggested_ship_type,
             )
         return TrackRequest(
             TrackIntent.AMBIGUOUS,
             reason="Komutun tamamı uygulanmadı. " + " ".join(validation_errors),
+            suggested_ship_type=suggested_ship_type,
         )
-    if write_signal and has_values and (field_signal or explicit_track):
+    if write_signal and has_values and (field_signal or explicit_track or ship_type is not None):
         return TrackRequest(
             TrackIntent.WRITE,
             speed,
@@ -212,6 +217,17 @@ def parse_track_request(text: str) -> TrackRequest:
     ):
         return TrackRequest(TrackIntent.READ)
     return TrackRequest(TrackIntent.NOT_TRACK)
+
+
+def parse_confirmation(text: str) -> bool | None:
+    """Bekleyen MCP önerisine verilen kısa Türkçe onay veya ret cevabını çözümler."""
+
+    normalized = _normalize(text).strip(" .!?")
+    if normalized in {"evet", "evet onu", "dogru", "aynen", "olur", "tamam"}:
+        return True
+    if normalized in {"hayir", "degil", "iptal", "vazgectim", "istemiyorum"}:
+        return False
+    return None
 
 
 def _looks_like_direct_state_question(text: str) -> bool:

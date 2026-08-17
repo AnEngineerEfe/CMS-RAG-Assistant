@@ -39,6 +39,36 @@ class _UiTrackGateway:
 
 
 class StreamlitJourneyTests(unittest.TestCase):
+    def test_ship_typo_confirmation_creates_a_plan_instead_of_falling_back_to_rag(self):
+        """`evet` cevabını bekleyen tip önerisine bağlayıp yine son işlem onayını ister."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        with patch(
+            "src.cms_rag.presentation.track_chat.get_track_control_service",
+            return_value=service,
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            app.chat_input[0].set_value("gemi tipi muhrap yap").run()
+            page = "\n".join(item.value for item in app.markdown)
+            self.assertIn("Muhrip", page)
+            self.assertIn("Yalnızca **evet**", page)
+            self.assertEqual(gateway.write_count, 0)
+
+            app.chat_input[0].set_value("evet").run()
+            approve = next(
+                button for button in app.button if button.label == "Onayla ve uygula"
+            )
+            self.assertEqual(gateway.write_count, 0)
+            approve.click().run()
+
+        page = "\n".join(item.value for item in app.markdown)
+        self.assertEqual(gateway.write_count, 1)
+        self.assertEqual(gateway.state.ship_type, "MUHRIP")
+        self.assertIn("MCP · DOĞRULANMIŞ İŞLEM", page)
+        self.assertNotIn("Bu soruyu destekleyecek yeterli kaynak bulunamadı", page)
+        self.assertFalse(app.exception)
+
     def test_unknown_ship_type_requires_confirmation_for_valid_subset(self):
         """Geçerli alanları onaya sunar, tanınmayan gemi tipini değiştirmeden korur."""
 

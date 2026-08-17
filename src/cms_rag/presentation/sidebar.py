@@ -86,6 +86,7 @@ def _render_session_actions(engine: CMSRAGEngine) -> None:
         engine.clear_chat()
         st.session_state.messages = []
         st.session_state.pop("pending_track_action", None)
+        st.session_state.pop("pending_track_suggestion", None)
         st.rerun()
 
 

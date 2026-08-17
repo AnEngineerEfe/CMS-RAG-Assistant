@@ -109,13 +109,15 @@ adımlarla otomatik doğrulanır:
 10. Tanınmayan gemi tipinde yalnız geçerli alanların ayrıca onaya sunulması
 11. Yakın gemi tipi yazım hatasında otomatik değişiklik yerine öneri verilmesi
 12. Negatif ve 360'tan büyük yönlerin esas açıya dönüştürülüp onayda gösterilmesi
+13. Gemi tipi önerisinden sonraki `evet` cevabının RAG yerine MCP planına bağlanması
+14. `Muhrip yap` gibi açık kısa tip komutlarının doğru yönlendirilmesi
 
 ## Son doğrulama
 
 2026-08-17 tarihinde hazır bilgi tabanı, MCP entegrasyonu ve bağımsız değerlendirme kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Python otomatik testleri: `101/101` başarılı
+- Python otomatik testleri: `104/104` başarılı
 - Java MCP otomatik testleri: `9/9` başarılı
 - Gerçek Python–Java MCP tur testi: başarılı
 - Streamlit onaylı MCP yazma testi: başarılı

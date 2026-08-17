@@ -7,23 +7,55 @@ from typing import Any
 import streamlit as st
 
 from ..application.track_control import PendingTrackAction
-from ..domain.track_control import TrackIntent, TrackState, parse_track_request
+from ..domain.track_control import (
+    SHIP_TYPE_LABELS,
+    TrackIntent,
+    TrackRequest,
+    TrackState,
+    parse_confirmation,
+    parse_track_request,
+)
 from ..infrastructure.mcp_track_client import McpTrackError
 from .services import get_track_control_service
 
 
 PENDING_ACTION_KEY = "pending_track_action"
+PENDING_SUGGESTION_KEY = "pending_track_suggestion"
 
 
 def handle_track_question(question: str) -> bool:
     """İz kontrol iletisini RAG'dan ayırır; okur veya onay bekleyen plana dönüştürür."""
 
-    request = parse_track_request(question)
+    suggested_type = st.session_state.get(PENDING_SUGGESTION_KEY)
+    confirmation = parse_confirmation(question) if isinstance(suggested_type, str) else None
+    if confirmation is True:
+        st.session_state.pop(PENDING_SUGGESTION_KEY, None)
+        request = TrackRequest(TrackIntent.WRITE, ship_type=suggested_type)
+    elif confirmation is False:
+        st.session_state.pop(PENDING_SUGGESTION_KEY, None)
+        _append_assistant(
+            "Gemi tipi önerisi iptal edildi; hiçbir değer değiştirilmedi.",
+            "MCP · ÖNERİ İPTALİ",
+        )
+        return True
+    else:
+        # Kullanıcı evet/hayır yerine yeni bir istek verdiyse eski öneri artık geçerli değildir.
+        st.session_state.pop(PENDING_SUGGESTION_KEY, None)
+        request = parse_track_request(question)
     if request.intent == TrackIntent.NOT_TRACK:
         return False
     if request.intent == TrackIntent.AMBIGUOUS:
+        suggestion_note = ""
+        if request.suggested_ship_type:
+            st.session_state[PENDING_SUGGESTION_KEY] = request.suggested_ship_type
+            suggestion_note = (
+                f" Yalnızca **evet** yazarsanız "
+                f"{SHIP_TYPE_LABELS[request.suggested_ship_type]} için onay planı hazırlanır; "
+                "değer doğrudan değiştirilmez."
+            )
         _append_assistant(
             request.reason
+            + suggestion_note
             + " Geçerli örnekler: “Hızı 24,5 knot yap”, “Yönü 270 derece yap” "
             "veya “Gemi tipini fırkateyn yap” şeklindedir.",
             "MCP · KOMUT DOĞRULAMA",
