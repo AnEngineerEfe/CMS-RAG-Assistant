@@ -129,8 +129,14 @@ class TrackRequestTests(unittest.TestCase):
         """Bekleyen öneri için doğal kısa onay ve ret sözcüklerini ayırır."""
 
         self.assertIs(parse_confirmation("evet"), True)
-        self.assertIs(parse_confirmation("Aynen!"), True)
+        self.assertIs(parse_confirmation("Evet doğru, onu demek istedim"), True)
+        self.assertIs(parse_confirmation("Aynen ya, tam olarak buydu!"), True)
+        self.assertIs(parse_confirmation("Heh işte, doğru bildin"), True)
+        self.assertIs(parse_confirmation("Olabilir, devam et"), True)
         self.assertIs(parse_confirmation("hayır"), False)
+        self.assertIs(parse_confirmation("Yok abi, o değil"), False)
+        self.assertIsNone(parse_confirmation("Emin değilim"))
+        self.assertIsNone(parse_confirmation("Doğru mu acaba?"))
         self.assertIsNone(parse_confirmation("ADVENT nedir?"))
 
     def test_heading_is_normalized_to_its_principal_angle(self):

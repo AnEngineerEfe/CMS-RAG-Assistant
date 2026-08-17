@@ -35,6 +35,10 @@ kendini yeniler.
   onayı veya düzeltilmiş yeni komut olmadan otomatik tipe dönüştürülmez.
 - Öneriden sonra verilen kısa `evet`/`hayır` cevabı aynı konuşma bağlamında tutulur.
   `Evet`, önerilen tip için yalnız işlem planı hazırlar; nihai yazma yine ayrı onay ister.
+- Onay çözümlemesi tek sözcüğe bağlı değildir: `evet doğru`, `aynen`, `tam olarak
+  buydu`, `kastettiğim oydu`, `doğru bildin` gibi olumlu; `o değil`, `yanlış`,
+  `istemiyorum`, `iptal et` gibi olumsuz anlamları ayırır. Belirsiz cevapta öneri
+  kaybolmaz ve sistem RAG'a sapmak yerine netleştirme ister.
 - `Muhrip yap` ve `Korvet yap` gibi tek başına açık olan izinli tip kısaltmaları da
   gemi tipi komutu olarak anlaşılır.
 - Negatif veya 360'tan büyük tam sayı yönler döngüsel esas açıya çevrilir

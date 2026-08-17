@@ -220,13 +220,66 @@ def parse_track_request(text: str) -> TrackRequest:
 
 
 def parse_confirmation(text: str) -> bool | None:
-    """Bekleyen MCP önerisine verilen kısa Türkçe onay veya ret cevabını çözümler."""
+    """Bekleyen öneriye verilen farklı doğal Türkçe onay veya ret ifadelerini çözümler."""
 
     normalized = _normalize(text).strip(" .!?")
-    if normalized in {"evet", "evet onu", "dogru", "aynen", "olur", "tamam"}:
-        return True
-    if normalized in {"hayir", "degil", "iptal", "vazgectim", "istemiyorum"}:
+    uncertain_patterns = (
+        r"\bemin degilim\b",
+        r"\bbilmiyorum\b",
+        r"\bkararsizim\b",
+        r"\bacaba\b",
+        r"\b(?:mi|mu)\b",
+    )
+    if any(re.search(pattern, normalized) for pattern in uncertain_patterns):
+        return None
+    # Olumsuzluk olumlu sözcükle aynı cümlede geçerse güvenli tarafta kalıp reddi
+    # önceleriz: “evet değil”, “doğru değil” gibi ifadeler onay sayılmaz.
+    negative_patterns = (
+        r"\bhayir\b",
+        r"\bdegil\b",
+        r"\byanlis\b",
+        r"\biptal\w*\b",
+        r"\bvazgec\w*\b",
+        r"\bistemi\w*\b",
+        r"\bolmasin\b",
+        r"\byapma\b",
+        r"\bsakin\b",
+        r"\bredded\w*\b",
+        r"\byok\b",
+        r"\bolmaz\b",
+        r"\balakasi yok\b",
+    )
+    if any(re.search(pattern, normalized) for pattern in negative_patterns):
         return False
+    positive_patterns = (
+        r"\bevet\b",
+        r"\baynen\b",
+        r"\bdogru\w*\b",
+        r"\btamam\b",
+        r"\bolur\b",
+        r"\buygun\w*\b",
+        r"\bkabul\w*\b",
+        r"\bonay\w*\b",
+        r"\bkastettigim\b",
+        r"\bdemek istedigim\b",
+        r"\bonu demek\b",
+        r"\btam olarak\b",
+        r"\bkesinlikle\b",
+        r"\btabii\b",
+        r"\bdevam et\b",
+        r"\byapabilirsin\b",
+        r"\bbuydu\b",
+        r"\bolabilir\b",
+        r"\bheh\b",
+        r"\biste bu\b",
+        r"\bbildin\b",
+        r"\btutturdun\b",
+        r"\bokey\b",
+        r"\bpeki\b",
+        r"\banlastik\b",
+    )
+    if any(re.search(pattern, normalized) for pattern in positive_patterns):
+        return True
     return None
 
 

@@ -111,6 +111,7 @@ adımlarla otomatik doğrulanır:
 12. Negatif ve 360'tan büyük yönlerin esas açıya dönüştürülüp onayda gösterilmesi
 13. Gemi tipi önerisinden sonraki `evet` cevabının RAG yerine MCP planına bağlanması
 14. `Muhrip yap` gibi açık kısa tip komutlarının doğru yönlendirilmesi
+15. Farklı olumlu/olumsuz ifadelerin ve belirsiz cevapta bağlam korumanın doğrulanması
 
 ## Son doğrulama
 

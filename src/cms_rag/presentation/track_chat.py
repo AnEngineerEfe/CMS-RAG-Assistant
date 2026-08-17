@@ -39,9 +39,23 @@ def handle_track_question(question: str) -> bool:
         )
         return True
     else:
-        # Kullanıcı evet/hayır yerine yeni bir istek verdiyse eski öneri artık geçerli değildir.
-        st.session_state.pop(PENDING_SUGGESTION_KEY, None)
         request = parse_track_request(question)
+        if isinstance(suggested_type, str) and request.intent == TrackIntent.NOT_TRACK:
+            # Kısa fakat tanınmayan bir cevapta öneriyi kaybetmeyiz. Açık yeni bir soru
+            # ise kullanıcı konuyu değiştirmiş kabul edip normal RAG akışına bırakırız.
+            if len(question.split()) <= 6 and "?" not in question:
+                _append_assistant(
+                    f"Yanıtınızı kesin onay veya ret olarak anlayamadım. "
+                    f"{SHIP_TYPE_LABELS[suggested_type]} önerisini kabul ediyorsanız "
+                    "örneğin “evet doğru”, “aynen” veya “kastettiğim buydu”; "
+                    "reddediyorsanız “hayır” ya da “o değil” diyebilirsiniz.",
+                    "MCP · ÖNERİ NETLEŞTİRME",
+                )
+                return True
+            st.session_state.pop(PENDING_SUGGESTION_KEY, None)
+        elif isinstance(suggested_type, str):
+            # Kullanıcı önceki öneriye cevap vermek yerine yeni ve açık bir MCP komutu verdi.
+            st.session_state.pop(PENDING_SUGGESTION_KEY, None)
     if request.intent == TrackIntent.NOT_TRACK:
         return False
     if request.intent == TrackIntent.AMBIGUOUS:
@@ -49,7 +63,7 @@ def handle_track_question(question: str) -> bool:
         if request.suggested_ship_type:
             st.session_state[PENDING_SUGGESTION_KEY] = request.suggested_ship_type
             suggestion_note = (
-                f" Yalnızca **evet** yazarsanız "
+                f" **Evet doğru**, **aynen** veya **kastettiğim buydu** gibi bir onay verirseniz "
                 f"{SHIP_TYPE_LABELS[request.suggested_ship_type]} için onay planı hazırlanır; "
                 "değer doğrudan değiştirilmez."
             )

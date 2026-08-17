@@ -52,10 +52,15 @@ class StreamlitJourneyTests(unittest.TestCase):
             app.chat_input[0].set_value("gemi tipi muhrap yap").run()
             page = "\n".join(item.value for item in app.markdown)
             self.assertIn("Muhrip", page)
-            self.assertIn("Yalnızca **evet**", page)
+            self.assertIn("**Evet doğru**", page)
             self.assertEqual(gateway.write_count, 0)
 
-            app.chat_input[0].set_value("evet").run()
+            app.chat_input[0].set_value("şey işte o").run()
+            page = "\n".join(item.value for item in app.markdown)
+            self.assertIn("MCP · ÖNERİ NETLEŞTİRME", page)
+            self.assertEqual(gateway.write_count, 0)
+
+            app.chat_input[0].set_value("Evet doğru, onu demek istedim").run()
             approve = next(
                 button for button in app.button if button.label == "Onayla ve uygula"
             )
