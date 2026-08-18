@@ -1,9 +1,13 @@
 """Hazır bilgi tabanı durumu ve isteğe bağlı ek belge yönetimi kenar paneli."""
 
+import os
+from uuid import uuid4
+
 import streamlit as st
 
 from ..application import CMSRAGEngine
 from .config import SOURCE_SCOPE_LABELS, SOURCE_SCOPES
+from .services import get_agentic_workflow
 
 
 def render_sidebar(engine: CMSRAGEngine) -> tuple[str, str]:
@@ -28,6 +32,16 @@ def render_sidebar(engine: CMSRAGEngine) -> tuple[str, str]:
             "Sorgu kapsamı",
             SOURCE_SCOPES,
             format_func=SOURCE_SCOPE_LABELS.__getitem__,
+        )
+        st.toggle(
+            "Agentic LangGraph modu",
+            value=os.getenv("CMS_RAG_AGENTIC_MODE", "0").strip().lower()
+            in {"1", "true", "yes", "on"},
+            key="agentic_mode",
+            help=(
+                "Kontrollü yönlendirme ve checkpoint omurgasını etkinleştirir. "
+                "Klasik motor ve güvenlik kuralları korunur."
+            ),
         )
         with st.expander("İsteğe bağlı ek belge"):
             st.caption(
@@ -87,6 +101,8 @@ def _render_session_actions(engine: CMSRAGEngine) -> None:
         st.session_state.messages = []
         st.session_state.pop("pending_track_action", None)
         st.session_state.pop("pending_track_suggestion", None)
+        st.session_state.pop("pending_track_correction", None)
+        st.session_state.agentic_thread_id = uuid4().hex
         st.rerun()
 
 
@@ -103,6 +119,11 @@ def _render_status(engine: CMSRAGEngine, scope: str) -> None:
     )
     st.caption("Çalışma anında web erişimi · Kapalı")
     st.caption("MCP iz kontrolü · İstek üzerine yerel başlatılır")
+    st.caption(
+        "Orkestrasyon · "
+        + ("LangGraph agentic" if st.session_state.get("agentic_mode") else "Klasik")
+    )
+    st.caption(f"Agent checkpoint · {get_agentic_workflow().checkpoint_backend}")
     st.caption(f"Koleksiyon · {scope}")
     st.caption("Arama · Semantic + BM25 + Reranking")
     for record in engine.supplemental_records():

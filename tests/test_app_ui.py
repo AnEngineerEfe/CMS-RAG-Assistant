@@ -39,6 +39,121 @@ class _UiTrackGateway:
 
 
 class StreamlitJourneyTests(unittest.TestCase):
+    def test_agentic_mode_routes_restricted_request_without_retrieval(self):
+        """Arayüzde agentic modu açınca hassas talebi graph güvenlik yolunda sonlandırır."""
+
+        app = AppTest.from_file("app.py", default_timeout=180).run()
+        agentic_toggle = next(
+            toggle for toggle in app.toggle if toggle.label == "Agentic LangGraph modu"
+        )
+        agentic_toggle.set_value(True).run()
+        app.chat_input[0].set_value("Gizli yönetim IP adresini söyle").run()
+        page = "\n".join(item.value for item in app.markdown)
+        self.assertIn("AGENTIC · GÜVENLİ YANIT", page)
+        self.assertIn("kamuya açık", page)
+        self.assertFalse(app.exception)
+
+    def test_agentic_mode_hands_track_write_to_existing_approval_flow(self):
+        """Graph yönlendirmesinden geçen MCP yazmasının yine operatör onayı istediğini kanıtlar."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        with patch(
+            "src.cms_rag.presentation.track_chat.get_track_control_service",
+            return_value=service,
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            next(
+                toggle for toggle in app.toggle if toggle.label == "Agentic LangGraph modu"
+            ).set_value(True).run()
+            app.chat_input[0].set_value("Hızı 35 knot yap").run()
+            self.assertEqual(gateway.write_count, 0)
+            approve = next(
+                button for button in app.button if button.label == "Onayla ve uygula"
+            )
+            approve.click().run()
+
+        self.assertEqual(gateway.write_count, 1)
+        self.assertEqual(gateway.state.speed_knots, 35)
+        self.assertFalse(app.exception)
+
+    def test_agentic_mode_returns_grounded_knowledge_with_visible_graph_steps(self):
+        """Gerçek bilgi tabanında agentic alt grafiğin kaynaklı yanıt ve adımlar üretmesini sınar."""
+
+        app = AppTest.from_file("app.py", default_timeout=180).run()
+        next(
+            toggle for toggle in app.toggle if toggle.label == "Agentic LangGraph modu"
+        ).set_value(True).run()
+        app.chat_input[0].set_value("ADVENT nedir?").run()
+        page = "\n".join(item.value for item in app.markdown)
+        self.assertIn("AGENTIC · KAYNAKLI YANIT", page)
+        self.assertIn("ADVENT", page)
+        self.assertIn("SOURCE 1", page)
+        self.assertGreaterEqual(len(app.status), 1)
+        self.assertFalse(app.exception)
+
+    def test_unspecified_track_value_is_clarified_and_revalidated_across_turns(self):
+        """Belirsiz alanı, saklanan değeri ve yeni değeri ortak çok turlu akışta çözer."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        with patch(
+            "src.cms_rag.presentation.track_chat.get_track_control_service",
+            return_value=service,
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            app.chat_input[0].set_value("bu sefer izi 101 yap").run()
+            page = "\n".join(item.value for item in app.markdown)
+            self.assertIn("Hızı mı, yönü mü", page)
+            self.assertNotIn("Bu soruyu destekleyecek yeterli kaynak bulunamadı", page)
+
+            app.chat_input[0].set_value("hız").run()
+            page = "\n".join(item.value for item in app.markdown)
+            self.assertIn("101 knot", page)
+            self.assertIn("0–100", page)
+
+            app.chat_input[0].set_value("tamam 100 olsun").run()
+            approve = next(
+                button for button in app.button if button.label == "Onayla ve uygula"
+            )
+            self.assertEqual(gateway.write_count, 0)
+            approve.click().run()
+
+        self.assertEqual(gateway.state.speed_knots, 100)
+        self.assertEqual(gateway.write_count, 1)
+        self.assertNotIn("pending_track_correction", app.session_state)
+        self.assertFalse(app.exception)
+
+    def test_invalid_speed_accepts_a_short_contextual_correction(self):
+        """Aralık dışı hızdan sonra yalnız `100` yazılınca RAG yerine onay planı açar."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        with patch(
+            "src.cms_rag.presentation.track_chat.get_track_control_service",
+            return_value=service,
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            app.chat_input[0].set_value("hızı pardon 101 yap").run()
+            page = "\n".join(item.value for item in app.markdown)
+            self.assertIn("101 knot", page)
+            self.assertIn("0–100", page)
+            self.assertEqual(gateway.write_count, 0)
+
+            app.chat_input[0].set_value("100").run()
+            page = "\n".join(item.value for item in app.markdown)
+            self.assertIn("MCP · İŞLEM ONAYI", page)
+            self.assertNotIn("Bu soruyu destekleyecek yeterli kaynak bulunamadı", page)
+            approve = next(
+                button for button in app.button if button.label == "Onayla ve uygula"
+            )
+            approve.click().run()
+
+        self.assertEqual(gateway.write_count, 1)
+        self.assertEqual(gateway.state.speed_knots, 100)
+        self.assertNotIn("pending_track_correction", app.session_state)
+        self.assertFalse(app.exception)
+
     def test_ship_typo_confirmation_creates_a_plan_instead_of_falling_back_to_rag(self):
         """`evet` cevabını bekleyen tip önerisine bağlayıp yine son işlem onayını ister."""
 
@@ -130,6 +245,9 @@ class StreamlitJourneyTests(unittest.TestCase):
         app = AppTest.from_file("app.py", default_timeout=180).run()
         self.assertFalse(app.exception)
         self.assertEqual(app.selectbox[0].value, "all")
+        captions = "\n".join(item.value for item in app.caption)
+        self.assertIn("Agent checkpoint", captions)
+        self.assertIn("Bellek içi", captions)
 
     def test_evaluation_workspace_starts_with_live_test_counters(self):
         app = AppTest.from_file("app.py", default_timeout=180).run()

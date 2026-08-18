@@ -6,9 +6,11 @@ from pathlib import Path
 
 from src.cms_rag.application.track_control import TrackControlService
 from src.cms_rag.domain.track_control import (
+    TrackField,
     TrackIntent,
     TrackState,
     parse_confirmation,
+    parse_track_correction,
     parse_track_request,
 )
 from src.cms_rag.infrastructure.mcp_audit import McpAuditStore
@@ -73,6 +75,71 @@ class TrackRequestTests(unittest.TestCase):
 
         request = parse_track_request("Uygulamadaki iz hızını değiştir")
         self.assertEqual(request.intent, TrackIntent.AMBIGUOUS)
+
+    def test_generic_track_value_asks_which_field_instead_of_using_rag(self):
+        """`izi 101 yap` ifadesini RAG'a bırakmadan alan netleştirmesi ister."""
+
+        request = parse_track_request("Bu sefer izi 101 yap")
+        self.assertEqual(request.intent, TrackIntent.AMBIGUOUS)
+        self.assertIn("Hızı mı, yönü mü", request.reason)
+
+    def test_filler_word_keeps_out_of_range_speed_visible(self):
+        """Alanla sayı arasındaki `pardon` sözcüğüne rağmen gerçek değeri raporlar."""
+
+        request = parse_track_request("Hızı pardon 101 yap")
+        self.assertEqual(request.intent, TrackIntent.AMBIGUOUS)
+        self.assertEqual(request.correction_target, TrackField.SPEED)
+        self.assertIn("101 knot", request.reason)
+        self.assertIn("0–100", request.reason)
+
+    def test_short_numeric_follow_up_completes_pending_speed_correction(self):
+        """Yalnız `100` yanıtını bekleyen hız düzeltmesine bağlar."""
+
+        request = parse_track_correction("tamam 100 olsun", TrackField.SPEED)
+        self.assertEqual(request.intent, TrackIntent.WRITE)
+        self.assertEqual(request.speed_knots, 100)
+
+    def test_heading_and_ship_type_use_the_same_follow_up_resolver(self):
+        """Ortak düzeltme mekanizmasının yön ve gemi tipi alanlarında da çalıştığını doğrular."""
+
+        heading = parse_track_correction("270 olsun", TrackField.HEADING)
+        ship = parse_track_correction("korvet", TrackField.SHIP_TYPE)
+        self.assertEqual(heading.intent, TrackIntent.WRITE)
+        self.assertEqual(heading.heading_degrees, 270)
+        self.assertEqual(ship.intent, TrackIntent.WRITE)
+        self.assertEqual(ship.ship_type, "KORVET")
+
+    def test_unspecified_track_value_can_be_bound_to_a_field_then_revalidated(self):
+        """`izi 101 yap` ardından `hız` denince saklanan değeri güvenli aralıkta yeniden sınar."""
+
+        ambiguous = parse_track_request("Bu sefer izi 101 yap")
+        rebound = parse_track_correction(
+            "hız",
+            ambiguous.correction_target,
+            ambiguous.correction_value,
+        )
+        self.assertEqual(ambiguous.correction_target, TrackField.UNSPECIFIED)
+        self.assertEqual(ambiguous.correction_value, 101)
+        self.assertEqual(rebound.intent, TrackIntent.AMBIGUOUS)
+        self.assertEqual(rebound.correction_target, TrackField.SPEED)
+        self.assertIn("101 knot", rebound.reason)
+
+    def test_missing_ship_type_accepts_a_short_valid_type_follow_up(self):
+        """Eksik gemi tipi komutunu izinli bir kısa değerle tamamlar."""
+
+        missing = parse_track_request("Gemi tipini değiştir")
+        corrected = parse_track_correction("denizaltı", missing.correction_target)
+        self.assertEqual(missing.correction_target, TrackField.SHIP_TYPE)
+        self.assertEqual(corrected.intent, TrackIntent.WRITE)
+        self.assertEqual(corrected.ship_type, "DENIZALTI")
+
+    def test_ship_type_follow_up_typo_moves_to_the_common_suggestion_flow(self):
+        """Gemi tipi düzeltmesindeki yazım hatasını da güvenli öneriye dönüştürür."""
+
+        request = parse_track_correction("firakteyn", TrackField.SHIP_TYPE)
+        self.assertEqual(request.intent, TrackIntent.AMBIGUOUS)
+        self.assertEqual(request.suggested_ship_type, "FIRKATEYN")
+        self.assertIn("demek istemiş olabilir misiniz", request.reason)
 
     def test_separates_valid_fields_when_ship_type_is_unknown(self):
         """Tanınmayan tipi dışarıda bırakıp geçerli hız ve yönü ayrıca onaya sunar."""

@@ -5,9 +5,11 @@ from typing import Any
 import streamlit as st
 
 from ..application import CMSRAGEngine
+from ..application.agentic import AgentRoute, AgenticResult
 from .components import render_message, show_sources, source_payload
 from .config import UNSUPPORTED_ANSWER_MARKERS
 from .track_chat import handle_track_question, render_pending_track_action
+from .services import get_agentic_workflow
 
 
 def initialize_index(engine: CMSRAGEngine) -> None:
@@ -39,13 +41,50 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
     user_message: dict[str, Any] = {"role": "user", "content": question}
     st.session_state.messages.append(user_message)
     render_message(user_message, key_prefix=f"user_{len(st.session_state.messages)}")
-    if handle_track_question(question):
-        st.rerun()
-        return
-    answer, sources = _render_answer(engine, question, scope)
+    if st.session_state.get("agentic_mode", False):
+        result = get_agentic_workflow().invoke(
+            question,
+            scope,
+            st.session_state.agentic_thread_id,
+        )
+        if result.route == AgentRoute.TRACK_CONTROL:
+            if handle_track_question(question):
+                st.rerun()
+                return
+            answer, sources = _render_agentic_result(result)
+        else:
+            answer, sources = _render_agentic_result(result)
+    else:
+        if handle_track_question(question):
+            st.rerun()
+            return
+        answer, sources = _render_answer(engine, question, scope)
     st.session_state.messages.append(
         {"role": "assistant", "content": answer, "sources": sources}
     )
+
+
+def _render_agentic_result(result: AgenticResult) -> tuple[str, list[dict[str, Any]]]:
+    """Checkpoint'li graph sonucunu adım özeti, yanıt ve kanıt kartlarıyla gösterir."""
+
+    sources = [source_payload(hit) for hit in result.hits]
+    with st.chat_message("assistant"):
+        label = "AGENTIC · KAYNAKLI YANIT" if sources else "AGENTIC · GÜVENLİ YANIT"
+        st.markdown(f"<div class='answer-label'>{label}</div>", unsafe_allow_html=True)
+        with st.status("Agentic çalışma adımları tamamlandı", expanded=False) as status:
+            for event in result.events:
+                st.write(f"✓ {event}")
+            status.update(state="complete")
+        answer = str(st.write_stream(_stream_words(result.answer)) or result.answer)
+        show_sources(sources, key_prefix=f"agentic_{len(st.session_state.messages)}")
+    return answer, sources
+
+
+def _stream_words(answer: str):
+    """Tamamlanmış graph yanıtını mevcut yazım animasyonuyla uyumlu parçalara böler."""
+
+    for word in answer.split(" "):
+        yield f"{word} "
 
 
 def _render_answer(

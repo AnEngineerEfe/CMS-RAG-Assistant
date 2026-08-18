@@ -48,6 +48,10 @@ anında web taraması gerekmez.
 - MCP yazma kilidi, atomik işlem, geri-okuma doğrulaması ve metinsiz yerel audit
 - Geçerli komut alt kümeleri için ayrı onay, gemi tipi yazım önerisi ve yön esas-açı dönüşümü
 - Gemi tipi önerilerinde konuşma bağlamlı evet/hayır takibi ve kısa tip komutları
+- Özellik bayraklı LangGraph modu: güvenli route, thread checkpoint ve görünür graph adımları
+- Geliştirmede bellek içi, yapılandırıldığında PostgreSQL tabanlı kalıcı agent checkpoint'i
+- Agentic RAG alt grafiği: sorgu planlama, retrieval, kanıt kapısı, üretim ve atıf doğrulama
+- Geçersiz atıfta en fazla bir deterministik onarım; başarısızlıkta kaynaksız güvenli ret
 
 ## Gereksinimler
 
@@ -101,6 +105,25 @@ $env:CMS_RAG_MODEL="qwen2.5:7b"
 streamlit run app.py
 ```
 
+### Kalıcı LangGraph checkpoint'i (isteğe bağlı)
+
+Agentic graph varsayılan olarak geliştirme için bellek içi checkpoint kullanır;
+uygulama kapanınca bu graph geçmişi silinir. PostgreSQL ile thread durumunu yeniden
+başlatmalar arasında korumak için yalnızca sunucu ortamında bağlantı dizesini verin:
+
+```powershell
+$env:CMS_RAG_AGENTIC_MODE="1"
+$env:CMS_RAG_CHECKPOINT_DSN="postgresql://cms_app:PAROLA@localhost:5432/cms_rag"
+streamlit run app.py
+```
+
+Bağlantı verildiğinde uygulama `PostgresSaver.setup()` ile gerekli LangGraph
+tablolarını idempotent olarak hazırlar. Kullanıcının ilgili veritabanında tablo
+oluşturma ve okuma/yazma yetkisi bulunmalıdır. Bağlantı kurulamazsa bellek moduna
+sessizce düşülmez; parola sızdırmayan açık bir yapılandırma hatası verilir.
+Bağlantı dizesini kaynak koda veya Git'e eklemeyin. Etkin altyapı sol panelde
+`Agent checkpoint` satırında görünür.
+
 ## Kullanım
 
 1. Uygulamayı açın; beş belgeli hazır bilgi tabanı otomatik yüklenir.
@@ -116,6 +139,10 @@ streamlit run app.py
    `Canlı kayıtları sıfırla` düğmesiyle temizleyin.
 8. `İz durumunu göster` ile canlı Swing değerlerini okuyun. Değişiklik için örneğin
    `Hızı 24,5 knot yap` yazın ve gösterilen işlem planını ayrıca onaylayın.
+9. `Agentic LangGraph modu` seçeneğini açarak aynı sistemi checkpoint'li ve adımları
+   görünür graph orkestrasyonu üzerinden çalıştırın. Sol panelden checkpoint'in
+   oturumluk bellek mi, kalıcı PostgreSQL mi kullandığını denetleyin. Klasik mod
+   karşılaştırma için korunur.
 
 Ek PDF zorunlu değildir. Gerektiğinde `İsteğe bağlı ek belge` alanından yalnızca
 kamuya açık veya kullanım yetkiniz bulunan PDF eklenebilir. Aynı içerik ikinci
@@ -156,6 +183,7 @@ app.py                         İnce Streamlit giriş noktası
 src/cms_rag/
   domain/                      Veri modelleri ve saf iş kuralları
   application/                 RAG kullanım senaryosu orkestrasyonu
+    agentic/                   LangGraph state, güvenli router ve bilgi alt grafiği
   infrastructure/              PDF, manifest, FAISS, BM25 ve reranker
   presentation/                Sohbet, PDF önizleme ve değerlendirme paneli
 data/

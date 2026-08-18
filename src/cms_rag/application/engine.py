@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import re
 from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 from time import perf_counter
 
@@ -28,6 +29,15 @@ from .live_evaluation import LiveEvaluationAssessor
 NO_ANSWER = "Bu soruyu destekleyecek yeterli kaynak bulunamad\u0131."
 DEFAULT_MAX_NEW_TOKENS = 160
 CONTINUATION_MAX_NEW_TOKENS = 96
+
+
+@dataclass(frozen=True)
+class KnowledgePreflight:
+    """Retrieval öncesinde deterministik olarak tamamlanabilen bilgi isteğini taşır."""
+
+    answer: str
+    hits: list[SearchHit]
+    generation_mode: str
 
 
 class CMSRAGEngine:
@@ -159,42 +169,20 @@ class CMSRAGEngine:
         """Soruyu kanıt kuralları, retrieval ve Ollama sırasıyla akışlı cevaplar."""
 
         started_at = perf_counter()
-        if not self.retriever:
+        preflight = self.preflight_answer(question, scope)
+        if preflight is not None:
             return self._completed(
                 question,
-                "\u00d6nce resm\u00ee PDF dok\u00fcman\u0131n\u0131 y\u00fckleyip indeksleyin.",
+                preflight.answer,
                 scope,
+                hits=preflight.hits,
                 started_at=started_at,
-                generation_mode="unavailable",
-            ), []
+                generation_mode=preflight.generation_mode,
+            ), preflight.hits
 
-        # Alan dışı sohbeti erken reddetmek gecikmeyi ve belgesiz üretim riskini azaltır.
-        if CMSQueryProcessor.is_non_domain_chitchat(question):
-            return self._completed(
-                question,
-                NO_ANSWER,
-                scope,
-                started_at=started_at,
-                generation_mode="safe_rejection",
-            ), []
-        scoped_history = self._history_for(scope)
-        evidence_chunks = [chunk for chunk in self.retriever.chunks if scope == "all" or chunk.collection == scope]
-        # Açıkça belgelenmiş sık sorular model belirsizliğine bırakılmadan cevaplanır.
-        evidence_answer = EvidenceResponder.answer(question, scoped_history, evidence_chunks)
-        if evidence_answer:
-            answer, hits = evidence_answer
-            return self._completed(
-                question,
-                answer,
-                scope,
-                hits=hits,
-                started_at=started_at,
-                generation_mode="evidence_rule",
-            ), hits
-
-        retrieval_query = CMSQueryProcessor.expand(self.build_retrieval_query(question, scope))
-        hits = self.retriever.search(retrieval_query, scope=scope)
-        if not self.retriever.is_answerable(retrieval_query, hits):
+        retrieval_query = self.plan_retrieval_query(question, scope)
+        hits = self.retrieve_planned(retrieval_query, scope)
+        if not self.evidence_is_answerable(retrieval_query, hits):
             return self._completed(
                 question,
                 NO_ANSWER,
@@ -211,6 +199,145 @@ class CMSRAGEngine:
             scope,
             started_at=started_at,
         ), hits
+
+    def preflight_answer(self, question: str, scope: str = "all") -> KnowledgePreflight | None:
+        """İndeks yokluğu, alan dışı sohbet ve kanıt kurallarını retrieval öncesi çözer."""
+
+        if not self.retriever:
+            return KnowledgePreflight(
+                "Önce resmî PDF dokümanını yükleyip indeksleyin.",
+                [],
+                "unavailable",
+            )
+        if CMSQueryProcessor.is_non_domain_chitchat(question):
+            return KnowledgePreflight(NO_ANSWER, [], "safe_rejection")
+        evidence_chunks = [
+            chunk
+            for chunk in self.retriever.chunks
+            if scope == "all" or chunk.collection == scope
+        ]
+        evidence_answer = EvidenceResponder.answer(
+            question,
+            self._history_for(scope),
+            evidence_chunks,
+        )
+        if evidence_answer is None:
+            return None
+        answer, hits = evidence_answer
+        return KnowledgePreflight(answer, hits, "evidence_rule")
+
+    def plan_retrieval_query(self, question: str, scope: str = "all") -> str:
+        """Sohbet bağlamı ve CMS sözlüğünü kullanarak retrieval'a verilecek sorguyu üretir."""
+
+        return CMSQueryProcessor.expand(self.build_retrieval_query(question, scope))
+
+    def retrieve_planned(self, retrieval_query: str, scope: str = "all") -> list[SearchHit]:
+        """Planlanmış sorguyu etkin hibrit retriever üzerinde çalıştırır."""
+
+        if self.retriever is None:
+            return []
+        return self.retriever.search(retrieval_query, scope=scope)
+
+    def evidence_is_answerable(self, retrieval_query: str, hits: list[SearchHit]) -> bool:
+        """Seçilen kanıtların mevcut retrieval eşiklerine göre cevaplanabilirliğini ölçer."""
+
+        return bool(self.retriever and self.retriever.is_answerable(retrieval_query, hits))
+
+    def generate_grounded_answer(
+        self,
+        question: str,
+        hits: list[SearchHit],
+        scope: str = "all",
+        *,
+        prompt: str | None = None,
+    ) -> str:
+        """Seçilmiş kanıtlardan tamamlanmış, temizlenmiş ve kaynak işaretli yanıt üretir."""
+
+        effective_prompt = prompt or self._prompt(question, hits, scope)
+        try:
+            draft, stop_reason = self._collect_model_response(
+                [{"role": "user", "content": effective_prompt}],
+                num_predict=DEFAULT_MAX_NEW_TOKENS,
+                temperature=0.0,
+            )
+            answer = draft.strip() or NO_ANSWER
+            if self._needs_completion(answer, stop_reason):
+                continuation, _ = self._collect_model_response(
+                    [
+                        {"role": "user", "content": effective_prompt},
+                        {"role": "assistant", "content": draft},
+                        {
+                            "role": "user",
+                            "content": (
+                                "Yanıt kesildi. Yalnızca yarım kalan Türkçe cümleyi "
+                                "mevcut CONTEXT'e dayanarak tamamla; yeni paragraf veya "
+                                "yeni iddia ekleme."
+                            ),
+                        },
+                    ],
+                    num_predict=CONTINUATION_MAX_NEW_TOKENS,
+                    temperature=0.0,
+                )
+                answer = self._merge_continuation(answer, continuation)
+            answer = self._clean_model_answer(question, answer)
+            answer = self._complete_sentences_only(answer)
+            if answer == NO_ANSWER and hits:
+                answer = self._grounded_fallback(question, hits)
+            if hits and "[SOURCE" not in answer.upper() and answer != NO_ANSWER:
+                answer += " [SOURCE 1]"
+            return answer
+        except Exception:
+            return (
+                "Yerel Ollama servisine ulaşılamadı. "
+                "`ollama serve` komutunu çalıştırın."
+            )
+
+    def record_completed_answer(
+        self,
+        question: str,
+        answer: str,
+        hits: list[SearchHit],
+        scope: str,
+        *,
+        started_at: float | None,
+        generation_mode: str,
+    ) -> None:
+        """Graph veya klasik akışta tamamlanan tek yanıtı belleğe ve audit kayıtlarına işler."""
+
+        self._remember(question, answer, scope)
+        self._record_audit(
+            question,
+            answer,
+            hits,
+            scope,
+            started_at,
+            generation_mode,
+        )
+
+    def repair_grounded_answer(
+        self,
+        question: str,
+        answer: str,
+        hits: list[SearchHit],
+    ) -> str:
+        """Geçersiz atıf veya yarım bitişi yeni iddia üretmeden tek kez onarır."""
+
+        repaired = self._clean_model_answer(question, answer)
+        repaired = self._complete_sentences_only(repaired)
+        valid_ids = {
+            int(source_id)
+            for source_id in re.findall(r"\[SOURCE\s+(\d+)\]", repaired, flags=re.I)
+            if 1 <= int(source_id) <= len(hits)
+        }
+        repaired = re.sub(r"\s*\[SOURCE\s+\d+\]\s*", " ", repaired, flags=re.I).strip()
+        if repaired == NO_ANSWER and hits:
+            return self._grounded_fallback(question, hits)
+        if hits:
+            citations = valid_ids or {1}
+            repaired = f"{repaired} " + " ".join(
+                f"[SOURCE {source_id}]" for source_id in sorted(citations)
+            )
+        return repaired.strip() or NO_ANSWER
 
     def clear_chat(self) -> None:
         """Motorun kapsam etiketli kısa konuşma belleğini temizler."""
@@ -370,51 +497,20 @@ number of source-backed items before writing the citation.
         def iterator() -> Iterator[str]:
             """Ham modeli kullanıcıya göstermeden önce bütünlük ve tekrar denetimi yapar."""
 
-            try:
-                draft, stop_reason = self._collect_model_response(
-                    [{"role": "user", "content": prompt}],
-                    num_predict=DEFAULT_MAX_NEW_TOKENS,
-                    temperature=0.0,
-                )
-                answer = draft.strip() or NO_ANSWER
-                if self._needs_completion(answer, stop_reason):
-                    continuation, _ = self._collect_model_response(
-                        [
-                            {"role": "user", "content": prompt},
-                            {"role": "assistant", "content": draft},
-                            {
-                                "role": "user",
-                                "content": (
-                                    "Yanıt kesildi. Yalnızca yarım kalan Türkçe cümleyi "
-                                    "mevcut CONTEXT'e dayanarak tamamla; yeni paragraf veya "
-                                    "yeni iddia ekleme."
-                                ),
-                            },
-                        ],
-                        num_predict=CONTINUATION_MAX_NEW_TOKENS,
-                        temperature=0.0,
-                    )
-                    answer = self._merge_continuation(answer, continuation)
-                answer = self._clean_model_answer(question, answer)
-                answer = self._complete_sentences_only(answer)
-                if answer == NO_ANSWER and hits:
-                    answer = self._grounded_fallback(question, hits)
-                if hits and "[SOURCE" not in answer.upper() and answer != NO_ANSWER:
-                    answer += " [SOURCE 1]"
-            except Exception:
-                answer = (
-                    "Yerel Ollama servisine ulaşılamadı. "
-                    "`ollama serve` komutunu çalıştırın."
-                )
+            answer = self.generate_grounded_answer(
+                question,
+                hits,
+                scope,
+                prompt=prompt,
+            )
             yield from self._word_stream(answer)
-            self._remember(question, answer, scope)
-            self._record_audit(
+            self.record_completed_answer(
                 question,
                 answer,
                 hits if "ulaşılamadı" not in answer else [],
                 scope,
-                started_at,
-                "ollama",
+                started_at=started_at,
+                generation_mode="ollama",
             )
 
         return iterator()

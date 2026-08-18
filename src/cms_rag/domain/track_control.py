@@ -19,6 +19,15 @@ class TrackIntent(str, Enum):
     AMBIGUOUS = "ambiguous"
 
 
+class TrackField(str, Enum):
+    """Eksik veya hatalı komutta kullanıcıdan yeniden istenecek iz alanını belirtir."""
+
+    SPEED = "speed"
+    HEADING = "heading"
+    SHIP_TYPE = "ship_type"
+    UNSPECIFIED = "unspecified"
+
+
 @dataclass(frozen=True)
 class TrackState:
     """MCP Swing uygulamasının doğrulanmış, taşıma-bağımsız iz durumudur."""
@@ -71,6 +80,8 @@ class TrackRequest:
     reason: str = ""
     warnings: tuple[str, ...] = ()
     suggested_ship_type: str | None = None
+    correction_target: TrackField | None = None
+    correction_value: float | None = None
 
 
 SHIP_TYPE_LABELS = {
@@ -115,6 +126,7 @@ def parse_track_request(text: str) -> TrackRequest:
             normalized,
         )
     )
+    generic_track = bool(re.search(r"\b(?:iz|izi|izin)\b", normalized))
     field_signal = bool(
         re.search(
             r"\b(hiz|surat|yon|rota|gemi tipi|iz tipi|tipi|tipini|tipin)\w*\b",
@@ -198,6 +210,15 @@ def parse_track_request(text: str) -> TrackRequest:
             TrackIntent.AMBIGUOUS,
             reason="Komutun tamamı uygulanmadı. " + " ".join(validation_errors),
             suggested_ship_type=suggested_ship_type,
+            correction_target=(
+                TrackField.SPEED
+                if speed_requested and not heading_requested and not ship_requested
+                else TrackField.HEADING
+                if heading_requested and not speed_requested and not ship_requested
+                else TrackField.SHIP_TYPE
+                if ship_requested and not speed_requested and not heading_requested and not suggestion
+                else None
+            ),
         )
     if write_signal and has_values and (field_signal or explicit_track or ship_type is not None):
         return TrackRequest(
@@ -212,11 +233,116 @@ def parse_track_request(text: str) -> TrackRequest:
             TrackIntent.AMBIGUOUS,
             reason="Değiştirilecek hız, yön veya gemi tipi açıkça belirtilmedi.",
         )
+    if write_signal and generic_track:
+        standalone_numbers = re.findall(r"(?<![\w.,])-?\d+(?:[.,]\d+)?(?![\w.,])", normalized)
+        candidate = (
+            float(standalone_numbers[0].replace(",", "."))
+            if len(standalone_numbers) == 1
+            else None
+        )
+        return TrackRequest(
+            TrackIntent.AMBIGUOUS,
+            reason=(
+                "İz için bir değer belirttiniz ancak hangi alanın değişeceği açık değil. "
+                "Hızı mı, yönü mü yoksa gemi tipini mi değiştirmek istediğinizi belirtin."
+            ),
+            correction_target=TrackField.UNSPECIFIED,
+            correction_value=candidate,
+        )
     if (explicit_track and read_signal) or (
         field_signal and read_signal and _looks_like_direct_state_question(normalized)
     ):
         return TrackRequest(TrackIntent.READ)
     return TrackRequest(TrackIntent.NOT_TRACK)
+
+
+def parse_track_correction(
+    text: str,
+    target: TrackField,
+    candidate_value: float | None = None,
+) -> TrackRequest:
+    """Bekleyen alan netleştirmesini kısa ve bağlama bağlı takip mesajından tamamlar."""
+
+    normalized = _normalize(text)
+    if target == TrackField.UNSPECIFIED:
+        speed_field = bool(re.search(r"\b(hiz|surat)\w*\b", normalized))
+        heading_field = bool(re.search(r"\b(yon|rota)\w*\b", normalized))
+        ship_field = bool(re.search(r"\b(gemi|tip|tipi|tipini)\w*\b", normalized))
+        selected = [
+            field
+            for field, present in (
+                (TrackField.SPEED, speed_field),
+                (TrackField.HEADING, heading_field),
+                (TrackField.SHIP_TYPE, ship_field),
+            )
+            if present
+        ]
+        if len(selected) != 1:
+            return TrackRequest(
+                TrackIntent.AMBIGUOUS,
+                reason="Değiştirilecek alanı hız, yön veya gemi tipi olarak belirtin.",
+                correction_target=target,
+                correction_value=candidate_value,
+            )
+        return parse_track_correction(text, selected[0], candidate_value)
+    if target == TrackField.SHIP_TYPE:
+        ship_type = _extract_ship_type(normalized)
+        if ship_type is not None:
+            return TrackRequest(TrackIntent.WRITE, ship_type=ship_type)
+        candidate = _extract_free_text_candidate(normalized)
+        suggestion = _suggest_ship_type(candidate)
+        suggestion_text = (
+            f" “{SHIP_TYPE_LABELS[suggestion]}” demek istemiş olabilir misiniz?"
+            if suggestion
+            else ""
+        )
+        return TrackRequest(
+            TrackIntent.AMBIGUOUS,
+            reason=(
+                f"Gemi tipi değiştirilmeyecek: ‘{candidate or text.strip()}’ tanımlı bir tip değil."
+                f"{suggestion_text} İzin verilen tipler: "
+                f"{', '.join(SHIP_TYPE_LABELS.values())}."
+            ),
+            suggested_ship_type=suggestion,
+            correction_target=None if suggestion else target,
+        )
+    numbers = re.findall(r"(?<![\w.,])-?\d+(?:[.,]\d+)?(?![\w.,])", normalized)
+    field_label = "hız" if target == TrackField.SPEED else "yön"
+    if len(numbers) == 1:
+        value = float(numbers[0].replace(",", "."))
+    elif not numbers and candidate_value is not None:
+        value = candidate_value
+    else:
+        return TrackRequest(
+            TrackIntent.AMBIGUOUS,
+            reason=f"Bekleyen {field_label} düzeltmesi için tek bir sayısal değer belirtin.",
+            correction_target=target,
+            correction_value=candidate_value,
+        )
+    if target == TrackField.SPEED:
+        if not 0 <= value <= 100:
+            return TrackRequest(
+                TrackIntent.AMBIGUOUS,
+                reason=(
+                    f"Hız değiştirilmeyecek: {value:g} knot, izin verilen "
+                    "0–100 aralığının dışında. Yeni hız değerini yazabilirsiniz."
+                ),
+                correction_target=target,
+            )
+        return TrackRequest(TrackIntent.WRITE, speed_knots=value)
+    if not value.is_integer():
+        return TrackRequest(
+            TrackIntent.AMBIGUOUS,
+            reason="Yön değiştirilmeyecek: tam sayı derece belirtin.",
+            correction_target=target,
+        )
+    heading = int(value)
+    warnings: tuple[str, ...] = ()
+    if heading < 0 or heading > 360:
+        original = heading
+        heading %= 360
+        warnings = (f"Yön {original}° değeri esas açıya dönüştürüldü: {heading}°.",)
+    return TrackRequest(TrackIntent.WRITE, heading_degrees=heading, warnings=warnings)
 
 
 def parse_confirmation(text: str) -> bool | None:
@@ -299,8 +425,12 @@ def _extract_decimal(text: str, fields: tuple[str, ...]) -> float | None:
     """Alan adından sonra gelen nokta veya virgüllü sayıyı güvenle çıkarır."""
 
     names = "|".join(re.escape(field) for field in fields)
+    filler = (
+        r"(?:(?:pardon|yani|lutfen|simdi|artik|tekrar|tamam|da|de|"
+        r"bu\s+sefer|degerini|degeri|soyle|sey)\s+)*"
+    )
     match = re.search(
-        rf"\b(?:{names})\w*\s*(?:deger\w*\s*)?(?:=|:)?\s*(-?\d+(?:[.,]\d+)?)",
+        rf"\b(?:{names})\w*\s*{filler}(?:=|:)?\s*(-?\d+(?:[.,]\d+)?)",
         text,
     )
     if not match:
@@ -327,6 +457,17 @@ def _extract_unknown_ship_candidate(text: str) -> str:
         text,
     )
     return match.group(1).strip() if match else ""
+
+
+def _extract_free_text_candidate(text: str) -> str:
+    """Kısa gemi tipi düzeltmesindeki komut sözcüklerini ayıklayıp aday adı döndürür."""
+
+    cleaned = re.sub(
+        r"\b(gemi|iz|tipi|tipini|tip|yap|ayarla|degistir|guncelle|olsun|pardon|tamam)\w*\b",
+        " ",
+        text,
+    )
+    return " ".join(cleaned.split())
 
 
 def _suggest_ship_type(candidate: str) -> str | None:

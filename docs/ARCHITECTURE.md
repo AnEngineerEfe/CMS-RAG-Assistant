@@ -97,6 +97,51 @@ Semantik arama anlam yakınlığını, BM25 ise ürün adı, kısaltma ve teknik
 eşleşmesini yakalar. RRF skor ölçeklerini doğrudan karşılaştırmadan iki sıralamayı
 birleştirir. Cross-encoder son adayları soru-parça çifti olarak yeniden sıralar.
 
+### 5.1 Kontrollü Agentic LangGraph hattı
+
+Klasik sorgu hattı karşılaştırma ve geri dönüş için korunur. Kullanıcı kenar
+panelinden agentic modu açtığında aynı domain, retrieval, üretim ve audit servisleri
+LangGraph tarafından ayrı ve checkpoint'li düğümler olarak orkestre edilir:
+
+```text
+girdi doğrulama
+  -> deterministik route (bilgi / MCP / güvenli ret)
+  -> deterministik ön cevap kontrolü
+  -> bağlamlı retrieval sorgusu planlama
+  -> FAISS veya pgvector hibrit retrieval + BM25 + reranking
+  -> kanıt yeterlilik kapısı
+  -> yalnız yeterli kanıtta yerel Ollama üretimi
+  -> kaynak kimliği ve cümle bütünlüğü doğrulaması
+  -> gerekirse tek deterministik atıf onarımı
+  -> audit + kısa konuşma belleği + checkpoint
+```
+
+MCP route'u LangGraph'in serbestçe yazma aracı çağırmasına izin vermez; mevcut
+doğal dil doğrulaması, işlem planı, operatör onayı, yazma kilidi, stale-state
+kontrolü ve geri-okuma hattına devredilir. Hassas/tasnifli veri route'u retrieval
+ve model çağrısından önce sonlanır. Graph state içindeki kanıtlar özel Python
+nesneleri olarak değil, sıkı msgpack/JSON uyumlu alanlar biçiminde saklanır.
+
+Agentic doğrulama döngüsü üstten sınırlıdır: model ikinci kez serbest cevap
+üretmez; yalnız atıf ve tamamlanmış cümle biçimi deterministik olarak bir kez
+onarılabilir. Onarım da doğrulamayı geçmezse cevap ve kanıt kartları gizlenir.
+
+#### Checkpoint yaşam döngüsü
+
+- `CMS_RAG_CHECKPOINT_DSN` yoksa `InMemorySaver` kullanılır; bu seçenek yerel
+  geliştirme ve otomatik testler içindir.
+- DSN verildiğinde `PostgresSaver` bağlantısı Streamlit resource cache ile tek
+  yaşam döngüsünde tutulur ve uygulama kapanırken kapatılır.
+- PostgreSQL tabloları ilk kullanımda `setup()` ile hazırlanır. Yapılandırılmış
+  kalıcı altyapı çalışmazsa sistem sessizce geçici belleğe geçmez.
+- DSN yalnızca composition-root seviyesinde okunur; graph state, olay listesi,
+  audit ve arayüz metnine eklenmez. Hata metinleri sürücü ayrıntılarını ve
+  parolayı gizler.
+- `JsonPlusSerializer`, özel msgpack modüllerinin yüklenmesini kabul etmeyecek
+  biçimde kurulur. Graph state yalnızca temel JSON/msgpack tiplerinden oluşur.
+- Her sohbet `thread_id` ile ayrı tutulur; arayüzde oturum temizlendiğinde yeni
+  thread kimliği üretilir ve eski kalıcı kayıt yeni sohbete karışmaz.
+
 ## 6. Hazır bilgi tabanı ve belge yaşam döngüsü
 
 1. Kamuya açık birincil kaynaklar geliştirme aşamasında doğrulanır.

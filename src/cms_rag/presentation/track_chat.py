@@ -9,10 +9,12 @@ import streamlit as st
 from ..application.track_control import PendingTrackAction
 from ..domain.track_control import (
     SHIP_TYPE_LABELS,
+    TrackField,
     TrackIntent,
     TrackRequest,
     TrackState,
     parse_confirmation,
+    parse_track_correction,
     parse_track_request,
 )
 from ..infrastructure.mcp_track_client import McpTrackError
@@ -21,14 +23,45 @@ from .services import get_track_control_service
 
 PENDING_ACTION_KEY = "pending_track_action"
 PENDING_SUGGESTION_KEY = "pending_track_suggestion"
+PENDING_CORRECTION_KEY = "pending_track_correction"
 
 
 def handle_track_question(question: str) -> bool:
     """İz kontrol iletisini RAG'dan ayırır; okur veya onay bekleyen plana dönüştürür."""
 
+    pending_correction = st.session_state.get(PENDING_CORRECTION_KEY)
+    correction_target: TrackField | None = None
+    correction_value: float | None = None
+    if isinstance(pending_correction, tuple) and len(pending_correction) == 2:
+        correction_target, correction_value = pending_correction
+    elif isinstance(pending_correction, TrackField):
+        correction_target = pending_correction
+    request: TrackRequest | None = None
+    if isinstance(correction_target, TrackField):
+        fresh_request = parse_track_request(question)
+        if fresh_request.intent != TrackIntent.NOT_TRACK:
+            st.session_state.pop(PENDING_CORRECTION_KEY, None)
+            request = fresh_request
+        elif parse_confirmation(question) is False:
+            st.session_state.pop(PENDING_CORRECTION_KEY, None)
+            _append_assistant(
+                "Sayısal değer düzeltmesi iptal edildi; hiçbir değer değiştirilmedi.",
+                "MCP · DÜZELTME İPTALİ",
+            )
+            return True
+        elif "?" in question or len(question.split()) > 7:
+            st.session_state.pop(PENDING_CORRECTION_KEY, None)
+            return False
+        else:
+            request = parse_track_correction(question, correction_target, correction_value)
+            if request.intent != TrackIntent.AMBIGUOUS or request.suggested_ship_type:
+                st.session_state.pop(PENDING_CORRECTION_KEY, None)
+
     suggested_type = st.session_state.get(PENDING_SUGGESTION_KEY)
     confirmation = parse_confirmation(question) if isinstance(suggested_type, str) else None
-    if confirmation is True:
+    if request is not None:
+        pass
+    elif confirmation is True:
         st.session_state.pop(PENDING_SUGGESTION_KEY, None)
         request = TrackRequest(TrackIntent.WRITE, ship_type=suggested_type)
     elif confirmation is False:
@@ -67,9 +100,26 @@ def handle_track_question(question: str) -> bool:
                 f"{SHIP_TYPE_LABELS[request.suggested_ship_type]} için onay planı hazırlanır; "
                 "değer doğrudan değiştirilmez."
             )
+        correction_note = ""
+        if request.correction_target:
+            st.session_state[PENDING_CORRECTION_KEY] = (
+                request.correction_target,
+                request.correction_value,
+            )
+            if request.correction_target == TrackField.UNSPECIFIED:
+                correction_note = " Takip mesajında yalnızca `hız`, `yön` veya `gemi tipi` diyebilirsiniz."
+            elif request.correction_target == TrackField.SHIP_TYPE:
+                correction_note = " Yeni gemi tipini kısa bir takip mesajıyla yazabilirsiniz."
+            else:
+                field_name = "hız" if request.correction_target == TrackField.SPEED else "yön"
+                correction_note = (
+                    f" Yeni {field_name} değerini `100` veya `{field_name} 100 olsun` "
+                    "gibi kısa bir takip mesajıyla yazabilirsiniz."
+                )
         _append_assistant(
             request.reason
             + suggestion_note
+            + correction_note
             + " Geçerli örnekler: “Hızı 24,5 knot yap”, “Yönü 270 derece yap” "
             "veya “Gemi tipini fırkateyn yap” şeklindedir.",
             "MCP · KOMUT DOĞRULAMA",

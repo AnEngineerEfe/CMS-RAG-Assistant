@@ -1,5 +1,7 @@
 """Sunum katmanındaki bileşenleri doğru sırayla çalıştıran orkestratör."""
 
+from uuid import uuid4
+
 import streamlit as st
 
 from .chat import initialize_index, render_chat
@@ -16,6 +18,7 @@ def run() -> None:
     apply_theme()
     engine = get_engine()
     st.session_state.setdefault("messages", [])
+    st.session_state.setdefault("agentic_thread_id", uuid4().hex)
 
     initialize_index(engine)
     page, scope = render_sidebar(engine)
