@@ -123,7 +123,7 @@ adımlarla otomatik doğrulanır:
 2026-08-18 tarihinde hazır bilgi tabanı, MCP entegrasyonu, LangGraph kalıcılığı ve bağımsız değerlendirme kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Python otomatik testleri: `145/145` başarılı
+- Python otomatik testleri: `148/148` başarılı
 - Java MCP otomatik testleri: `9/9` başarılı
 - Gerçek Python–Java MCP tur testi: başarılı
 - Streamlit onaylı MCP yazma testi: başarılı

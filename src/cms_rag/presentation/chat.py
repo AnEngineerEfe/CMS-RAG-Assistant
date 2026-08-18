@@ -45,9 +45,7 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
     if not question:
         return
 
-    user_message: dict[str, Any] = {"role": "user", "content": question}
-    st.session_state.messages.append(user_message)
-    render_message(user_message, key_prefix=f"user_{len(st.session_state.messages)}")
+    _append_user_message_once(question)
     if st.session_state.get("agentic_mode", False):
         workflow = get_agentic_workflow()
         has_pending_mcp_context = any(
@@ -57,12 +55,18 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
         if has_pending_mcp_context:
             message_count = len(st.session_state.messages)
             if handle_track_question(question):
-                contextual_result = workflow.invoke_track_context(
-                    question,
-                    scope,
-                    st.session_state.agentic_thread_id,
-                    requires_approval=PENDING_ACTION_KEY in st.session_state,
-                )
+                try:
+                    contextual_result = workflow.invoke_track_context(
+                        question,
+                        scope,
+                        st.session_state.agentic_thread_id,
+                        requires_approval=PENDING_ACTION_KEY in st.session_state,
+                    )
+                except Exception:  # UI sınırı: sürücü/DSN ayrıntısı kullanıcıya sızdırılmaz.
+                    st.session_state.pop(PENDING_ACTION_KEY, None)
+                    _append_agentic_checkpoint_error()
+                    st.rerun()
+                    return
                 if contextual_result.interrupted:
                     st.session_state[PENDING_AGENTIC_THREAD_KEY] = (
                         st.session_state.agentic_thread_id
@@ -88,11 +92,16 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
                 for turn in prior_turns
             ]
         )
-        result = workflow.invoke(
-            question,
-            scope,
-            st.session_state.agentic_thread_id,
-        )
+        try:
+            result = workflow.invoke(
+                question,
+                scope,
+                st.session_state.agentic_thread_id,
+            )
+        except Exception:  # UI sınırı: sürücü/DSN ayrıntısı kullanıcıya sızdırılmaz.
+            _append_agentic_checkpoint_error()
+            st.rerun()
+            return
         if result.route == AgentRoute.TRACK_CONTROL:
             if result.interrupted:
                 st.session_state[PENDING_AGENTIC_THREAD_KEY] = (
@@ -118,6 +127,36 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
         answer, sources = _render_answer(engine, question, scope)
     st.session_state.messages.append(
         {"role": "assistant", "content": answer, "sources": sources}
+    )
+
+
+def _append_user_message_once(question: str) -> None:
+    """Aynı Streamlit olayı yeniden teslim edilirse ardışık mükerrer kullanıcı kartı oluşturmaz."""
+
+    messages = st.session_state.messages
+    if messages:
+        last = messages[-1]
+        if last.get("role") == "user" and last.get("content") == question:
+            return
+    user_message: dict[str, Any] = {"role": "user", "content": question}
+    messages.append(user_message)
+    render_message(user_message, key_prefix=f"user_{len(messages)}")
+
+
+def _append_agentic_checkpoint_error() -> None:
+    """Agent graph/checkpoint arızasında sessiz kalmadan güvenli ve tekrar denenebilir cevap üretir."""
+
+    st.session_state.messages.append(
+        {
+            "role": "assistant",
+            "content": (
+                "İstek işlenirken agent checkpoint bağlantısı tamamlanamadı; hiçbir MCP "
+                "değişikliği uygulanmadı. PostgreSQL bağlantısını kontrol edip komutu yeniden gönderin."
+            ),
+            "sources": [],
+            "label": "AGENTIC · CHECKPOINT HATASI",
+            "channel": "agentic",
+        }
     )
 
 

@@ -129,6 +129,19 @@ class AgenticWorkflowTests(unittest.TestCase):
         self.assertTrue(result.interrupted)
         self.assertEqual(result.interrupt_payload["kind"], "track_control_approval")
 
+    def test_partial_track_write_is_checkpointed_as_an_approval_interrupt(self):
+        """Geçerli ve geçersiz alanları birlikte taşıyan komutu da kalıcı MCP onayında durdurur."""
+
+        result = self.workflow.invoke(
+            "hız 29,16 yön -92,75 gemi tipi korvet",
+            "all",
+            "partial-track-thread",
+        )
+        self.assertEqual(result.route, AgentRoute.TRACK_CONTROL)
+        self.assertTrue(result.interrupted)
+        self.assertEqual(result.interrupt_payload["kind"], "track_control_approval")
+        self.assertEqual(self.engine.calls, [])
+
     def test_external_mcp_read_is_added_to_restorable_conversation(self):
         """UI'da sonuçlanan salt-okunur MCP turunu aynı terminal checkpoint'ten geri yükler."""
 

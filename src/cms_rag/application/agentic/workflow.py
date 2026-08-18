@@ -707,7 +707,9 @@ class CMSAgenticWorkflow:
         """MCP yazmasını checkpoint'te durdurur; okuma ve belirsizliği yan etkisiz devreder."""
 
         request = parse_track_request(state.get("question", ""))
-        if request.intent == TrackIntent.WRITE or state.get("force_track_approval", False):
+        if request.intent in {TrackIntent.WRITE, TrackIntent.PARTIAL_WRITE} or state.get(
+            "force_track_approval", False
+        ):
             resume_payload = interrupt(
                 {
                     "kind": "track_control_approval",

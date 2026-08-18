@@ -110,6 +110,79 @@ class StreamlitJourneyTests(unittest.TestCase):
         self.assertNotIn("Kaynakta soruyla ilgili", page)
         self.assertFalse(app.exception)
 
+    def test_agentic_mixed_partial_write_after_clarification_always_responds_once(self):
+        """Belirsiz iz mesajından sonra karma kısmi komutu sessiz bırakmadan tek plana dönüştürür."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        with patch(
+            "src.cms_rag.presentation.track_chat.get_track_control_service",
+            return_value=service,
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            next(
+                toggle for toggle in app.toggle if toggle.label == "Agentic LangGraph modu"
+            ).set_value(True).run()
+            app.chat_input[0].set_value("izi 29,16 yap").run()
+            first_page = "\n".join(item.value for item in app.markdown)
+            self.assertIn("Hızı mı, yönü mü", first_page)
+
+            command = "hız 29,16 yön -92,75 gemi tipi korvet"
+            app.chat_input[0].set_value(command).run()
+
+        page = "\n".join(item.value for item in app.markdown)
+        user_messages = [
+            message
+            for message in app.session_state["messages"]
+            if message.get("role") == "user" and message.get("content") == command
+        ]
+        self.assertEqual(len(user_messages), 1)
+        self.assertIn("MCP · İŞLEM ONAYI", page)
+        self.assertIn("29.16 knot", page)
+        self.assertIn("Gemi tipi", page)
+        warnings = "\n".join(item.value for item in app.warning)
+        self.assertIn("ondalıklı açı", warnings)
+        self.assertEqual(gateway.write_count, 0)
+        self.assertFalse(app.exception)
+
+    def test_contextual_checkpoint_failure_never_leaves_a_silent_or_writable_plan(self):
+        """Takip mesajında checkpoint çökerse açık cevap verir ve izlenemeyen yazma planını siler."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        workflow = Mock(wraps=get_agentic_workflow())
+        workflow.invoke_track_context.side_effect = RuntimeError("database unavailable")
+        with (
+            patch(
+                "src.cms_rag.presentation.track_chat.get_track_control_service",
+                return_value=service,
+            ),
+            patch(
+                "src.cms_rag.presentation.chat.get_agentic_workflow",
+                return_value=workflow,
+            ),
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            next(
+                toggle for toggle in app.toggle if toggle.label == "Agentic LangGraph modu"
+            ).set_value(True).run()
+            app.chat_input[0].set_value("izi 29,16 yap").run()
+            command = "hız 29,16 yön -92,75 gemi tipi korvet"
+            app.chat_input[0].set_value(command).run()
+
+        page = "\n".join(item.value for item in app.markdown)
+        user_messages = [
+            message
+            for message in app.session_state["messages"]
+            if message.get("role") == "user" and message.get("content") == command
+        ]
+        self.assertEqual(len(user_messages), 1)
+        self.assertIn("AGENTIC · CHECKPOINT HATASI", page)
+        self.assertIn("hiçbir MCP değişikliği uygulanmadı", page)
+        self.assertNotIn("pending_track_action", app.session_state)
+        self.assertEqual(gateway.write_count, 0)
+        self.assertFalse(app.exception)
+
     def test_agentic_checkpoint_retry_never_repeats_the_mcp_write(self):
         """MCP sonrası checkpoint arızasını yalnız resume ederek kurtarır; set aracını yinelemez."""
 
