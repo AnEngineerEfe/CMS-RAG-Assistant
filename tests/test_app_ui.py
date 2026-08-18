@@ -9,6 +9,7 @@ from src.cms_rag.application import CMSRAGEngine
 from src.cms_rag.application.track_control import TrackControlService
 from src.cms_rag.domain import Chunk, SearchHit
 from src.cms_rag.domain.track_control import TrackState
+from src.cms_rag.presentation.services import get_agentic_workflow
 
 
 class _UiTrackGateway:
@@ -77,6 +78,38 @@ class StreamlitJourneyTests(unittest.TestCase):
         self.assertEqual(gateway.state.speed_knots, 35)
         self.assertFalse(app.exception)
 
+    def test_agentic_signed_heading_correction_stays_in_mcp_flow(self):
+        """Ondalıklı yön uyarısından sonraki negatif dereceyi RAG'a kaçırmadan uygular."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        with patch(
+            "src.cms_rag.presentation.track_chat.get_track_control_service",
+            return_value=service,
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            next(
+                toggle for toggle in app.toggle if toggle.label == "Agentic LangGraph modu"
+            ).set_value(True).run()
+            app.chat_input[0].set_value("Dereceyi -75.8 derece yap").run()
+            page = "\n".join(item.value for item in app.markdown)
+            self.assertIn("Swing/MCP yön alanı tam sayı", page)
+            self.assertNotIn("AGENTIC · KAYNAKLI YANIT", page)
+
+            app.chat_input[0].set_value("-92 derece").run()
+            approve = next(
+                button for button in app.button if button.label == "Onayla ve uygula"
+            )
+            self.assertEqual(gateway.write_count, 0)
+            approve.click().run()
+
+        page = "\n".join(item.value for item in app.markdown)
+        self.assertEqual(gateway.write_count, 1)
+        self.assertEqual(gateway.state.heading_degrees, 268)
+        self.assertIn("esas açıya dönüştürüldü", page)
+        self.assertNotIn("Kaynakta soruyla ilgili", page)
+        self.assertFalse(app.exception)
+
     def test_agentic_checkpoint_retry_never_repeats_the_mcp_write(self):
         """MCP sonrası checkpoint arızasını yalnız resume ederek kurtarır; set aracını yinelemez."""
 
@@ -126,6 +159,90 @@ class StreamlitJourneyTests(unittest.TestCase):
         self.assertIn("SOURCE 1", page)
         self.assertGreaterEqual(len(app.status), 1)
         self.assertFalse(app.exception)
+
+    def test_fresh_browser_session_restores_latest_agentic_conversation(self):
+        """Sayfa yenilemesini taklit eden yeni Streamlit oturumunda son thread'i otomatik açar."""
+
+        workflow = get_agentic_workflow()
+        with (
+            patch.dict("os.environ", {"CMS_RAG_AGENTIC_MODE": "1"}, clear=False),
+            patch.object(workflow, "checkpoint_persistent", True),
+        ):
+            first = AppTest.from_file("app.py", default_timeout=180).run()
+            first.chat_input[0].set_value("ADVENT hangi amaca hizmet etmektedir?").run()
+            first_page = "\n".join(item.value for item in first.markdown)
+            self.assertIn("ADVENT", first_page)
+
+            refreshed = AppTest.from_file("app.py", default_timeout=180).run()
+
+        refreshed_page = "\n".join(item.value for item in refreshed.markdown)
+        self.assertIn("ADVENT hangi amaca hizmet etmektedir?", refreshed_page)
+        self.assertIn("Savaş Yönetim Sistemi", refreshed_page)
+        self.assertFalse(refreshed.exception)
+
+    def test_refresh_restores_mcp_read_and_validation_messages(self):
+        """Graph dışında üretilen MCP okuma ve hata açıklamalarını da yeni oturumda korur."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        workflow = get_agentic_workflow()
+        with (
+            patch.dict("os.environ", {"CMS_RAG_AGENTIC_MODE": "1"}, clear=False),
+            patch.object(workflow, "checkpoint_persistent", True),
+            patch(
+                "src.cms_rag.presentation.track_chat.get_track_control_service",
+                return_value=service,
+            ),
+        ):
+            first = AppTest.from_file("app.py", default_timeout=180).run()
+            first.chat_input[0].set_value("İz durumunu göster").run()
+            first.chat_input[0].set_value("Dereceyi 75.8 derece yap").run()
+            refreshed = AppTest.from_file("app.py", default_timeout=180).run()
+
+        page = "\n".join(item.value for item in refreshed.markdown)
+        self.assertIn("İz durumunu göster", page)
+        self.assertIn("10 knot", page)
+        self.assertIn("Dereceyi 75.8 derece yap", page)
+        self.assertIn("Swing/MCP yön alanı tam sayı", page)
+        self.assertNotIn("Kaynakta soruyla ilgili", page)
+        self.assertFalse(refreshed.exception)
+
+    def test_refresh_restores_pending_mcp_approval_and_completed_result(self):
+        """Yenilemede bekleyen yazmayı yeniden onaya açar ve tamamlanmış sonucu da korur."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        workflow = get_agentic_workflow()
+        with (
+            patch.dict("os.environ", {"CMS_RAG_AGENTIC_MODE": "1"}, clear=False),
+            patch.object(workflow, "checkpoint_persistent", True),
+            patch(
+                "src.cms_rag.presentation.track_chat.get_track_control_service",
+                return_value=service,
+            ),
+        ):
+            first = AppTest.from_file("app.py", default_timeout=180).run()
+            first.chat_input[0].set_value("Hızı 43 knot yap").run()
+            self.assertEqual(gateway.write_count, 0)
+
+            pending_refresh = AppTest.from_file("app.py", default_timeout=180).run()
+            approve = next(
+                button
+                for button in pending_refresh.button
+                if button.label == "Onayla ve uygula"
+            )
+            self.assertEqual(gateway.write_count, 0)
+            approve.click().run()
+            self.assertEqual(gateway.write_count, 1)
+
+            completed_refresh = AppTest.from_file("app.py", default_timeout=180).run()
+
+        page = "\n".join(item.value for item in completed_refresh.markdown)
+        self.assertEqual(gateway.state.speed_knots, 43)
+        self.assertIn("Hızı 43 knot yap", page)
+        self.assertIn("43 knot", page)
+        self.assertIn("MCP · KAYITLI İŞLEM", page)
+        self.assertFalse(completed_refresh.exception)
 
     def test_unspecified_track_value_is_clarified_and_revalidated_across_turns(self):
         """Belirsiz alanı, saklanan değeri ve yeni değeri ortak çok turlu akışta çözer."""
@@ -220,6 +337,40 @@ class StreamlitJourneyTests(unittest.TestCase):
         page = "\n".join(item.value for item in app.markdown)
         self.assertEqual(gateway.write_count, 1)
         self.assertEqual(gateway.state.ship_type, "MUHRIP")
+        self.assertIn("MCP · DOĞRULANMIŞ İŞLEM", page)
+        self.assertNotIn("Bu soruyu destekleyecek yeterli kaynak bulunamadı", page)
+        self.assertFalse(app.exception)
+
+    def test_agentic_ship_typo_confirmation_remains_in_mcp_context(self):
+        """Agentic modda doğal onay cümlesini bilgi sorusu sanmadan MCP planına dönüştürür."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        with patch(
+            "src.cms_rag.presentation.track_chat.get_track_control_service",
+            return_value=service,
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            next(
+                toggle for toggle in app.toggle if toggle.label == "Agentic LangGraph modu"
+            ).set_value(True).run()
+            app.chat_input[0].set_value("gemi tipini firakteyn yap").run()
+            page = "\n".join(item.value for item in app.markdown)
+            self.assertIn("Fırkateyn", page)
+            self.assertEqual(gateway.write_count, 0)
+
+            app.chat_input[0].set_value("Evet doğru, onu demek istedim").run()
+            page = "\n".join(item.value for item in app.markdown)
+            self.assertIn("MCP · İŞLEM ONAYI", page)
+            self.assertNotIn("AGENTIC · KAYNAKLI YANIT", page)
+            self.assertEqual(gateway.write_count, 0)
+            next(
+                button for button in app.button if button.label == "Onayla ve uygula"
+            ).click().run()
+
+        page = "\n".join(item.value for item in app.markdown)
+        self.assertEqual(gateway.write_count, 1)
+        self.assertEqual(gateway.state.ship_type, "FIRKATEYN")
         self.assertIn("MCP · DOĞRULANMIŞ İŞLEM", page)
         self.assertNotIn("Bu soruyu destekleyecek yeterli kaynak bulunamadı", page)
         self.assertFalse(app.exception)

@@ -40,6 +40,8 @@ class CMSAgentState(TypedDict, total=False):
     events: list[str]
     error: str
     completed: bool
+    force_track_control: bool
+    force_track_approval: bool
 
 
 def serialize_hits(hits: list[SearchHit]) -> list[EvidenceHitState]:

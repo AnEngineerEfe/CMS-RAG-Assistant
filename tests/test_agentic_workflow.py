@@ -129,6 +129,52 @@ class AgenticWorkflowTests(unittest.TestCase):
         self.assertTrue(result.interrupted)
         self.assertEqual(result.interrupt_payload["kind"], "track_control_approval")
 
+    def test_external_mcp_read_is_added_to_restorable_conversation(self):
+        """UI'da sonuçlanan salt-okunur MCP turunu aynı terminal checkpoint'ten geri yükler."""
+
+        thread_id = "external-mcp-read"
+        result = self.workflow.invoke("İz durumunu göster", "all", thread_id)
+        self.assertFalse(result.interrupted)
+        self.assertEqual(self.workflow.conversation_history(thread_id), [])
+        self.workflow.complete_external_turn(
+            thread_id,
+            "Hız: 0 knot · Yön: 0° · Gemi tipi: Belirsiz",
+            generation_mode="track_external",
+            event="Canlı MCP durumu kaydedildi.",
+        )
+        turns = self.workflow.conversation_history(thread_id)
+        self.assertEqual(len(turns), 1)
+        self.assertEqual(turns[0].route, AgentRoute.TRACK_CONTROL)
+        self.assertEqual(turns[0].generation_mode, "track_external")
+        self.assertIn("Hız: 0", turns[0].answer)
+
+    def test_forced_track_context_interrupts_without_falling_back_to_knowledge(self):
+        """UI'nin çözdüğü kısa takip yanıtını RAG yerine aynı MCP onay yoluna zorlar."""
+
+        thread_id = "contextual-track-approval"
+        result = self.workflow.invoke_track_context(
+            "Evet doğru, onu demek istedim",
+            "all",
+            thread_id,
+            requires_approval=True,
+        )
+        self.assertEqual(result.route, AgentRoute.TRACK_CONTROL)
+        self.assertTrue(result.interrupted)
+        self.assertEqual(result.interrupt_payload["kind"], "track_control_approval")
+        self.assertEqual(self.engine.calls, [])
+        resumed = self.workflow.resume(
+            thread_id,
+            {
+                "decision": "approved",
+                "answer": "Gemi tipi Fırkateyn olarak uygulandı.",
+            },
+        )
+        self.assertFalse(resumed.interrupted)
+        turns = self.workflow.conversation_history(thread_id)
+        self.assertEqual(len(turns), 1)
+        self.assertEqual(turns[0].route, AgentRoute.TRACK_CONTROL)
+        self.assertIn("Fırkateyn", turns[0].answer)
+
     def test_track_interrupt_resumes_on_same_checkpoint_and_becomes_a_turn(self):
         """Onay kararını aynı thread'e verip MCP sonucunu kalıcı konuşma turuna dönüştürür."""
 

@@ -129,18 +129,29 @@ def parse_track_request(text: str) -> TrackRequest:
     generic_track = bool(re.search(r"\b(?:iz|izi|izin)\b", normalized))
     field_signal = bool(
         re.search(
-            r"\b(hiz|surat|yon|rota|gemi tipi|iz tipi|tipi|tipini|tipin)\w*\b",
+            r"\b(hiz|surat|yon|rota|derece|gemi tipi|iz tipi|tipi|tipini|tipin)\w*\b",
             normalized,
         )
     )
     speed_requested = bool(re.search(r"\b(hiz|surat)\w*\b", normalized))
-    heading_requested = bool(re.search(r"\b(yon|rota)\w*\b", normalized))
+    heading_requested = bool(re.search(r"\b(yon|rota|derece)\w*\b", normalized))
     ship_requested = bool(
         re.search(r"\b(gemi tipi\w*|iz tipi\w*|tipi|tipini|tipin)\b", normalized)
     )
 
     speed = _extract_decimal(normalized, ("hiz", "surat"))
-    heading_decimal = _extract_decimal(normalized, ("yon", "rota"))
+    heading_decimal = _extract_decimal(normalized, ("yon", "rota", "derece"))
+    if heading_decimal is None:
+        degree_suffix = re.search(
+            r"(?<![\w.,])(-?\d+(?:[.,]\d+)?)\s*derece\w*\b",
+            normalized,
+        )
+        if degree_suffix:
+            heading_decimal = float(degree_suffix.group(1).replace(",", "."))
+    # “-92 derece” gibi kısa takipler, özellikle önceki doğrulama mesajından sonra,
+    # yeni bir bilgi sorusu değil açık yön düzeltmesidir.
+    if heading_requested and heading_decimal is not None and not read_signal:
+        write_signal = True
     heading: int | None = None
     heading_integer_error = False
     if heading_decimal is not None:
@@ -165,7 +176,8 @@ def parse_track_request(text: str) -> TrackRequest:
         )
     if heading_integer_error:
         validation_errors.append(
-            "Yön değiştirilmeyecek: ondalıklı açı yerine tam sayı derece belirtin."
+            "Yön değiştirilmeyecek: Swing/MCP yön alanı tam sayı kabul ettiği için "
+            "ondalıklı açı yerine tam sayı derece belirtin."
         )
         heading = None
     if write_signal and ship_requested and ship_type is None:
@@ -266,7 +278,7 @@ def parse_track_correction(
     normalized = _normalize(text)
     if target == TrackField.UNSPECIFIED:
         speed_field = bool(re.search(r"\b(hiz|surat)\w*\b", normalized))
-        heading_field = bool(re.search(r"\b(yon|rota)\w*\b", normalized))
+        heading_field = bool(re.search(r"\b(yon|rota|derece)\w*\b", normalized))
         ship_field = bool(re.search(r"\b(gemi|tip|tipi|tipini)\w*\b", normalized))
         selected = [
             field
@@ -333,7 +345,10 @@ def parse_track_correction(
     if not value.is_integer():
         return TrackRequest(
             TrackIntent.AMBIGUOUS,
-            reason="Yön değiştirilmeyecek: tam sayı derece belirtin.",
+            reason=(
+                "Yön değiştirilmeyecek: Swing/MCP yön alanı tam sayı kabul ettiği için "
+                "tam sayı derece belirtin."
+            ),
             correction_target=target,
         )
     heading = int(value)

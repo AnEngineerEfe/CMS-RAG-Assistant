@@ -52,6 +52,7 @@ class ConversationTurn:
     route: AgentRoute
     hits: list[SearchHit]
     created_at: str
+    generation_mode: str = ""
 
 
 @dataclass(frozen=True)
@@ -82,6 +83,9 @@ class CMSAgenticWorkflow:
         self.engine = engine
         self._checkpoint_runtime = checkpoint_runtime or create_checkpoint_runtime()
         self.checkpointer = checkpointer or self._checkpoint_runtime.saver
+        self.checkpoint_persistent = (
+            False if checkpointer is not None else self._checkpoint_runtime.persistent
+        )
         self.checkpoint_backend = (
             "Harici checkpointer" if checkpointer is not None else self._checkpoint_runtime.display_name
         )
@@ -94,6 +98,43 @@ class CMSAgenticWorkflow:
 
     def invoke(self, question: str, scope: str, thread_id: str) -> AgenticResult:
         """Bir kullanıcı turunu checkpoint'li graph üzerinde çalıştırıp tipli sonuç döndürür."""
+
+        return self._invoke(
+            question,
+            scope,
+            thread_id,
+            force_track_control=False,
+            force_track_approval=False,
+        )
+
+    def invoke_track_context(
+        self,
+        question: str,
+        scope: str,
+        thread_id: str,
+        *,
+        requires_approval: bool,
+    ) -> AgenticResult:
+        """UI'da çözülen takip bağlamını RAG'a uğratmadan denetimli MCP rotasında çalıştırır."""
+
+        return self._invoke(
+            question,
+            scope,
+            thread_id,
+            force_track_control=True,
+            force_track_approval=requires_approval,
+        )
+
+    def _invoke(
+        self,
+        question: str,
+        scope: str,
+        thread_id: str,
+        *,
+        force_track_control: bool,
+        force_track_approval: bool,
+    ) -> AgenticResult:
+        """Normal ve bağlamdan çözülmüş girdileri ortak başlangıç state'iyle graph'a verir."""
 
         if scope not in {"all", "official", "open_source"}:
             raise ValueError(f"Desteklenmeyen kaynak kapsamı: {scope}")
@@ -115,6 +156,8 @@ class CMSAgenticWorkflow:
                 "recorded": False,
                 "error": "",
                 "completed": False,
+                "force_track_control": force_track_control,
+                "force_track_approval": force_track_approval,
             },
             config=config,
         )
@@ -181,6 +224,36 @@ class CMSAgenticWorkflow:
         config = {"configurable": {"thread_id": thread_id}}
         return list(self.graph.get_state_history(config))
 
+    def complete_external_turn(
+        self,
+        thread_id: str,
+        answer: str,
+        *,
+        generation_mode: str,
+        event: str,
+    ) -> None:
+        """UI'da tamamlanan MCP okuma/doğrulama turunu mevcut terminal checkpoint'e ekler."""
+
+        if not answer.strip():
+            raise ValueError("Kalıcılaştırılacak dış yanıt boş olamaz.")
+        config = {"configurable": {"thread_id": thread_id}}
+        snapshot = self.graph.get_state(config)
+        values = snapshot.values
+        if snapshot.next or values.get("route") != AgentRoute.TRACK_CONTROL.value:
+            raise RuntimeError("Yalnız tamamlanmış MCP devri dış sonuçla güncellenebilir.")
+        if str(values.get("answer", "")).strip():
+            raise RuntimeError("Tamamlanmış graph yanıtı dış sonuçla değiştirilemez.")
+        self.graph.update_state(
+            config,
+            {
+                "answer": answer.strip(),
+                "generation_mode": generation_mode,
+                "completed": True,
+                "events": [*values.get("events", []), event],
+            },
+            as_node="finalize",
+        )
+
     def conversation_history(self, thread_id: str) -> list[ConversationTurn]:
         """Bir thread'in yalnız tamamlanmış son durumlarından sohbet turlarını kurar."""
 
@@ -208,6 +281,7 @@ class CMSAgenticWorkflow:
                     route=route,
                     hits=deserialize_hits(list(values.get("hits", []))),
                     created_at=str(snapshot.created_at or ""),
+                    generation_mode=str(values.get("generation_mode", "")),
                 )
             )
         return turns
@@ -329,6 +403,15 @@ class CMSAgenticWorkflow:
     def _route_request(state: CMSAgentState) -> CMSAgentState:
         """İsteği bilgi, MCP kontrol veya güvenli ret yoluna deterministik yönlendirir."""
 
+        if state.get("force_track_control", False):
+            return {
+                "route": AgentRoute.TRACK_CONTROL.value,
+                "route_reason": "Bekleyen MCP konuşma bağlamı kontrollü iz rotasına bağlandı.",
+                "events": [
+                    *state.get("events", []),
+                    "Bekleyen MCP konuşma bağlamı kontrollü iz rotasına bağlandı.",
+                ],
+            }
         decision = decide_route(state.get("question", ""))
         return {
             "route": decision.route.value,
@@ -624,7 +707,7 @@ class CMSAgenticWorkflow:
         """MCP yazmasını checkpoint'te durdurur; okuma ve belirsizliği yan etkisiz devreder."""
 
         request = parse_track_request(state.get("question", ""))
-        if request.intent == TrackIntent.WRITE:
+        if request.intent == TrackIntent.WRITE or state.get("force_track_approval", False):
             resume_payload = interrupt(
                 {
                     "kind": "track_control_approval",

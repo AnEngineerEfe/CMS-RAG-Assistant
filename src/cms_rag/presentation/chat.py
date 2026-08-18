@@ -9,7 +9,10 @@ from ..application.agentic import AgentRoute, AgenticResult
 from .components import render_message, show_sources, source_payload
 from .config import UNSUPPORTED_ANSWER_MARKERS
 from .track_chat import (
+    PENDING_ACTION_KEY,
     PENDING_AGENTIC_THREAD_KEY,
+    PENDING_CORRECTION_KEY,
+    PENDING_SUGGESTION_KEY,
     handle_track_question,
     render_pending_track_action,
 )
@@ -47,6 +50,31 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
     render_message(user_message, key_prefix=f"user_{len(st.session_state.messages)}")
     if st.session_state.get("agentic_mode", False):
         workflow = get_agentic_workflow()
+        has_pending_mcp_context = any(
+            key in st.session_state
+            for key in (PENDING_SUGGESTION_KEY, PENDING_CORRECTION_KEY)
+        )
+        if has_pending_mcp_context:
+            message_count = len(st.session_state.messages)
+            if handle_track_question(question):
+                contextual_result = workflow.invoke_track_context(
+                    question,
+                    scope,
+                    st.session_state.agentic_thread_id,
+                    requires_approval=PENDING_ACTION_KEY in st.session_state,
+                )
+                if contextual_result.interrupted:
+                    st.session_state[PENDING_AGENTIC_THREAD_KEY] = (
+                        st.session_state.agentic_thread_id
+                    )
+                else:
+                    _checkpoint_external_mcp_response(
+                        workflow,
+                        st.session_state.agentic_thread_id,
+                        message_count,
+                    )
+                st.rerun()
+                return
         prior_turns = workflow.conversation_history(
             st.session_state.agentic_thread_id
         )
@@ -70,7 +98,14 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
                 st.session_state[PENDING_AGENTIC_THREAD_KEY] = (
                     st.session_state.agentic_thread_id
                 )
+            message_count = len(st.session_state.messages)
             if handle_track_question(question):
+                if not result.interrupted:
+                    _checkpoint_external_mcp_response(
+                        workflow,
+                        st.session_state.agentic_thread_id,
+                        message_count,
+                    )
                 st.rerun()
                 return
             answer, sources = _render_agentic_result(result)
@@ -84,6 +119,35 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
     st.session_state.messages.append(
         {"role": "assistant", "content": answer, "sources": sources}
     )
+
+
+def _checkpoint_external_mcp_response(workflow, thread_id: str, message_count: int) -> None:
+    """Graph dışında üretilen son MCP cevabını yenilemede kaybolmaması için checkpoint'e ekler."""
+
+    if len(st.session_state.messages) <= message_count:
+        return
+    message = st.session_state.messages[-1]
+    if message.get("role") != "assistant" or message.get("channel") != "mcp":
+        return
+    try:
+        workflow.complete_external_turn(
+            thread_id,
+            str(message.get("content", "")),
+            generation_mode="track_external",
+            event="MCP okuma veya doğrulama sonucu kalıcı konuşma checkpoint'ine eklendi.",
+        )
+    except (OSError, RuntimeError, ValueError, TypeError):
+        st.session_state.messages.append(
+            {
+                "role": "assistant",
+                "content": (
+                    "MCP sonucu gösterildi ancak konuşma checkpoint'ine kaydedilemedi. "
+                    "PostgreSQL bağlantısını denetleyin."
+                ),
+                "sources": [],
+                "label": "AGENTIC · KAYIT UYARISI",
+            }
+        )
 
 
 def _render_agentic_result(result: AgenticResult) -> tuple[str, list[dict[str, Any]]]:

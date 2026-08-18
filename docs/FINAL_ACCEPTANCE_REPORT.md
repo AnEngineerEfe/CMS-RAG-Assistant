@@ -18,7 +18,7 @@ veri kullanılmamıştır.
 
 | Kontrol | Sonuç |
 |---|---:|
-| Otomatik test | 137/137 başarılı |
+| Otomatik test | 145/145 başarılı |
 | Retrieval kabul vakası | 8/8 başarılı |
 | Gerçek yanıt kabul vakası | 7/7 başarılı |
 | Hazır PDF kaynağı | 5 |

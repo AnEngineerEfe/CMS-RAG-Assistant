@@ -217,6 +217,18 @@ class TrackRequestTests(unittest.TestCase):
         self.assertEqual(overflow.heading_degrees, 5)
         self.assertIn("725°", " ".join(overflow.warnings))
 
+    def test_degree_alias_and_signed_follow_up_never_fall_through_to_rag(self):
+        """`dereceyi` ve kısa negatif derece mesajlarını yön komutu olarak tutar."""
+
+        decimal = parse_track_request("Dereceyi -75.8 derece yap")
+        corrected = parse_track_request("-92 derece")
+        self.assertEqual(decimal.intent, TrackIntent.AMBIGUOUS)
+        self.assertEqual(decimal.correction_target, TrackField.HEADING)
+        self.assertIn("tam sayı", decimal.reason)
+        self.assertEqual(corrected.intent, TrackIntent.WRITE)
+        self.assertEqual(corrected.heading_degrees, 268)
+        self.assertIn("esas açı", corrected.warnings[0])
+
     def test_domain_rejects_values_outside_safe_ranges(self):
         """MCP çağrısından önce hız ve yön sınırlarını uygular."""
 
