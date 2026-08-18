@@ -25,7 +25,3 @@ data/evaluation/
 .idea/
 .DS_Store
 Thumbs.db
-
-# Kişisel staj defteri proje deposuna alınmaz
-SWE299*.doc
-SWE299*.docx
