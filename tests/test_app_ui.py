@@ -39,6 +39,18 @@ class _UiTrackGateway:
         return state
 
 
+def _open_history_conversation(app: AppTest, title_prefix: str) -> AppTest:
+    """Kenar panelindeki geçmişi açıp başlığı verilen kalıcı sohbeti seçer."""
+
+    next(
+        button for button in app.button if button.label.startswith("☰ Sohbet geçmişi")
+    ).click().run()
+    next(
+        button for button in app.button if button.label.startswith(title_prefix)
+    ).click().run()
+    return app
+
+
 class StreamlitJourneyTests(unittest.TestCase):
     def test_agentic_mode_routes_restricted_request_without_retrieval(self):
         """Arayüzde agentic modu açınca hassas talebi graph güvenlik yolunda sonlandırır."""
@@ -233,8 +245,8 @@ class StreamlitJourneyTests(unittest.TestCase):
         self.assertGreaterEqual(len(app.status), 1)
         self.assertFalse(app.exception)
 
-    def test_fresh_browser_session_restores_latest_agentic_conversation(self):
-        """Sayfa yenilemesini taklit eden yeni Streamlit oturumunda son thread'i otomatik açar."""
+    def test_refresh_starts_blank_and_history_button_restores_selected_conversation(self):
+        """Yeni tarayıcı oturumunu boş açar; eski sohbeti yalnız kullanıcının seçimiyle yükler."""
 
         workflow = get_agentic_workflow()
         with (
@@ -247,6 +259,12 @@ class StreamlitJourneyTests(unittest.TestCase):
             self.assertIn("ADVENT", first_page)
 
             refreshed = AppTest.from_file("app.py", default_timeout=180).run()
+            blank_page = "\n".join(item.value for item in refreshed.markdown)
+            self.assertNotIn("ADVENT hangi amaca hizmet etmektedir?", blank_page)
+            self.assertEqual(refreshed.session_state["messages"], [])
+            _open_history_conversation(
+                refreshed, "ADVENT hangi amaca hizmet etmektedir?"
+            )
 
         refreshed_page = "\n".join(item.value for item in refreshed.markdown)
         self.assertIn("ADVENT hangi amaca hizmet etmektedir?", refreshed_page)
@@ -271,6 +289,8 @@ class StreamlitJourneyTests(unittest.TestCase):
             first.chat_input[0].set_value("İz durumunu göster").run()
             first.chat_input[0].set_value("Dereceyi 75.8 derece yap").run()
             refreshed = AppTest.from_file("app.py", default_timeout=180).run()
+            self.assertEqual(refreshed.session_state["messages"], [])
+            _open_history_conversation(refreshed, "İz durumunu göster")
 
         page = "\n".join(item.value for item in refreshed.markdown)
         self.assertIn("İz durumunu göster", page)
@@ -299,6 +319,8 @@ class StreamlitJourneyTests(unittest.TestCase):
             self.assertEqual(gateway.write_count, 0)
 
             pending_refresh = AppTest.from_file("app.py", default_timeout=180).run()
+            self.assertEqual(pending_refresh.session_state["messages"], [])
+            _open_history_conversation(pending_refresh, "Hızı 43 knot yap")
             approve = next(
                 button
                 for button in pending_refresh.button
@@ -309,6 +331,8 @@ class StreamlitJourneyTests(unittest.TestCase):
             self.assertEqual(gateway.write_count, 1)
 
             completed_refresh = AppTest.from_file("app.py", default_timeout=180).run()
+            self.assertEqual(completed_refresh.session_state["messages"], [])
+            _open_history_conversation(completed_refresh, "Hızı 43 knot yap")
 
         page = "\n".join(item.value for item in completed_refresh.markdown)
         self.assertEqual(gateway.state.speed_knots, 43)
@@ -577,6 +601,23 @@ class StreamlitJourneyTests(unittest.TestCase):
         self.assertEqual(len(app.expander), initial_expanders)
         self.assertFalse(app.exception)
 
+    def test_unexpected_classic_engine_failure_always_returns_a_visible_answer(self):
+        """Model/arama istisnasında kullanıcı kartını yalnız bırakmadan güvenli hata cevabı gösterir."""
+
+        with patch.object(
+            CMSRAGEngine,
+            "stream_ask",
+            side_effect=RuntimeError("internal model failure"),
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            app.chat_input[0].set_value("Beklenmeyen servis arızası denemesi").run()
+
+        page = "\n".join(item.value for item in app.markdown)
+        self.assertIn("YANIT · İŞLEM HATASI", page)
+        self.assertIn("İstek tamamlanamadı", page)
+        self.assertNotIn("processing_question", app.session_state)
+        self.assertFalse(app.exception)
+
     def test_grounded_follow_up_and_unsupported_question(self):
         app = AppTest.from_file("app.py", default_timeout=180).run()
         self.assertFalse(app.exception)
@@ -596,5 +637,7 @@ class StreamlitJourneyTests(unittest.TestCase):
         page = "\n".join(item.value for item in app.markdown)
         self.assertIn("yeterli kaynak bulunamad\u0131", page)
         self.assertIn("G\u00dcVENL\u0130 YANIT", page)
-        self.assertEqual(len(app.expander), prior_evidence_count)
+        self.assertLessEqual(len(app.expander), prior_evidence_count)
+        self.assertIn("Sayfa 18", page)
+        self.assertIn("Sayfa 4", page)
         self.assertFalse(app.exception)

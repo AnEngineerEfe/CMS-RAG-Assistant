@@ -42,7 +42,7 @@ LINEAGE_REPORT = json.loads(
     (ROOT / "evaluation" / "results" / "lineage-latest" / "lineage_evaluation_report.json")
     .read_text(encoding="utf-8")
 )
-AUTOMATED_TESTS = 148
+AUTOMATED_TESTS = 149
 
 NAVY = "0B1F3A"
 BLUE = "1B5FA7"

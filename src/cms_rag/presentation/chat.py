@@ -19,6 +19,9 @@ from .track_chat import (
 from .services import get_agentic_workflow
 
 
+PROCESSING_QUESTION_KEY = "processing_question"
+
+
 def initialize_index(engine: CMSRAGEngine) -> None:
     """İlk açılışta yerel belgelerden arama indeksini tembel biçimde kurar."""
 
@@ -35,17 +38,24 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
         render_message(message, key_prefix=f"history_{index}")
 
     has_pending_action = render_pending_track_action()
+    queued_question = st.session_state.get(PROCESSING_QUESTION_KEY)
 
     question = st.chat_input(
         "CMS sorusu sorun veya iz durumunu okuyup değiştirmek için komut verin...",
         # MCP canlı kontrolü RAG indeksinden bağımsızdır; yalnız bekleyen onay yeni
         # bir iletinin aynı anda işlenmesini engeller.
-        disabled=has_pending_action,
+        disabled=has_pending_action or isinstance(queued_question, str),
     )
-    if not question:
+    if question:
+        _append_user_message_once(question)
+        st.session_state[PROCESSING_QUESTION_KEY] = question
+        st.rerun()
+        return
+    if not isinstance(queued_question, str) or not queued_question.strip():
         return
 
-    _append_user_message_once(question)
+    question = str(st.session_state.pop(PROCESSING_QUESTION_KEY)).strip()
+    st.caption("İstek işleniyor; sonuç tamamlanana kadar yeni mesaj gönderimi bekletiliyor…")
     if st.session_state.get("agentic_mode", False):
         workflow = get_agentic_workflow()
         has_pending_mcp_context = any(
@@ -124,10 +134,16 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
         if handle_track_question(question):
             st.rerun()
             return
-        answer, sources = _render_answer(engine, question, scope)
+        try:
+            answer, sources = _render_answer(engine, question, scope)
+        except Exception:  # UI sınırı: model/arama ayrıntısı yerine güvenli kullanıcı cevabı verilir.
+            _append_processing_error()
+            st.rerun()
+            return
     st.session_state.messages.append(
         {"role": "assistant", "content": answer, "sources": sources}
     )
+    st.rerun()
 
 
 def _append_user_message_once(question: str) -> None:
@@ -156,6 +172,22 @@ def _append_agentic_checkpoint_error() -> None:
             "sources": [],
             "label": "AGENTIC · CHECKPOINT HATASI",
             "channel": "agentic",
+        }
+    )
+
+
+def _append_processing_error() -> None:
+    """Klasik model veya retrieval arızasında kullanıcı mesajını cevapsız bırakmaz."""
+
+    st.session_state.messages.append(
+        {
+            "role": "assistant",
+            "content": (
+                "İstek tamamlanamadı. Yerel model ve arama servisinin çalıştığını kontrol edip "
+                "soruyu yeniden gönderin."
+            ),
+            "sources": [],
+            "label": "YANIT · İŞLEM HATASI",
         }
     )
 
