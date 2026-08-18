@@ -8,7 +8,11 @@ from ..application import CMSRAGEngine
 from ..application.agentic import AgentRoute, AgenticResult
 from .components import render_message, show_sources, source_payload
 from .config import UNSUPPORTED_ANSWER_MARKERS
-from .track_chat import handle_track_question, render_pending_track_action
+from .track_chat import (
+    PENDING_AGENTIC_THREAD_KEY,
+    handle_track_question,
+    render_pending_track_action,
+)
 from .services import get_agentic_workflow
 
 
@@ -42,12 +46,30 @@ def render_chat(engine: CMSRAGEngine, scope: str) -> None:
     st.session_state.messages.append(user_message)
     render_message(user_message, key_prefix=f"user_{len(st.session_state.messages)}")
     if st.session_state.get("agentic_mode", False):
-        result = get_agentic_workflow().invoke(
+        workflow = get_agentic_workflow()
+        prior_turns = workflow.conversation_history(
+            st.session_state.agentic_thread_id
+        )
+        engine.restore_chat(
+            [
+                {
+                    "question": turn.question,
+                    "answer": turn.answer,
+                    "scope": turn.scope,
+                }
+                for turn in prior_turns
+            ]
+        )
+        result = workflow.invoke(
             question,
             scope,
             st.session_state.agentic_thread_id,
         )
         if result.route == AgentRoute.TRACK_CONTROL:
+            if result.interrupted:
+                st.session_state[PENDING_AGENTIC_THREAD_KEY] = (
+                    st.session_state.agentic_thread_id
+                )
             if handle_track_question(question):
                 st.rerun()
                 return
@@ -75,6 +97,11 @@ def _render_agentic_result(result: AgenticResult) -> tuple[str, list[dict[str, A
             for event in result.events:
                 st.write(f"✓ {event}")
             status.update(state="complete")
+        st.caption(
+            f"Rota: {result.route.value} · Üretim: {result.generation_mode or 'uygulanamaz'} · "
+            f"Doğrulama: {'geçti' if result.verification_passed else 'uygulanamaz'} · "
+            f"Onarım: {result.repair_count} · {result.duration_ms:.0f} ms"
+        )
         answer = str(st.write_stream(_stream_words(result.answer)) or result.answer)
         show_sources(sources, key_prefix=f"agentic_{len(st.session_state.messages)}")
     return answer, sources

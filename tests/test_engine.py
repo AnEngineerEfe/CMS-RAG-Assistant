@@ -424,6 +424,25 @@ class CMSRAGEngineTests(unittest.TestCase):
             self.assertEqual("".join(engine._completed("Soru", answer)).strip(), answer)
             self.assertEqual(engine.history[-1]["question"], "Soru")
 
+    def test_persistent_turns_restore_only_valid_bounded_chat_history(self):
+        """Kalıcı thread geçmişini son üç geçerli turla sınırlar."""
+
+        with TemporaryDirectory() as directory:
+            engine = CMSRAGEngine(Path(directory))
+            engine.restore_chat(
+                [
+                    {"question": "Eski", "answer": "Eski yanıt", "scope": "all"},
+                    {"question": "Bir", "answer": "Yanıt 1", "scope": "all"},
+                    {"question": "Geçersiz", "answer": "", "scope": "all"},
+                    {"question": "İki", "answer": "Yanıt 2", "scope": "official"},
+                    {"question": "Üç", "answer": "Yanıt 3", "scope": "open_source"},
+                ]
+            )
+        self.assertEqual(
+            [item["question"] for item in engine.history],
+            ["Bir", "İki", "Üç"],
+        )
+
     def test_turkish_cms_terminology_is_expanded_for_retrieval(self):
         expanded = CMSQueryProcessor.expand("Taktik veri baglantisi nedir?")
         self.assertIn("tactical data link", expanded)

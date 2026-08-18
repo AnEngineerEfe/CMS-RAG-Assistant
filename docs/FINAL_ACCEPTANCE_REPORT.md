@@ -1,6 +1,6 @@
 # Nihai Kabul Raporu
 
-Tarih: 2026-08-10
+Tarih: 2026-08-18
 
 ## Sonuç
 
@@ -18,7 +18,7 @@ veri kullanılmamıştır.
 
 | Kontrol | Sonuç |
 |---|---:|
-| Otomatik test | 85/85 başarılı |
+| Otomatik test | 137/137 başarılı |
 | Retrieval kabul vakası | 8/8 başarılı |
 | Gerçek yanıt kabul vakası | 7/7 başarılı |
 | Hazır PDF kaynağı | 5 |
@@ -70,6 +70,19 @@ ile embedding matrisini sürümlenebilir biçimde saklar.
 3. FAISS, BM25, RRF ve cross-encoder sıralaması uygulanır.
 4. Yerel Ollama modeli yalnız getirilen kanıta dayanarak cevap üretir.
 5. Cevapla birlikte belge ve sayfa kaynakları gösterilir.
+
+### Agentic kullanım
+
+1. LangGraph isteği bilgi, canlı MCP kontrolü veya güvenli ret rotasına ayırır.
+2. Bilgi rotasında retrieval, kanıt yeterliliği, üretim ve atıf doğrulama ayrı
+   checkpoint'li düğümlerde çalışır.
+3. PostgreSQL yapılandırıldığında konuşmalar uygulama yeniden başlatıldıktan sonra
+   listelenebilir ve kaynak kartlarıyla geri yüklenebilir.
+4. MCP yazması `interrupt()` noktasında durur; açık operatör onayı olmadan araç çağrılmaz.
+5. Onay veya ret aynı thread üzerinde graph'ı devam ettirir; bekleyen onay yeniden
+   başlatma sonrasında da kurtarılabilir.
+6. Düğüm arızaları belgesiz cevap üretmeden güvenli sonuca çevrilir; rota, doğrulama,
+   onarım sayısı ve süre kullanıcıya gösterilir.
 
 Bu akışta web taraması, çalışma anı araştırması veya çekirdek belgelerin yeniden
 embedding edilmesi yoktur.

@@ -8,8 +8,10 @@ from time import perf_counter
 from typing import Any
 
 from langgraph.graph import END, START, StateGraph
+from langgraph.types import Command, interrupt
 
 from ...domain.models import SearchHit
+from ...domain.track_control import TrackIntent, parse_track_request
 from ..engine import CMSRAGEngine, NO_ANSWER
 from .checkpoints import CheckpointRuntime, create_checkpoint_runtime
 from .router import AgentRoute, decide_route
@@ -32,6 +34,35 @@ class AgenticResult:
     hits: list[SearchHit]
     events: tuple[str, ...]
     error: str = ""
+    interrupted: bool = False
+    interrupt_payload: dict[str, Any] | None = None
+    generation_mode: str = ""
+    verification_passed: bool = False
+    repair_count: int = 0
+    duration_ms: float = 0.0
+
+
+@dataclass(frozen=True)
+class ConversationTurn:
+    """Tamamlanmış bir graph turunu sohbet ekranına geri yüklenebilir biçimde taşır."""
+
+    question: str
+    answer: str
+    scope: str
+    route: AgentRoute
+    hits: list[SearchHit]
+    created_at: str
+
+
+@dataclass(frozen=True)
+class ConversationSummary:
+    """Checkpoint deposundaki bir thread için güvenli ve kısa liste bilgisidir."""
+
+    thread_id: str
+    title: str
+    turn_count: int
+    updated_at: str
+    pending_approval: bool = False
 
 
 class CMSAgenticWorkflow:
@@ -66,6 +97,7 @@ class CMSAgenticWorkflow:
 
         if scope not in {"all", "official", "open_source"}:
             raise ValueError(f"Desteklenmeyen kaynak kapsamı: {scope}")
+        config = {"configurable": {"thread_id": thread_id}}
         state = self.graph.invoke(
             {
                 "question": question,
@@ -84,15 +116,63 @@ class CMSAgenticWorkflow:
                 "error": "",
                 "completed": False,
             },
-            config={"configurable": {"thread_id": thread_id}},
+            config=config,
+        )
+        return self._result_from_state(state, config)
+
+    def resume(self, thread_id: str, payload: dict[str, Any]) -> AgenticResult:
+        """Operatör kararını aynı checkpoint üzerinden verip bekleyen graph turunu sürdürür."""
+
+        if not thread_id.strip():
+            raise ValueError("Devam ettirilecek konuşma kimliği boş olamaz.")
+        if payload.get("decision") not in {"approved", "rejected", "failed"}:
+            raise ValueError("Geçersiz MCP devam kararı.")
+        config = {"configurable": {"thread_id": thread_id}}
+        state = self.graph.invoke(Command(resume=dict(payload)), config=config)
+        return self._result_from_state(state, config)
+
+    def _result_from_state(
+        self,
+        state: dict[str, Any],
+        config: dict[str, dict[str, str]],
+    ) -> AgenticResult:
+        """Normal ve interrupt çıktısını aynı güvenli sunum modeline dönüştürür."""
+
+        raw_interrupts = tuple(state.get("__interrupt__", ()))
+        interrupted = bool(raw_interrupts)
+        if interrupted:
+            # Interrupt çıktısı yalnız değişen alanları içerebilir. Kalıcı snapshot,
+            # yönlendirme ve açıklama olaylarının eksiksiz kaynağıdır.
+            values = dict(self.graph.get_state(config).values)
+            values.update({key: value for key, value in state.items() if key != "__interrupt__"})
+            state = values
+        payload: dict[str, Any] | None = None
+        if raw_interrupts:
+            candidate = getattr(raw_interrupts[0], "value", None)
+            if isinstance(candidate, dict):
+                payload = dict(candidate)
+        try:
+            started_at = float(state.get("started_at", 0.0))
+        except (TypeError, ValueError):
+            started_at = 0.0
+        duration_ms = (
+            max((perf_counter() - started_at) * 1000, 0.0)
+            if started_at > 0 and not interrupted
+            else 0.0
         )
         return AgenticResult(
-            route=AgentRoute(state["route"]),
+            route=AgentRoute(state.get("route", AgentRoute.SAFE_REJECT.value)),
             reason=state.get("route_reason", ""),
             answer=state.get("answer", ""),
             hits=deserialize_hits(list(state.get("hits", []))),
             events=tuple(state.get("events", [])),
             error=state.get("error", ""),
+            interrupted=interrupted,
+            interrupt_payload=payload,
+            generation_mode=str(state.get("generation_mode", "")),
+            verification_passed=bool(state.get("verification_passed", False)),
+            repair_count=int(state.get("repair_count", 0)),
+            duration_ms=round(duration_ms, 3),
         )
 
     def state_history(self, thread_id: str) -> list[Any]:
@@ -100,6 +180,81 @@ class CMSAgenticWorkflow:
 
         config = {"configurable": {"thread_id": thread_id}}
         return list(self.graph.get_state_history(config))
+
+    def conversation_history(self, thread_id: str) -> list[ConversationTurn]:
+        """Bir thread'in yalnız tamamlanmış son durumlarından sohbet turlarını kurar."""
+
+        turns: list[ConversationTurn] = []
+        for snapshot in reversed(self.state_history(thread_id)):
+            values = snapshot.values
+            # Sonraki invocation'ın input checkpoint'i önceki `completed=True`
+            # değerini kısa süre taşıyabilir. Yalnız terminal snapshot gerçek turdur.
+            if not values.get("completed") or snapshot.next:
+                continue
+            question = str(values.get("question", "")).strip()
+            answer = str(values.get("answer", "")).strip()
+            if not question or not answer:
+                continue
+            route_value = str(values.get("route", AgentRoute.KNOWLEDGE.value))
+            try:
+                route = AgentRoute(route_value)
+            except ValueError:
+                route = AgentRoute.SAFE_REJECT
+            turns.append(
+                ConversationTurn(
+                    question=question,
+                    answer=answer,
+                    scope=str(values.get("scope", "all")),
+                    route=route,
+                    hits=deserialize_hits(list(values.get("hits", []))),
+                    created_at=str(snapshot.created_at or ""),
+                )
+            )
+        return turns
+
+    def conversation_summaries(self, *, limit: int = 50) -> list[ConversationSummary]:
+        """Tamamlanmış ve operatör onayı bekleyen thread'leri son etkinliğe göre listeler."""
+
+        thread_ids: list[str] = []
+        seen: set[str] = set()
+        for item in self.checkpointer.list(None, limit=2000):
+            thread_id = str(item.config.get("configurable", {}).get("thread_id", ""))
+            if thread_id and thread_id not in seen:
+                seen.add(thread_id)
+                thread_ids.append(thread_id)
+        summaries: list[ConversationSummary] = []
+        for thread_id in thread_ids:
+            turns = self.conversation_history(thread_id)
+            pending = self.pending_interrupt(thread_id)
+            if not turns and pending is None:
+                continue
+            first_question = turns[0].question if turns else str(pending.get("question", ""))
+            title = " ".join(first_question.split()) or "MCP onayı bekleyen konuşma"
+            latest = self.graph.get_state(
+                {"configurable": {"thread_id": thread_id}}
+            )
+            summaries.append(
+                ConversationSummary(
+                    thread_id=thread_id,
+                    title=title[:52] + ("…" if len(title) > 52 else ""),
+                    turn_count=len(turns),
+                    updated_at=str(latest.created_at or (turns[-1].created_at if turns else "")),
+                    pending_approval=pending is not None,
+                )
+            )
+        summaries.sort(key=lambda item: item.updated_at, reverse=True)
+        return summaries[:limit]
+
+    def pending_interrupt(self, thread_id: str) -> dict[str, Any] | None:
+        """Thread'in bekleyen güvenli interrupt yükünü, uygulama yeniden başlasa da bulur."""
+
+        snapshot = self.graph.get_state({"configurable": {"thread_id": thread_id}})
+        for task in snapshot.tasks:
+            for item in task.interrupts:
+                payload = getattr(item, "value", None)
+                if isinstance(payload, dict) and payload.get("kind") == "track_control_approval":
+                    return dict(payload)
+        return None
 
     def _build_graph(self):
         """İlk parity sürümünün düğüm ve koşullu kenarlarını oluşturur."""
@@ -193,7 +348,10 @@ class CMSAgenticWorkflow:
     def _plan_knowledge(self, state: CMSAgentState) -> CMSAgentState:
         """Deterministik ön kontrolü çalıştırır veya bağlama göre retrieval sorgusu planlar."""
 
-        preflight = self.engine.preflight_answer(state["question"], state["scope"])
+        try:
+            preflight = self.engine.preflight_answer(state["question"], state["scope"])
+        except (OSError, RuntimeError, ValueError, TypeError) as exception:
+            return self._safe_node_failure(state, "planning_error", "Planlama", exception)
         if preflight is not None:
             return {
                 "answer": preflight.answer,
@@ -204,7 +362,10 @@ class CMSAgenticWorkflow:
                     f"Ön kontrol isteği {preflight.generation_mode} yolunda tamamladı.",
                 ],
             }
-        query = self.engine.plan_retrieval_query(state["question"], state["scope"])
+        try:
+            query = self.engine.plan_retrieval_query(state["question"], state["scope"])
+        except (OSError, RuntimeError, ValueError, TypeError) as exception:
+            return self._safe_node_failure(state, "planning_error", "Planlama", exception)
         return {
             "retrieval_query": query,
             "events": [
@@ -247,10 +408,16 @@ class CMSAgenticWorkflow:
         if state.get("error"):
             answerable = False
         else:
-            answerable = self.engine.evidence_is_answerable(
-                state["retrieval_query"],
-                deserialize_hits(state.get("hits", [])),
-            )
+            try:
+                answerable = self.engine.evidence_is_answerable(
+                    state["retrieval_query"],
+                    deserialize_hits(state.get("hits", [])),
+                )
+            except (OSError, RuntimeError, ValueError, TypeError) as exception:
+                return {
+                    **self._safe_node_failure(state, "evidence_gate_error", "Kanıt kapısı", exception),
+                    "answerable": False,
+                }
         return {
             "answerable": answerable,
             "events": [
@@ -284,11 +451,14 @@ class CMSAgenticWorkflow:
     def _generate_answer(self, state: CMSAgentState) -> CMSAgentState:
         """Yerel modeli yalnız seçilmiş kanıtlarla çağırıp tamamlanmış yanıt üretir."""
 
-        answer = self.engine.generate_grounded_answer(
-            state["question"],
-            deserialize_hits(state.get("hits", [])),
-            state["scope"],
-        )
+        try:
+            answer = self.engine.generate_grounded_answer(
+                state["question"],
+                deserialize_hits(state.get("hits", [])),
+                state["scope"],
+            )
+        except (OSError, RuntimeError, ValueError, TypeError) as exception:
+            return self._safe_node_failure(state, "generation_error", "Yanıt üretimi", exception)
         service_error = "Ollama servisine ulaşılamadı" in answer
         return {
             "answer": answer,
@@ -309,7 +479,17 @@ class CMSAgenticWorkflow:
         answer = state.get("answer", "").strip()
         hits = state.get("hits", [])
         mode = state.get("generation_mode", "")
-        if mode in {"unavailable", "safe_rejection", "evidence_gate", "retrieval_error", "service_error"}:
+        if mode in {
+            "unavailable",
+            "safe_rejection",
+            "evidence_gate",
+            "retrieval_error",
+            "service_error",
+            "planning_error",
+            "evidence_gate_error",
+            "generation_error",
+            "repair_error",
+        }:
             passed, reason = True, f"{mode} sonucu araçsız/güvenli son durum olarak kabul edildi."
         elif not answer or answer == NO_ANSWER:
             passed, reason = False, "Kanıt bulunduğu hâlde kullanılabilir bir yanıt üretilemedi."
@@ -356,11 +536,14 @@ class CMSAgenticWorkflow:
     def _repair_answer(self, state: CMSAgentState) -> CMSAgentState:
         """Yanıtı yeni model çağrısı yapmadan ve yeni iddia eklemeden tek kez onarır."""
 
-        repaired = self.engine.repair_grounded_answer(
-            state["question"],
-            state.get("answer", ""),
-            deserialize_hits(state.get("hits", [])),
-        )
+        try:
+            repaired = self.engine.repair_grounded_answer(
+                state["question"],
+                state.get("answer", ""),
+                deserialize_hits(state.get("hits", [])),
+            )
+        except (OSError, RuntimeError, ValueError, TypeError) as exception:
+            return self._safe_node_failure(state, "repair_error", "Yanıt onarımı", exception)
         return {
             "answer": repaired,
             "repair_count": state.get("repair_count", 0) + 1,
@@ -389,14 +572,24 @@ class CMSAgenticWorkflow:
 
         if state.get("recorded", False):
             return state
-        self.engine.record_completed_answer(
-            state["question"],
-            state.get("answer", NO_ANSWER),
-            deserialize_hits(state.get("hits", [])),
-            state["scope"],
-            started_at=state.get("started_at"),
-            generation_mode=f"agentic_{state.get('generation_mode', 'unknown')}",
-        )
+        try:
+            self.engine.record_completed_answer(
+                state["question"],
+                state.get("answer", NO_ANSWER),
+                deserialize_hits(state.get("hits", [])),
+                state["scope"],
+                started_at=state.get("started_at"),
+                generation_mode=f"agentic_{state.get('generation_mode', 'unknown')}",
+            )
+        except (OSError, RuntimeError, ValueError, TypeError) as exception:
+            return {
+                "recorded": False,
+                "error": state.get("error") or (str(exception).strip() or exception.__class__.__name__),
+                "events": [
+                    *state.get("events", []),
+                    "Yanıt hazırlandı ancak audit kaydı kullanılamadı; kullanıcı yanıtı korunuyor.",
+                ],
+            }
         return {
             "recorded": True,
             "events": [
@@ -406,8 +599,60 @@ class CMSAgenticWorkflow:
         }
 
     @staticmethod
+    def _safe_node_failure(
+        state: CMSAgentState,
+        mode: str,
+        node_label: str,
+        exception: Exception,
+    ) -> CMSAgentState:
+        """Bir düğüm hatasını teknik ayrıntı sızdırmadan güvenli terminal yanıta dönüştürür."""
+
+        detail = str(exception).strip() or exception.__class__.__name__
+        return {
+            "answer": NO_ANSWER,
+            "hits": [],
+            "generation_mode": mode,
+            "error": detail,
+            "events": [
+                *state.get("events", []),
+                f"{node_label} düğümü hata sınırında durduruldu; belgesiz üretim yapılmadı.",
+            ],
+        }
+
+    @staticmethod
     def _track_handoff(state: CMSAgentState) -> CMSAgentState:
-        """MCP isteğini mevcut onaylı kontrol akışına yan etkisiz biçimde devreder."""
+        """MCP yazmasını checkpoint'te durdurur; okuma ve belirsizliği yan etkisiz devreder."""
+
+        request = parse_track_request(state.get("question", ""))
+        if request.intent == TrackIntent.WRITE:
+            resume_payload = interrupt(
+                {
+                    "kind": "track_control_approval",
+                    "question": state.get("question", ""),
+                    "message": "MCP yazma işlemi operatör onayı bekliyor.",
+                }
+            )
+            if not isinstance(resume_payload, dict):
+                resume_payload = {"decision": "failed", "answer": "Geçersiz operatör kararı."}
+            decision = str(resume_payload.get("decision", "failed"))
+            answer = str(resume_payload.get("answer", "")).strip()
+            if not answer:
+                answer = (
+                    "İşlem operatör tarafından iptal edildi; hiçbir değer değiştirilmedi."
+                    if decision == "rejected"
+                    else "MCP işlemi güvenli biçimde tamamlanamadı."
+                )
+            decision_event = {
+                "approved": "Operatör onayı sonrası MCP yazması uygulanıp geri-okumayla doğrulandı.",
+                "rejected": "Operatör MCP yazmasını reddetti; herhangi bir değişiklik yapılmadı.",
+                "failed": "Onaylanan MCP yazması güvenli biçimde tamamlanamadı.",
+            }.get(decision, "MCP devam kararı doğrulanamadı.")
+            return {
+                "answer": answer,
+                "hits": [],
+                "generation_mode": f"track_{decision}",
+                "events": [*state.get("events", []), decision_event],
+            }
 
         return {
             "answer": "",

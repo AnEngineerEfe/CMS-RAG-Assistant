@@ -18,12 +18,14 @@ from ..domain.track_control import (
     parse_track_request,
 )
 from ..infrastructure.mcp_track_client import McpTrackError
-from .services import get_track_control_service
+from .services import get_agentic_workflow, get_track_control_service
 
 
 PENDING_ACTION_KEY = "pending_track_action"
 PENDING_SUGGESTION_KEY = "pending_track_suggestion"
 PENDING_CORRECTION_KEY = "pending_track_correction"
+PENDING_AGENTIC_THREAD_KEY = "pending_track_agentic_thread"
+PENDING_AGENTIC_COMPLETION_KEY = "pending_track_agentic_completion"
 
 
 def handle_track_question(question: str) -> bool:
@@ -144,6 +146,29 @@ def handle_track_question(question: str) -> bool:
 def render_pending_track_action() -> bool:
     """Bekleyen yazmayı önce/sonra özetiyle gösterir ve açık onay veya iptal ister."""
 
+    completion = st.session_state.get(PENDING_AGENTIC_COMPLETION_KEY)
+    if isinstance(completion, dict):
+        with st.container(border=True):
+            st.markdown(
+                "<div class='answer-label'>AGENTIC · CHECKPOINT KURTARMA</div>",
+                unsafe_allow_html=True,
+            )
+            st.warning(
+                "MCP sonucu alındı fakat graph checkpoint'i tamamlanamadı. MCP işlemi "
+                "tekrar uygulanmadan yalnızca kayıt devam ettirilecektir."
+            )
+            if st.button("Checkpoint devamını yeniden dene", type="primary"):
+                if _resume_agentic_interrupt(
+                    str(completion.get("decision", "failed")),
+                    str(completion.get("answer", "")),
+                ):
+                    _append_assistant(
+                        "Bekleyen agent checkpoint'i güvenli biçimde tamamlandı.",
+                        "AGENTIC · CHECKPOINT KURTARILDI",
+                    )
+                st.rerun()
+        return True
+
     action = st.session_state.get(PENDING_ACTION_KEY)
     if not isinstance(action, PendingTrackAction):
         return False
@@ -169,7 +194,9 @@ def render_pending_track_action() -> bool:
             if st.button("İptal et", use_container_width=True):
                 get_track_control_service().cancel(action)
                 del st.session_state[PENDING_ACTION_KEY]
-                _append_assistant("İşlem iptal edildi; hiçbir değer değiştirilmedi.", "MCP · İPTAL")
+                content = "İşlem iptal edildi; hiçbir değer değiştirilmedi."
+                _resume_agentic_interrupt("rejected", content)
+                _append_assistant(content, "MCP · İPTAL")
                 st.rerun()
         with remainder:
             st.caption("Operatör onayı olmadan `set_*` aracı çağrılmaz.")
@@ -189,15 +216,46 @@ def _execute(action: PendingTrackAction) -> None:
             notes = "\n".join(f"- {warning}" for warning in action.warnings)
             content += f"\n\n**İşlem notları:**\n{notes}"
         label = "MCP · DOĞRULANMIŞ İŞLEM"
+        decision = "approved"
     except PermissionError as exception:
         content = f"İşlem uygulanmadı: {exception}"
         label = "MCP · YETKİ REDDİ"
+        decision = "failed"
     except (McpTrackError, OSError, ValueError, RuntimeError) as exception:
         content = f"İşlem güvenli biçimde durduruldu: {_safe_error(exception)}"
         label = "MCP · İŞLEM HATASI"
+        decision = "failed"
     del st.session_state[PENDING_ACTION_KEY]
+    _resume_agentic_interrupt(decision, content)
     _append_assistant(content, label)
     st.rerun()
+
+
+def _resume_agentic_interrupt(decision: str, answer: str) -> bool:
+    """Varsa bekleyen LangGraph MCP turunu aynı thread üzerinde sonuçlandırır."""
+
+    thread_id = st.session_state.get(PENDING_AGENTIC_THREAD_KEY)
+    if not isinstance(thread_id, str) or not thread_id.strip():
+        return True
+    try:
+        get_agentic_workflow().resume(
+            thread_id,
+            {"decision": decision, "answer": answer},
+        )
+    except Exception:  # Sunum sınırı; sürücü hatasının DSN/parola metni kullanıcıya taşınmaz.
+        st.session_state[PENDING_AGENTIC_COMPLETION_KEY] = {
+            "decision": decision,
+            "answer": answer,
+        }
+        _append_assistant(
+            "İşlem sonucu alındı ancak agent checkpoint'i tamamlanamadı. Veritabanı "
+            "erişimini denetleyip ekrandaki güvenli yeniden deneme düğmesini kullanın.",
+            "AGENTIC · CHECKPOINT UYARISI",
+        )
+        return False
+    st.session_state.pop(PENDING_AGENTIC_THREAD_KEY, None)
+    st.session_state.pop(PENDING_AGENTIC_COMPLETION_KEY, None)
+    return True
 
 
 def _state_text(state: TrackState) -> str:

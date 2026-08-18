@@ -52,6 +52,10 @@ anında web taraması gerekmez.
 - Geliştirmede bellek içi, yapılandırıldığında PostgreSQL tabanlı kalıcı agent checkpoint'i
 - Agentic RAG alt grafiği: sorgu planlama, retrieval, kanıt kapısı, üretim ve atıf doğrulama
 - Geçersiz atıfta en fazla bir deterministik onarım; başarısızlıkta kaynaksız güvenli ret
+- PostgreSQL checkpoint'lerinden listelenebilen, seçilip geri yüklenebilen kalıcı konuşmalar
+- MCP yazmalarında gerçek LangGraph interrupt/resume, operatör onayı ve yeniden başlatma kurtarması
+- Agentic sonuçlarda rota, üretim yolu, doğrulama, onarım sayısı ve uçtan uca süre görünürlüğü
+- Planlama/retrieval/model arızalarında traceback yerine checkpoint'li güvenli sonlandırma
 
 ## Gereksinimler
 
@@ -141,8 +145,10 @@ Bağlantı dizesini kaynak koda veya Git'e eklemeyin. Etkin altyapı sol panelde
    `Hızı 24,5 knot yap` yazın ve gösterilen işlem planını ayrıca onaylayın.
 9. `Agentic LangGraph modu` seçeneğini açarak aynı sistemi checkpoint'li ve adımları
    görünür graph orkestrasyonu üzerinden çalıştırın. Sol panelden checkpoint'in
-   oturumluk bellek mi, kalıcı PostgreSQL mi kullandığını denetleyin. Klasik mod
-   karşılaştırma için korunur.
+   oturumluk bellek mi, kalıcı PostgreSQL mi kullandığını denetleyin. `Konuşmalar`
+   listesinden önceki bir thread'i kaynaklarıyla geri yükleyebilir veya `Yeni konuşma`
+   başlatabilirsiniz. MCP yazma komutu graph'ı durdurur; yalnız operatör onayından sonra
+   devam eder. Klasik mod karşılaştırma için korunur.
 
 Ek PDF zorunlu değildir. Gerektiğinde `İsteğe bağlı ek belge` alanından yalnızca
 kamuya açık veya kullanım yetkiniz bulunan PDF eklenebilir. Aynı içerik ikinci

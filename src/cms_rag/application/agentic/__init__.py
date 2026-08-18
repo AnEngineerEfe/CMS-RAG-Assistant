@@ -6,7 +6,12 @@ from .checkpoints import (
     create_checkpoint_runtime,
 )
 from .router import AgentRoute, RouteDecision, decide_route
-from .workflow import AgenticResult, CMSAgenticWorkflow
+from .workflow import (
+    AgenticResult,
+    CMSAgenticWorkflow,
+    ConversationSummary,
+    ConversationTurn,
+)
 
 __all__ = [
     "AgentRoute",
@@ -14,6 +19,8 @@ __all__ = [
     "CheckpointConfigurationError",
     "CheckpointRuntime",
     "CMSAgenticWorkflow",
+    "ConversationSummary",
+    "ConversationTurn",
     "RouteDecision",
     "create_checkpoint_runtime",
     "decide_route",

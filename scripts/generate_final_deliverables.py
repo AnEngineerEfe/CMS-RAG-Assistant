@@ -27,9 +27,9 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "deliverables"
 DOCX_PATH = OUTPUT_DIR / "CMS-RAG_Nihai_Teknik_Dokumantasyon.docx"
 PPTX_PATH = OUTPUT_DIR / "CMS-RAG_Nihai_Proje_Sunumu.pptx"
-TODAY = date(2026, 8, 6)
-VERSION = "1.3"
-COMMIT = "codex/evaluation-benchmark"
+TODAY = date(2026, 8, 18)
+VERSION = "2.0"
+COMMIT = "codex/pgvector-lineage · agentic final"
 BENCHMARK_REPORT = json.loads(
     (ROOT / "evaluation" / "results" / "latest" / "benchmark_report.json")
     .read_text(encoding="utf-8")
@@ -42,7 +42,7 @@ LINEAGE_REPORT = json.loads(
     (ROOT / "evaluation" / "results" / "lineage-latest" / "lineage_evaluation_report.json")
     .read_text(encoding="utf-8")
 )
-AUTOMATED_TESTS = 82
+AUTOMATED_TESTS = 137
 
 NAVY = "0B1F3A"
 BLUE = "1B5FA7"
@@ -330,7 +330,7 @@ def build_word_document() -> None:
             ["Tarih", TODAY.strftime("%d.%m.%Y")],
             ["Doğrulanmış dal", COMMIT],
             ["Mimari", "Hazır PDF paketi + önceden hesaplanmış embedding snapshot'ı"],
-            ["Durum", "Nihai kabul — 82/82 test, 8/8 retrieval, 7/7 yanıt"],
+            ["Durum", f"Nihai kabul — {AUTOMATED_TESTS}/{AUTOMATED_TESTS} test, 8/8 retrieval, 7/7 yanıt"],
         ],
         [5.0, 11.5],
     )
@@ -356,7 +356,7 @@ def build_word_document() -> None:
             ["Kaynaklar", "Dört önceden hazırlanmış kamuya açık PDF; şirket verisi kullanılmaz"],
             ["Çalışma modeli", "Yerel Ollama qwen2.5:3b; güçlü donanımda qwen2.5:7b"],
             ["Arayüz", "Streamlit tabanlı, kaynak kartlı ve akışlı sohbet"],
-            ["Son kabul", "82/82 test, 8/8 retrieval, 7/7 yanıt ve 77/77 snapshot"],
+            ["Son kabul", f"{AUTOMATED_TESTS}/{AUTOMATED_TESTS} test, 8/8 retrieval, 7/7 yanıt ve 77/77 snapshot"],
         ],
         [4.2, 12.3],
     )
@@ -405,7 +405,7 @@ def build_word_document() -> None:
         document,
         ["Kabul göstergesi", "Sonuç", "Yorum"],
         [
-            ["Otomatik test", "41 / 41", "Birim, entegrasyon, UI ve mimari sınır testleri"],
+            ["Otomatik test", f"{AUTOMATED_TESTS} / {AUTOMATED_TESTS}", "Birim, entegrasyon, UI, agentic ve mimari sınır testleri"],
             ["Retrieval kabulü", "8 / 8", "Hazır kamuya açık bilgi paketinde doğru kanıt erişimi"],
             ["Yanıt kabulü", "7 / 7", "Kavram, atıf, kaynak ve doğru ret kararı"],
             ["İndekslenen kanıt", "77", "Beş PDF ve önceden hesaplanmış 77 embedding"],
@@ -455,7 +455,7 @@ def build_word_document() -> None:
             ["Tekrarlı PDF", "İkinci kayıt oluşmamalı", "SHA-256 ile engellendi"],
             ["Takip sorusu", "Son bağlamı anlamalı", "3 turluk kapsam izole bellek"],
             ["Hata davranışı", "İlgisiz kaynak göstermemeli", "UI ve motor testleriyle doğrulandı"],
-            ["Yeniden üretim", "Hazır paket ve snapshot", "82/82, 8/8, 7/7 ve 77/77"],
+            ["Yeniden üretim", "Hazır paket ve snapshot", f"{AUTOMATED_TESTS}/{AUTOMATED_TESTS}, 8/8, 7/7 ve 77/77"],
         ],
         [5.0, 5.8, 5.7],
     )
@@ -580,6 +580,22 @@ def build_word_document() -> None:
         "Mimari koruma",
         "tests/test_architecture.py; giriş noktasının ince kalmasını, bağımlılık yönlerini ve "
         "tüm kaynak sınıf/fonksiyonlarının Türkçe açıklama taşımasını AST üzerinden denetler.",
+    )
+    document.add_heading("5.2 Agentic LangGraph ve kalıcı konuşmalar", level=2)
+    add_word_body(
+        document,
+        "Agentic mod; bilgi, MCP kontrol ve güvenli ret rotalarını ayrı checkpoint'li "
+        "düğümlerle yönetir. Bilgi akışında sorgu planlama, hibrit retrieval, kanıt kapısı, "
+        "yerel üretim, atıf doğrulama ve en fazla bir deterministik onarım bulunur. PostgreSQL "
+        "checkpointer kullanıldığında konuşmalar yeniden başlatma sonrasında listelenip kaynak "
+        "kartlarıyla geri yüklenebilir.",
+    )
+    add_word_body(
+        document,
+        "MCP yazma komutu interrupt noktasında durur. Operatör onayı olmadan set aracı "
+        "çağrılmaz; onay veya ret aynı thread üzerinde resume edilerek kalıcı sonuca dönüşür. "
+        "Bekleyen onay uygulama yeniden başlatılsa bile bulunabilir. Planlama veya model arızası "
+        "traceback yerine belgesiz üretim yapmayan güvenli sonuçla kapanır.",
     )
     document.add_page_break()
 
@@ -850,6 +866,7 @@ def build_word_document() -> None:
             ["UI", "Kapsam seçimi, konuşma yolculuğu, Ollama hatası, kaynak kalıcılığı", "Başarılı"],
             ["Architecture", "İnce app.py, bağımlılık yönü, Türkçe açıklama standardı", "Başarılı"],
             ["Audit", "Ham içeriksiz SHA-256 özeti, gecikme, kapsam ve kaynak metadatası", "Başarılı"],
+            ["Agentic", "Route, checkpoint, konuşma geri yükleme, interrupt/resume ve hata sınırları", "Başarılı"],
             ["Retrieval", "45 altın belge/terim/sayfa ve güvenli-ret vakası", "45 / 45"],
         ],
         [4.0, 9.7, 2.9],
@@ -1035,7 +1052,7 @@ def build_word_document() -> None:
             ["3 dk", "Mimari", "Katmanlar, hibrit retrieval ve kanıt zinciri"],
             ["2 dk", "Güvenilirlik", "Hash, güvenli ret, kapsam izolasyonu ve yerel model"],
             ["3 dk", "Canlı demo", "ADVENT → takip sorusu → NATO kapsamı → kaynaksız ret"],
-            ["1 dk", "Test", "82/82, 8/8, 7/7 ve 77/77 snapshot"],
+            ["1 dk", "Test", f"{AUTOMATED_TESTS}/{AUTOMATED_TESTS}, 8/8, 7/7 ve 77/77 snapshot"],
             ["1 dk", "Yol haritası", "OCR, kalıcı indeks, RBAC ve audit"],
         ],
         [2.5, 4.5, 9.6],
@@ -1353,7 +1370,7 @@ def build_powerpoint() -> None:
     set_slide_background(slide)
     add_slide_frame(slide, 2, "Yönetici Özeti")
     add_slide_title(slide, "Tek cümlede proje", "Önceden hazırlanmış kamu bilgisini çevrimdışı, yerel ve kaynaklı cevaba dönüştürür.")
-    add_metric_card(slide, 0.7, 2.1, 2.7, "41 / 41", "OTOMATİK TEST")
+    add_metric_card(slide, 0.7, 2.1, 2.7, f"{AUTOMATED_TESTS} / {AUTOMATED_TESTS}", "OTOMATİK TEST")
     add_metric_card(slide, 3.55, 2.1, 2.7, "8 / 8", "RETRIEVAL KABULÜ", GREEN)
     add_metric_card(slide, 6.4, 2.1, 2.7, "77", "KANIT PARÇASI", ORANGE)
     add_metric_card(slide, 9.25, 2.1, 2.7, "HTTP 200", "CANLI SERVİS", BLUE)
@@ -1514,8 +1531,8 @@ def build_powerpoint() -> None:
     # 9 memory
     slide = presentation.slides.add_slide(blank)
     set_slide_background(slide, NAVY)
-    add_slide_frame(slide, 9, "Konuşma Belleği", dark=True)
-    add_slide_title(slide, "Takip sorusu anlaşılır; kapsamlar birbirine sızmaz", dark=True)
+    add_slide_frame(slide, 9, "Agentic Kalıcılık", dark=True)
+    add_slide_title(slide, "Konuşma, kanıt ve bekleyen onay yeniden başlatmada korunur", dark=True)
     # Conversation cards
     add_ppt_box(slide, 0.75, 2.05, 5.45, 0.8, fill="15365F", line=BLUE)
     add_ppt_text(slide, "ADVENT nedir?", 1.0, 2.28, 4.9, 0.3, size=14, color=WHITE, bold=True)
@@ -1537,7 +1554,7 @@ def build_powerpoint() -> None:
     add_ppt_box(slide, 7.75, 3.78, 4.55, 1.25, fill="174A46", line=GREEN)
     add_ppt_text(slide, "open_source history", 8.05, 4.05, 3.9, 0.3, size=16, color=WHITE, bold=True)
     add_ppt_text(slide, "NATO genel birlikte çalışabilirlik", 8.05, 4.5, 3.9, 0.25, size=10, color="BDE7D5")
-    add_ppt_text(slide, "En fazla 3 tur · kapsam etiketli · bounded context", 3.2, 6.25, 6.9, 0.35, size=12, color=CYAN, bold=True, align=PP_ALIGN.CENTER)
+    add_ppt_text(slide, "PostgreSQL checkpoint · thread geri yükleme · MCP interrupt / resume", 2.35, 6.25, 8.7, 0.35, size=12, color=CYAN, bold=True, align=PP_ALIGN.CENTER)
 
     # 10 UI
     slide = presentation.slides.add_slide(blank)
@@ -1618,7 +1635,7 @@ def build_powerpoint() -> None:
         ("HASH", "SHA-256 duplicate ve bütünlük"),
         ("SCOPE", "Koleksiyon ve geçmiş izolasyonu"),
         ("ESCAPE", "Kaynak HTML çıktısı güvenli"),
-        ("REJECT", "Yetersiz kanıtta açık ret"),
+        ("HITL", "MCP yazmasında operatör onayı"),
         ("PATH", "Manifest traversal engeli"),
     ]
     for index, (tag, body) in enumerate(controls):
@@ -1692,8 +1709,8 @@ def build_powerpoint() -> None:
     add_slide_title(slide, "MVP tamamlandı; kurumsal ölçek için sıradaki adımlar")
     horizons = [
         ("YAKIN", "OCR\nKaynak drift kontrolü\nCI kabul pipeline", BLUE),
-        ("ORTA", "Kalıcı vektör deposu\nKalite eğilim alarmı\nRBAC", GREEN),
-        ("UZUN", "Merkezi audit aktarımı\nÇok modlu retrieval\nKaynak onay akışı", ORANGE),
+        ("ORTA", "RBAC\nCheckpoint saklama politikası\nKalite eğilim alarmı", GREEN),
+        ("UZUN", "Merkezi audit aktarımı\nÇok modlu retrieval\nKurumsal gözlemlenebilirlik", ORANGE),
     ]
     for index, (label, body, accent) in enumerate(horizons):
         x = 0.75 + index * 4.1
@@ -1701,7 +1718,7 @@ def build_powerpoint() -> None:
         add_label(slide, label, x + 0.85, 2.35, 2.05, accent)
         add_ppt_text(slide, body, x + 0.45, 3.15, 2.85, 1.65, size=16, color=NAVY, bold=True, align=PP_ALIGN.CENTER)
         add_ppt_text(slide, f"0{index + 1}", x + 1.48, 5.05, 0.75, 0.35, size=12, color=accent, bold=True, align=PP_ALIGN.CENTER)
-    add_ppt_text(slide, "Öncelik: OCR + kalıcı indeks + otomatik regression", 2.25, 6.25, 8.85, 0.4, size=15, color=BLUE, bold=True, align=PP_ALIGN.CENTER)
+    add_ppt_text(slide, "Öncelik: CI kalite kapısı + RBAC + kurumsal gözlemlenebilirlik", 2.25, 6.25, 8.85, 0.4, size=15, color=BLUE, bold=True, align=PP_ALIGN.CENTER)
 
     # 16 Demo
     slide = presentation.slides.add_slide(blank)

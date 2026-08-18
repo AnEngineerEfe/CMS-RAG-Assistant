@@ -1,7 +1,7 @@
 """Streamlit-level regression test for the real multi-turn user journey."""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from streamlit.testing.v1 import AppTest
 
@@ -75,6 +75,41 @@ class StreamlitJourneyTests(unittest.TestCase):
 
         self.assertEqual(gateway.write_count, 1)
         self.assertEqual(gateway.state.speed_knots, 35)
+        self.assertFalse(app.exception)
+
+    def test_agentic_checkpoint_retry_never_repeats_the_mcp_write(self):
+        """MCP sonrası checkpoint arızasını yalnız resume ederek kurtarır; set aracını yinelemez."""
+
+        gateway = _UiTrackGateway()
+        service = TrackControlService(gateway)
+        workflow = Mock()
+        workflow.resume.side_effect = [RuntimeError("database unavailable"), Mock()]
+        with (
+            patch(
+                "src.cms_rag.presentation.track_chat.get_track_control_service",
+                return_value=service,
+            ),
+            patch(
+                "src.cms_rag.presentation.track_chat.get_agentic_workflow",
+                return_value=workflow,
+            ),
+        ):
+            app = AppTest.from_file("app.py", default_timeout=180).run()
+            next(
+                toggle for toggle in app.toggle if toggle.label == "Agentic LangGraph modu"
+            ).set_value(True).run()
+            app.chat_input[0].set_value("Hızı 36 knot yap").run()
+            next(button for button in app.button if button.label == "Onayla ve uygula").click().run()
+            self.assertEqual(gateway.write_count, 1)
+            retry = next(
+                button
+                for button in app.button
+                if button.label == "Checkpoint devamını yeniden dene"
+            )
+            retry.click().run()
+
+        self.assertEqual(gateway.write_count, 1)
+        self.assertEqual(workflow.resume.call_count, 2)
         self.assertFalse(app.exception)
 
     def test_agentic_mode_returns_grounded_knowledge_with_visible_graph_steps(self):

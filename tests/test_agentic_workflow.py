@@ -2,9 +2,11 @@
 
 import unittest
 
+from langgraph.checkpoint.memory import InMemorySaver
+
 from src.cms_rag.application.agentic import AgentRoute, CMSAgenticWorkflow
 from src.cms_rag.application.agentic.workflow import RESTRICTED_ANSWER
-from src.cms_rag.application.engine import KnowledgePreflight
+from src.cms_rag.application.engine import KnowledgePreflight, NO_ANSWER
 from src.cms_rag.domain import Chunk, SearchHit
 
 
@@ -80,6 +82,24 @@ class _RetrievalEngine(_FakeEngine):
         return "Üretilmiş kaynaklı yanıt. [SOURCE 1]"
 
 
+class _FailingEngine(_RetrievalEngine):
+    """Seçilen agent düğümünde denetimli hata üreten dayanıklılık motoru."""
+
+    def __init__(self, failure: str) -> None:
+        super().__init__()
+        self.failure = failure
+
+    def preflight_answer(self, question: str, scope: str):
+        if self.failure == "planning":
+            raise OSError("ham bağlantı ayrıntısı")
+        return super().preflight_answer(question, scope)
+
+    def generate_grounded_answer(self, question: str, hits: list[SearchHit], scope: str) -> str:
+        if self.failure == "generation":
+            raise RuntimeError("model çöktü")
+        return super().generate_grounded_answer(question, hits, scope)
+
+
 class AgenticWorkflowTests(unittest.TestCase):
     """Kontrollü graph'ın doğru alt akışı seçtiğini ve durumu koruduğunu doğrular."""
 
@@ -106,6 +126,49 @@ class AgenticWorkflowTests(unittest.TestCase):
         self.assertEqual(result.route, AgentRoute.TRACK_CONTROL)
         self.assertEqual(self.engine.calls, [])
         self.assertEqual(result.answer, "")
+        self.assertTrue(result.interrupted)
+        self.assertEqual(result.interrupt_payload["kind"], "track_control_approval")
+
+    def test_track_interrupt_resumes_on_same_checkpoint_and_becomes_a_turn(self):
+        """Onay kararını aynı thread'e verip MCP sonucunu kalıcı konuşma turuna dönüştürür."""
+
+        thread_id = "resumable-track-thread"
+        initial = self.workflow.invoke("Hızı 25 knot yap", "all", thread_id)
+        self.assertTrue(initial.interrupted)
+        resumed = self.workflow.resume(
+            thread_id,
+            {
+                "decision": "approved",
+                "answer": "İşlem uygulandı ve geri-okumayla doğrulandı.",
+            },
+        )
+        self.assertFalse(resumed.interrupted)
+        self.assertTrue(any("Operatör onayı" in event for event in resumed.events))
+        turns = self.workflow.conversation_history(thread_id)
+        self.assertEqual(len(turns), 1)
+        self.assertEqual(turns[0].answer, "İşlem uygulandı ve geri-okumayla doğrulandı.")
+
+    def test_interrupted_track_turn_survives_workflow_recreation(self):
+        """Aynı checkpointer'a bağlanan yeni workflow bekleyen MCP turunu devam ettirebilir."""
+
+        saver = InMemorySaver()
+        first = CMSAgenticWorkflow(_FakeEngine(), checkpointer=saver)
+        second = CMSAgenticWorkflow(_FakeEngine(), checkpointer=saver)
+        thread_id = "restart-safe-track-thread"
+        self.assertTrue(first.invoke("Yönü 270 derece yap", "all", thread_id).interrupted)
+        pending = second.pending_interrupt(thread_id)
+        self.assertEqual(pending["question"], "Yönü 270 derece yap")
+        summary = next(item for item in second.conversation_summaries() if item.thread_id == thread_id)
+        self.assertTrue(summary.pending_approval)
+        self.assertEqual(summary.turn_count, 0)
+        resumed = second.resume(
+            thread_id,
+            {"decision": "rejected", "answer": "Operatör işlemi iptal etti."},
+        )
+        self.assertFalse(resumed.interrupted)
+        self.assertEqual(resumed.answer, "Operatör işlemi iptal etti.")
+        self.assertEqual(second.conversation_history(thread_id)[0].route, AgentRoute.TRACK_CONTROL)
+        self.assertIsNone(second.pending_interrupt(thread_id))
 
     def test_restricted_request_is_rejected_without_tools(self):
         """Tasnifli veri talebini retrieval veya model çağrısı olmadan reddeder."""
@@ -123,6 +186,31 @@ class AgenticWorkflowTests(unittest.TestCase):
         history = self.workflow.state_history(thread_id)
         self.assertGreaterEqual(len(history), 6)
         self.assertTrue(history[0].values["completed"])
+
+    def test_completed_turns_can_be_restored_without_superstep_duplicates(self):
+        """Checkpoint super-step'lerini iki tamamlanmış kullanıcı turuna indirger."""
+
+        thread_id = "restorable-thread"
+        self.workflow.invoke("ADVENT nedir?", "all", thread_id)
+        self.workflow.invoke("MAIN nedir?", "official", thread_id)
+        turns = self.workflow.conversation_history(thread_id)
+        self.assertEqual(
+            [turn.question for turn in turns],
+            ["ADVENT nedir?", "MAIN nedir?"],
+        )
+        self.assertEqual([turn.scope for turn in turns], ["all", "official"])
+        self.assertTrue(all(turn.hits for turn in turns))
+
+    def test_conversation_catalog_groups_threads_and_uses_first_question_as_title(self):
+        """Farklı thread checkpoint'lerini son etkinlikli konuşma özetlerine dönüştürür."""
+
+        self.workflow.invoke("ADVENT nedir?", "all", "catalog-a")
+        self.workflow.invoke("MAIN ne yapar?", "all", "catalog-b")
+        summaries = self.workflow.conversation_summaries()
+        by_id = {item.thread_id: item for item in summaries}
+        self.assertEqual(by_id["catalog-a"].title, "ADVENT nedir?")
+        self.assertEqual(by_id["catalog-b"].title, "MAIN ne yapar?")
+        self.assertEqual(by_id["catalog-a"].turn_count, 1)
 
     def test_retrieval_path_runs_plan_gate_generation_and_verification(self):
         """Bilgi alt grafiğinin ayrılmış bütün temel düğümlerden geçtiğini kanıtlar."""
@@ -153,6 +241,28 @@ class AgenticWorkflowTests(unittest.TestCase):
         self.assertEqual(engine.generated, 0)
         self.assertEqual(result.hits, [])
         self.assertIn("yeterli kaynak bulunamadı", result.answer)
+
+    def test_planning_failure_becomes_checkpointed_safe_answer(self):
+        """Planlama arızasını traceback yerine güvenli ret ve denetlenebilir olayla bitirir."""
+
+        workflow = CMSAgenticWorkflow(_FailingEngine("planning"))
+        result = workflow.invoke("Arıza senaryosu", "all", "planning-failure")
+        self.assertEqual(result.generation_mode, "planning_error")
+        self.assertEqual(result.answer, NO_ANSWER)
+        self.assertTrue(result.verification_passed)
+        self.assertTrue(any("Planlama düğümü" in event for event in result.events))
+        self.assertEqual(len(workflow.conversation_history("planning-failure")), 1)
+
+    def test_generation_failure_never_leaks_unverified_evidence(self):
+        """Model arızasında aday kanıtları gizler ve belgesiz cevap üretmeden tamamlanır."""
+
+        result = CMSAgenticWorkflow(_FailingEngine("generation")).invoke(
+            "Üretim arızası", "all", "generation-failure"
+        )
+        self.assertEqual(result.generation_mode, "generation_error")
+        self.assertEqual(result.answer, NO_ANSWER)
+        self.assertEqual(result.hits, [])
+        self.assertTrue(result.verification_passed)
 
 
 if __name__ == "__main__":

@@ -344,6 +344,20 @@ class CMSRAGEngine:
 
         self.history.clear()
 
+    def restore_chat(self, turns: list[dict[str, str]]) -> None:
+        """Kalıcı thread'den gelen son turları doğrulayıp sınırlı belleğe geri yükler."""
+
+        restored: list[dict[str, str]] = []
+        for turn in turns:
+            question = str(turn.get("question", "")).strip()
+            answer = str(turn.get("answer", "")).strip()
+            scope = str(turn.get("scope", "all"))
+            if question and answer and scope in {"all", "official", "open_source"}:
+                restored.append(
+                    {"question": question, "answer": answer, "scope": scope}
+                )
+        self.history = restored[-3:]
+
     def build_retrieval_query(self, question: str, scope: str = "all") -> str:
         """Resolve short references using the complete bounded conversation."""
         reference_words = ("bunlar", "bunun", "onlar", "detay", "ornek", "baska", "gorev")

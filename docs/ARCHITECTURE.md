@@ -116,9 +116,12 @@ girdi doğrulama
   -> audit + kısa konuşma belleği + checkpoint
 ```
 
-MCP route'u LangGraph'in serbestçe yazma aracı çağırmasına izin vermez; mevcut
-doğal dil doğrulaması, işlem planı, operatör onayı, yazma kilidi, stale-state
-kontrolü ve geri-okuma hattına devredilir. Hassas/tasnifli veri route'u retrieval
+MCP route'u LangGraph'in serbestçe yazma aracı çağırmasına izin vermez. Yazma niyeti
+`interrupt()` ile checkpoint üzerinde durur; doğal dil doğrulaması ve işlem planı
+gösterildikten sonra operatör onayı alınır. MCP yazması, yazma kilidi, stale-state
+kontrolü ve geri-okuma doğrulamasından geçer; graph aynı `thread_id` üzerinde
+`Command(resume=...)` ile tamamlanır. Salt-okunur MCP çağrıları onay istemez.
+Hassas/tasnifli veri route'u retrieval
 ve model çağrısından önce sonlanır. Graph state içindeki kanıtlar özel Python
 nesneleri olarak değil, sıkı msgpack/JSON uyumlu alanlar biçiminde saklanır.
 
@@ -141,6 +144,14 @@ onarılabilir. Onarım da doğrulamayı geçmezse cevap ve kanıt kartları gizl
   biçimde kurulur. Graph state yalnızca temel JSON/msgpack tiplerinden oluşur.
 - Her sohbet `thread_id` ile ayrı tutulur; arayüzde oturum temizlendiğinde yeni
   thread kimliği üretilir ve eski kalıcı kayıt yeni sohbete karışmaz.
+- Tamamlanmış konuşmalar checkpoint deposundan özetlenir; ilk soru başlık olur ve
+  seçilen thread'in kullanıcı mesajları, cevapları ve kaynak kartları yeniden kurulur.
+- Operatör onayı bekleyen MCP thread'i ayrı durumuyla listelenir. Uygulama yeniden
+  başlatılsa bile aynı checkpoint seçilip plan yeniden gösterilebilir ve güvenli biçimde
+  onaylanabilir veya reddedilebilir.
+- Planlama, retrieval, kanıt kapısı, üretim ve onarım düğümleri hata sınırlarına sahiptir.
+  Bağımlılık arızasında kaynak dışı cevap üretilmez; güvenli sonuç ve düğüm olayı
+  checkpoint'e yazılır.
 
 ## 6. Hazır bilgi tabanı ve belge yaşam döngüsü
 

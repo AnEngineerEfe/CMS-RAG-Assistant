@@ -112,13 +112,18 @@ adımlarla otomatik doğrulanır:
 13. Gemi tipi önerisinden sonraki `evet` cevabının RAG yerine MCP planına bağlanması
 14. `Muhrip yap` gibi açık kısa tip komutlarının doğru yönlendirilmesi
 15. Farklı olumlu/olumsuz ifadelerin ve belirsiz cevapta bağlam korumanın doğrulanması
+16. Agentic MCP yazmasının LangGraph interrupt noktasında yan etkisiz durması
+17. Onay ve reddin aynı thread'de `Command(resume=...)` ile graph'ı tamamlaması
+18. Yeni workflow örneğinin bekleyen interrupt'ı checkpoint'ten bulup sürdürebilmesi
+19. Planlama veya model arızasında kanıt sızdırmadan güvenli cevap üretilmesi
+20. Kalıcı konuşma kataloğunun tamamlanmış turları tekrar oluşturmadan geri yüklemesi
 
 ## Son doğrulama
 
-2026-08-17 tarihinde hazır bilgi tabanı, MCP entegrasyonu ve bağımsız değerlendirme kabul turunda:
+2026-08-18 tarihinde hazır bilgi tabanı, MCP entegrasyonu, LangGraph kalıcılığı ve bağımsız değerlendirme kabul turunda:
 
 - Python kaynak derlemesi: başarılı
-- Python otomatik testleri: `104/104` başarılı
+- Python otomatik testleri: `137/137` başarılı
 - Java MCP otomatik testleri: `9/9` başarılı
 - Gerçek Python–Java MCP tur testi: başarılı
 - Streamlit onaylı MCP yazma testi: başarılı

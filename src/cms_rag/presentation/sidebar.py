@@ -7,6 +7,7 @@ import streamlit as st
 
 from ..application import CMSRAGEngine
 from .config import SOURCE_SCOPE_LABELS, SOURCE_SCOPES
+from .conversations import render_conversation_controls
 from .services import get_agentic_workflow
 
 
@@ -43,6 +44,7 @@ def render_sidebar(engine: CMSRAGEngine) -> tuple[str, str]:
                 "Klasik motor ve güvenlik kuralları korunur."
             ),
         )
+        render_conversation_controls(engine)
         with st.expander("İsteğe bağlı ek belge"):
             st.caption(
                 "Çekirdek bilgi tabanı önceden hazırdır. Yalnız kamuya açık "
@@ -96,7 +98,10 @@ def _render_session_actions(engine: CMSRAGEngine) -> None:
     if st.button("Hazır indeksi yeniden yükle", use_container_width=True):
         with st.spinner("Önceden hazırlanmış yerel indeks yükleniyor..."):
             st.success(f"{engine.rebuild()} kanıt parçası hazır")
-    if st.button("Oturumu temizle", use_container_width=True):
+    if (
+        not st.session_state.get("agentic_mode", False)
+        and st.button("Oturumu temizle", use_container_width=True)
+    ):
         engine.clear_chat()
         st.session_state.messages = []
         st.session_state.pop("pending_track_action", None)
