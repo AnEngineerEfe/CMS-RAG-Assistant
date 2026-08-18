@@ -5,6 +5,7 @@ from __future__ import annotations
 import unicodedata
 
 from .models import Chunk, SearchHit
+from .query import CMSQueryProcessor
 
 
 class EvidenceResponder:
@@ -390,9 +391,13 @@ class EvidenceResponder:
             )
 
         asks_advent_overview = (
-            any(
-                marker in normalized
-                for marker in ("advent nedir", "advent tam olarak nedir", "what is advent")
+            "advent" in normalized
+            and (
+                any(
+                    marker in normalized
+                    for marker in ("advent nedir", "advent tam olarak nedir", "what is advent")
+                )
+                or CMSQueryProcessor.is_overview_intent(question)
             )
             and not any(
                 marker in normalized
@@ -405,6 +410,10 @@ class EvidenceResponder:
                     "advent ufuk",
                     "advent muren",
                     "advent ai",
+                    "savas gemisi",
+                    "warship",
+                    "deniz platformu",
+                    "kalyon",
                 )
             )
         )

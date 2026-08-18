@@ -390,6 +390,30 @@ class CMSRAGEngineTests(unittest.TestCase):
         self.assertIn("y\u00fczey platformlar\u0131", result[0])
         self.assertEqual(result[1][0].chunk.page, 18)
 
+    def test_advent_purpose_question_uses_the_grounded_overview_rule(self):
+        """Genel amaç sorusunun modele dar bir varyant cevabı ürettirmesini engeller."""
+
+        chunks = [
+            Chunk(
+                "ADVENT represents a CMS family with command and control, mission "
+                "management and combat management system functions.",
+                "official.pdf",
+                4,
+                "official.pdf",
+            )
+        ]
+        result = EvidenceResponder.answer(
+            "ADVENT hangi amaca hizmet etmektedir?",
+            [],
+            chunks,
+        )
+        self.assertIsNotNone(result)
+        answer, sources = result
+        self.assertIn("Savaş Yönetim Sistemi", answer)
+        self.assertIn("komuta ve kontrol", answer)
+        self.assertIn("görev yönetimi", answer)
+        self.assertEqual(len(sources), 1)
+
     def test_chitchat_is_rejected_without_retrieval(self):
         self.assertTrue(CMSQueryProcessor.is_non_domain_chitchat("Ben kimim?"))
 

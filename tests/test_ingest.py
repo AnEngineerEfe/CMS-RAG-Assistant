@@ -82,6 +82,61 @@ class PDFIngestorTests(unittest.TestCase):
             )
         )
 
+    def test_overview_intent_accepts_low_score_but_grounded_product_evidence(self):
+        """Genel amaç sorusunu sırf birebir fiil örtüşmedi diye false-negative yapmaz."""
+
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever._reranker = object()
+        retriever.reranker_mode = "gate"
+        evidence = [
+            SearchHit(
+                Chunk(
+                    "ADVENT is a combat management system for naval platforms and mission management.",
+                    "doc.pdf",
+                    1,
+                    "doc.pdf",
+                ),
+                0.004,
+            )
+        ]
+        self.assertTrue(
+            retriever.is_answerable(
+                "ADVENT hangi amaca hizmet etmektedir?",
+                evidence,
+            )
+        )
+
+    def test_overview_intent_still_rejects_unrelated_or_unknown_subjects(self):
+        """Genel amaç istisnasını bilinmeyen konuya veya alan dışı metne uygulamaz."""
+
+        retriever = HybridRetriever.__new__(HybridRetriever)
+        retriever._reranker = object()
+        retriever.reranker_mode = "gate"
+        unrelated = [
+            SearchHit(
+                Chunk("ADVENT etkinliğinde yemek hizmeti verilir.", "doc.pdf", 1, "doc.pdf"),
+                0.004,
+            )
+        ]
+        domain_text = [
+            SearchHit(
+                Chunk("Naval combat management and command control.", "doc.pdf", 1, "doc.pdf"),
+                0.004,
+            )
+        ]
+        self.assertFalse(
+            retriever.is_answerable(
+                "ADVENT hangi amaca hizmet etmektedir?",
+                unrelated,
+            )
+        )
+        self.assertFalse(
+            retriever.is_answerable(
+                "SANCAR hangi amaca hizmet etmektedir?",
+                domain_text,
+            )
+        )
+
     def test_answerability_rejects_restricted_configuration_requests(self):
         retriever = HybridRetriever.__new__(HybridRetriever)
         retriever._reranker = object()

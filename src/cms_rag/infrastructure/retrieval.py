@@ -348,13 +348,15 @@ class HybridRetriever:
             term in evidence_terms for term in required_terms
         ):
             return False
+        overview_supported = self._supports_overview_intent(query, evidence_terms)
         if self._reranker is not None:
             if max(hit.score for hit in hits[:2]) < reranker_threshold:
                 if self.reranker_mode != "gate":
                     return False
                 overlap = query_terms & evidence_terms
                 return (
-                    len(overlap) >= 2
+                    overview_supported
+                    or len(overlap) >= 2
                     or bool(query_terms)
                     and len(overlap) / len(query_terms) >= 0.5
                 )
@@ -363,7 +365,7 @@ class HybridRetriever:
             # nitelik (işletim sistemi, frekans vb.) sorulduğunda yalnızca yüksek alan
             # benzerliği yanlış pozitif üretebilir. Bu nedenle karar, ayırt edici sorgu
             # terimlerinden en az birinin kanıtta gerçekten görülmesini de gerektirir.
-            return bool(query_terms & evidence_terms)
+            return bool(query_terms & evidence_terms) or overview_supported
 
         # Reranker yerelde bulunamazsa yalnız RRF puanına güvenilmez. Sorgunun ayırt
         # edici terimlerinin kanıt metninde yeterli oranda bulunması güvenli yedektir.
@@ -377,10 +379,49 @@ class HybridRetriever:
             if token not in ignored and len(token) > 2
         }
         if not query_terms:
-            return False
+            return overview_supported
         evidence_terms = set(self._tokenise(" ".join(hit.chunk.text for hit in hits[:2])))
         overlap = query_terms & evidence_terms
-        return len(overlap) >= 2 or len(overlap) / len(query_terms) >= 0.5
+        return (
+            overview_supported
+            or len(overlap) >= 2
+            or len(overlap) / len(query_terms) >= 0.5
+        )
+
+    @staticmethod
+    def _supports_overview_intent(query: str, evidence_terms: set[str]) -> bool:
+        """Genel amaç sorusunu yalnız konu adı ve CMS alan kanıtı birlikteyse destekler."""
+
+        from ..domain.query import CMSQueryProcessor
+
+        if not CMSQueryProcessor.is_overview_intent(query):
+            return False
+        subject_terms = set(CMSQueryProcessor.overview_subject_terms(query))
+        if not subject_terms or not subject_terms.intersection(evidence_terms):
+            return False
+        domain_anchors = {
+            "cms",
+            "combat",
+            "management",
+            "command",
+            "control",
+            "mission",
+            "platform",
+            "platforms",
+            "naval",
+            "maritime",
+            "warfare",
+            "savaş",
+            "savas",
+            "yönetim",
+            "yonetim",
+            "komuta",
+            "kontrol",
+            "taktik",
+            "operasyon",
+            "operational",
+        }
+        return bool(domain_anchors.intersection(evidence_terms))
 
     @classmethod
     def _content_terms(cls, query: str) -> set[str]:

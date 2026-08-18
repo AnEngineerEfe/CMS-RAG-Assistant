@@ -8,6 +8,29 @@ import unicodedata
 class CMSQueryProcessor:
     """Kullanıcı sorularını alan kontrolü ve retrieval için hazırlar."""
 
+    _OVERVIEW_INTENT_MARKERS = (
+        "amac",
+        "hizmet et",
+        "ise yar",
+        "islev",
+        "gorev",
+        "ne yapar",
+        "ne saglar",
+    )
+    _OVERVIEW_SUBJECTS = {
+        "advent": ("advent",),
+        "advent-ai": ("advent-ai", "advent",),
+        "main": ("main",),
+        "kalyon": ("kalyon",),
+        "muren": ("muren",),
+        "marti": ("marti",),
+        "rota": ("rota",),
+        "ufuk": ("ufuk",),
+        "savas yonetim sistemi": ("cms", "combat", "management",),
+        "combat management system": ("cms", "combat", "management",),
+        "cms": ("cms", "combat", "management",),
+    }
+
     _GLOSSARY = {
         "savas yonetim sistemi": "combat management system CMS",
         "temel islev": "combat management system command and control mission management",
@@ -126,6 +149,24 @@ class CMSQueryProcessor:
             if marker in normalized:
                 required.extend(terms)
         return tuple(dict.fromkeys(required))
+
+    @classmethod
+    def is_overview_intent(cls, query: str) -> bool:
+        """Bir ürün veya sistemin genel amaç, görev ya da işlevinin sorulduğunu belirler."""
+
+        normalized = cls.normalise(query)
+        return any(marker in normalized for marker in cls._OVERVIEW_INTENT_MARKERS)
+
+    @classmethod
+    def overview_subject_terms(cls, query: str) -> tuple[str, ...]:
+        """Genel bakış sorusunda kanıtta da bulunması gereken kontrollü konu adlarını verir."""
+
+        normalized = cls.normalise(query)
+        subjects: list[str] = []
+        for marker, aliases in cls._OVERVIEW_SUBJECTS.items():
+            if marker in normalized:
+                subjects.extend(aliases)
+        return tuple(dict.fromkeys(subjects))
 
     @staticmethod
     def normalise(text: str) -> str:

@@ -72,6 +72,11 @@ class PreparedKnowledgeBaseTests(unittest.TestCase):
         self.assertGreaterEqual(count, 60)
         self.assertEqual(engine.prepared_document_count(), 5)
         self.assertEqual(engine.supplemental_records(), [])
+        purpose_question = "ADVENT hangi amaca hizmet etmektedir?"
+        purpose_query = engine.plan_retrieval_query(purpose_question)
+        purpose_hits = engine.retrieve_planned(purpose_query)
+        self.assertTrue(purpose_hits)
+        self.assertTrue(engine.evidence_is_answerable(purpose_query, purpose_hits))
         common_questions = {
             "ADVENT-AI operatöre nasıl destek olur?": "bilişsel yük",
             "MAIN bakım destek asistanı ne yapar?": "bakım adımlarını",
