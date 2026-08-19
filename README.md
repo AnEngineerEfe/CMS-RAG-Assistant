@@ -351,7 +351,9 @@ doğruluk üstünlüğü olarak genellenmemelidir.
 
 `mcp-swing-demo/`, RAG uygulamasından bağımsız bir Java 21 modülüdür. Yerel bir
 Swing iz ekranındaki hız, yön ve gemi tipi alanlarını resmî Java MCP SDK üzerinden
-okuyan ve değiştiren on kontrollü araç sunar. Operatör, model yazma yetkisini
+okuyan, değiştiren ve uygulama yaşam döngüsünü yöneten on üç kontrollü araç sunar.
+Codex köprüsü önceden açık Swing penceresine bağlanır ve ikinci pencere oluşturmaz.
+Operatör, model yazma yetkisini
 arayüzden kilitleyebilir; son 100 değişiklik kaynak bilgisiyle canlı tabloda izlenir. Gerçek sistem ya da şirket verisi
 kullanmaz; yapay zekâ–operatör arayüzü entegrasyonunu güvenli bir demonstrasyonla
 gösterir.
@@ -359,7 +361,7 @@ gösterir.
 ```powershell
 cd mcp-swing-demo
 .\mvnw.cmd clean verify
-java -jar target\mcp-swing-demo.jar
+java -jar target\mcp-swing-demo.jar --ui-only
 ```
 
 Kurulum, mimari, araç kataloğu ve MCP istemci ayarı için

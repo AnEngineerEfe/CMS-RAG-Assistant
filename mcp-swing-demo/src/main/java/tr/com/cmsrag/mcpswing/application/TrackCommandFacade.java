@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** Protokolden bağımsız komut yüzeyi; MCP adaptörü yalnızca bu sınıfa erişir. */
-public final class TrackCommandFacade {
+public final class TrackCommandFacade implements TrackCommands {
     private final TrackStateService service;
     public TrackCommandFacade(TrackStateService service) { this.service = service; }
     public Map<String, Object> getTrackState() { return toMap(service.getState()); }

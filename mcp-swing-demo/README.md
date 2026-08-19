@@ -14,6 +14,9 @@ demonstrasyondur. Gerçek sistem veya şirket verisi kullanmaz.
 
 | Araç | İşlev |
 |---|---|
+| `get_application_status` | Açık Swing uygulamasını ve süreç kimliğini denetler. |
+| `open_track_application` | Uygulama kapalıysa açar; açıksa ikinci pencere oluşturmaz. |
+| `close_track_application` | Açık uygulamayı kontrollü biçimde kapatır. |
 | `get_track_state` | Tüm iz durumunu okur. |
 | `get_write_policy` | Operatörün MCP yazma iznini okur. |
 | `get_change_history` | Son değişiklikleri kaynak ve zaman bilgisiyle okur. |
@@ -29,25 +32,30 @@ ekranda gösterir.
 
 ## Derleme ve çalıştırma
 
-Windows terminalinde:
+Windows terminalinde önce derleyin:
 
 ```powershell
 cd mcp-swing-demo
 .\mvnw.cmd clean verify
-java -jar target\mcp-swing-demo.jar
 ```
 
-Yalnız arayüzü açmak için:
+Track/Swing arayüzünü modelden önce elle açmak için:
 
 ```powershell
 java -jar target\mcp-swing-demo.jar --ui-only
 ```
 
-Yalnız STDIO MCP sunucusunu çalıştırmak için:
+Codex tarafından STDIO MCP köprüsü olarak çalıştırmak için:
 
 ```powershell
 java -jar target\mcp-swing-demo.jar --server-only
 ```
 
-MCP istemcisi sunucuyu `java -jar <tam-yol>\mcp-swing-demo.jar` komutuyla başlatmalıdır.
+Argümansız çalıştırma da STDIO MCP köprüsü kipidir. Köprü yeni pencere açmaz; mevcut
+Swing sürecini yerel loopback bağlantısından bulur. Bir `set_*` çağrısında uygulama
+kapalıysa sonuçta açık geri bildirim döndürür, tek Swing örneğini başlatır ve ilk
+komutu bu örneğe uygulayıp geri okur.
+
+MCP istemcisi sunucuyu `java -jar <tam-yol>\mcp-swing-demo.jar --server-only`
+komutuyla başlatmalıdır.
 STDOUT MCP protokolüne ayrıldığı için uygulama tanılama mesajlarını STDERR'a yazar.

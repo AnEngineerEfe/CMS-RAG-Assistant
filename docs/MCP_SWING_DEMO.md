@@ -10,28 +10,29 @@ ve genel amaçlı komut çalıştırma yeteneği içermez.
 ## Mimari
 
 ```text
-Model / MCP istemcisi
+Codex / MCP istemcisi
         │ STDIO · JSON-RPC
         ▼
-TrackMcpServer (infrastructure)
-        │ yalnız izinli komutlar
+TrackMcpServer (ayrı köprü süreci)
+        │ 127.0.0.1 · kimlik anahtarlı yerel IPC
         ▼
-TrackCommandFacade (application)
+TrackApplicationHost (tek açık Swing süreci)
         ▼
-TrackStateService (application)
-        ├── kaynaklı değişiklik geçmişi
-        ├── operatör MCP yazma kilidi
-        ▼
-TrackState + ShipType (domain)
-        ▲
-        │ Swing olayları ve durum bildirimleri
-TrackControlFrame (presentation)
+TrackCommandFacade → TrackStateService → TrackState
+                            ▲
+                            │ olay bildirimi
+                    TrackControlFrame
 ```
 
-MCP ile Swing aynı `TrackStateService` örneğini paylaşır. MCP aracı bir değeri
-değiştirdiğinde Swing bileşenleri Event Dispatch Thread üzerinde yenilenir. Operatör
-`Değerleri Uygula` düğmesine bastığında değişiklik aynı doğrulama katmanından geçer
-ve sonraki MCP `get` çağrısında görünür.
+MCP köprüsü artık kendi `TrackStateService` nesnesini veya kendi penceresini oluşturmaz.
+Açık Swing süreci tek durum otoritesidir. Köprü, geçici keşif kaydındaki rastgele
+kimlik anahtarıyla yalnız `127.0.0.1` adresine bağlanır ve izinli komutları o sürece
+iletir. Böylece Codex'ten önce açılmış ekran güncellenir; ikinci pencere oluşmaz.
+
+Bir yazma aracı çağrıldığında açık uygulama yoksa köprü bu durumu sonuçta bildirir,
+uygulamayı başlatır, bağlantıyı bekler, ilk komutu uygular ve durumu tekrar okuyarak
+değişikliği doğrular. Salt okuma çağrıları uygulamayı kendiliğinden açmaz. Uygulama
+yaşam döngüsü ayrıca açık araçlarla yönetilir.
 
 ## Veri sözleşmesi
 
@@ -48,6 +49,9 @@ Gemi tipi değerleri: `BELIRSIZ`, `FIRKATEYN`, `KORVET`, `MUHRIP`, `DENIZALTI`,
 
 | Araç | Girdi | Sonuç |
 |---|---|---|
+| `get_application_status` | Yok | Çalışma durumu, PID ve yerel port |
+| `open_track_application` | Yok | Tek örnekli/idempotent açma sonucu |
+| `close_track_application` | Yok | Kontrollü kapatma sonucu |
 | `get_track_state` | Yok | Üç alanın tamamı |
 | `get_write_policy` | Yok | MCP yazma izni ve politika durumu |
 | `get_change_history` | Yok | Son değişikliklerin kaynaklı audit listesi |
@@ -79,7 +83,6 @@ ilk çalıştırmada Maven 3.9.11'i indirir.
 ```powershell
 cd mcp-swing-demo
 .\mvnw.cmd clean verify
-java -jar target\mcp-swing-demo.jar
 ```
 
 Çalışma kipleri:
@@ -88,7 +91,7 @@ java -jar target\mcp-swing-demo.jar
 # Yalnız Swing ekranı
 java -jar target\mcp-swing-demo.jar --ui-only
 
-# Yalnız STDIO MCP sunucusu
+# Codex için STDIO MCP köprüsü (arayüz açmaz)
 java -jar target\mcp-swing-demo.jar --server-only
 ```
 
@@ -101,7 +104,8 @@ STDIO destekleyen bir MCP istemcisinde sunucu komutu aşağıdaki mantıkla tan�
   "command": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.8-hotspot\\bin\\java.exe",
   "args": [
     "-jar",
-    "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\mcp-swing-demo\\target\\mcp-swing-demo.jar"
+    "C:\\Users\\HP\\Desktop\\CMS-RAG-Assistant\\mcp-swing-demo\\target\\mcp-swing-demo.jar",
+    "--server-only"
   ]
 }
 ```
@@ -118,14 +122,18 @@ tanılama kayıtlarını STDERR'a yazar.
 2. Atomik üç alan güncellemesi ve dinleyici bildirimi.
 3. MCP biçimindeki girdilerin alan modeline dönüştürülmesi.
 4. Gerçek alt Java süreci üzerinden STDIO bağlantısı ve MCP başlangıç anlaşması.
-5. On aracın keşfi, `set_track_state` yazma ve `get_track_state` geri okuma.
+5. On üç aracın keşfi, `set_track_state` yazma ve `get_track_state` geri okuma.
 6. MCP değişikliğinin kaynaklı işlem geçmişinde görünmesi.
 7. Operatör kilidi kapalıyken MCP yazmasının reddedilmesi ve operatör yazmasının sürmesi.
 8. Şema dışı `361` derece yön çağrısının hata olarak reddedilmesi.
+9. Açık uygulamaya bağlanırken ikinci sürecin başlatılmaması.
+10. Uygulama yokken açık bildirim, otomatik açma, ilk komuta devam ve geri okuma.
+11. Tek örnek kilidi, yinelenen açma çağrısının idempotent olması ve kontrollü kapatma.
 
 ## Güvenlik sınırı
 
-- MCP sunucusu yalnız on sabit aracı sunar.
+- MCP sunucusu yalnız on üç sabit aracı sunar.
+- Süreçler-arası uç yalnız `127.0.0.1` üzerinde dinler ve 256 bit rastgele kimlik anahtarı ister.
 - Dosya sistemi, kabuk, veritabanı ve ağ aracı yoktur.
 - Girdiler kapalı JSON Schema ile doğrulanır; ek alanlara izin verilmez.
 - Model yazma yetkisi arayüzden anında kilitlenebilir; okuma yetkisi korunur.

@@ -6,8 +6,7 @@ import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.server.transport.StdioServerTransportProvider;
 import io.modelcontextprotocol.spec.McpSchema;
-import tr.com.cmsrag.mcpswing.application.TrackCommandFacade;
-import tr.com.cmsrag.mcpswing.application.TrackStateService;
+import tr.com.cmsrag.mcpswing.application.TrackApplicationCommands;
 import tr.com.cmsrag.mcpswing.domain.ShipType;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +16,8 @@ import java.util.function.Function;
 public final class TrackMcpServer {
     private static final Map<String, Object> EMPTY_SCHEMA = Map.of(
             "type", "object", "properties", Map.of(), "additionalProperties", false);
-    private final TrackCommandFacade commands;
-    public TrackMcpServer(TrackStateService service) { commands = new TrackCommandFacade(service); }
+    private final TrackApplicationCommands commands;
+    public TrackMcpServer(TrackApplicationCommands commands) { this.commands = commands; }
 
     public McpSyncServer start() {
         StdioServerTransportProvider transport = new StdioServerTransportProvider(McpJsonDefaults.getMapper());
@@ -27,12 +26,18 @@ public final class TrackMcpServer {
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(false).build())
                 .tools(toolSpecifications())
                 .build();
-        System.err.println("CMS Track MCP Server hazır: STDIO, 10 araç");
+        System.err.println("CMS Track MCP Server hazır: STDIO, 13 araç");
         return server;
     }
 
     private List<McpServerFeatures.SyncToolSpecification> toolSpecifications() {
         return List.of(
+                tool("get_application_status", "Açık Track/Swing uygulaması bulunup bulunmadığını kontrol eder.",
+                        EMPTY_SCHEMA, arguments -> commands.getApplicationStatus()),
+                tool("open_track_application", "Track/Swing uygulamasını yalnız açık değilse başlatır; ikinci pencere açmaz.",
+                        EMPTY_SCHEMA, arguments -> commands.openApplication()),
+                tool("close_track_application", "Açık Track/Swing uygulamasını kontrollü biçimde kapatır.",
+                        EMPTY_SCHEMA, arguments -> commands.closeApplication()),
                 tool("get_track_state", "Hız, yön ve gemi tipini birlikte okur.", EMPTY_SCHEMA,
                         arguments -> commands.getTrackState()),
                 tool("get_write_policy", "Operatörün MCP yazma iznini açık veya kilitli olarak okur.", EMPTY_SCHEMA,
@@ -41,20 +46,20 @@ public final class TrackMcpServer {
                         EMPTY_SCHEMA, arguments -> commands.getChangeHistory()),
                 tool("get_speed", "İzin mevcut hızını knot cinsinden okur.", EMPTY_SCHEMA,
                         arguments -> Map.of("speedKnots", commands.getTrackState().get("speedKnots"))),
-                tool("set_speed", "İzin hızını 0 ile 100 knot arasında günceller.",
+                tool("set_speed", "İzin hızını 0 ile 100 knot arasında günceller. Uygulama kapalıysa açar ve ilk komutu sürdürür.",
                         numberSchema("speedKnots", 0, 100, false),
                         arguments -> commands.setSpeed(arguments.get("speedKnots"))),
                 tool("get_heading", "İzin mevcut yönünü derece cinsinden okur.", EMPTY_SCHEMA,
                         arguments -> Map.of("headingDegrees", commands.getTrackState().get("headingDegrees"))),
-                tool("set_heading", "İzin yönünü 0 ile 360 derece arasında günceller.",
+                tool("set_heading", "İzin yönünü 0 ile 360 derece arasında günceller. Uygulama kapalıysa açar ve ilk komutu sürdürür.",
                         numberSchema("headingDegrees", 0, 360, true),
                         arguments -> commands.setHeading(arguments.get("headingDegrees"))),
                 tool("get_ship_type", "İzin seçili gemi tipini okur.", EMPTY_SCHEMA,
                         arguments -> Map.of("shipType", commands.getTrackState().get("shipType"),
                                 "shipTypeLabel", commands.getTrackState().get("shipTypeLabel"))),
-                tool("set_ship_type", "İzin gemi tipini kontrollü listeden seçer.", shipTypeSchema(),
+                tool("set_ship_type", "İzin gemi tipini kontrollü listeden seçer. Uygulama kapalıysa açar ve ilk komutu sürdürür.", shipTypeSchema(),
                         arguments -> commands.setShipType(arguments.get("shipType"))),
-                tool("set_track_state", "Hız, yön ve gemi tipini tek atomik işlemle günceller.", fullStateSchema(),
+                tool("set_track_state", "Hız, yön ve gemi tipini tek atomik işlemle günceller. Uygulama kapalıysa açar ve ilk komutu sürdürür.", fullStateSchema(),
                         arguments -> commands.setTrackState(arguments.get("speedKnots"),
                                 arguments.get("headingDegrees"), arguments.get("shipType")))
         );

@@ -243,9 +243,10 @@ sonuçları canlı sayaçlara karıştırılmadan ayrı referans sekmesinde gös
 
 `mcp-swing-demo` bağımsız bir Java modülüdür ve Python RAG çalışma zamanına
 bağlanmaz. Modül içinde bağımlılık yönü `presentation/infrastructure → application
-→ domain` şeklindedir. Swing ekranı ve MCP adaptörü aynı `TrackStateService`
-durumunu kullanır; böylece arayüzden ve model aracından gelen değişiklikler tek
-doğrulama hattından geçer. MCP STDIO aktarımı yalnız izinli get/set araçlarını
+→ domain` şeklindedir. Swing süreci tek `TrackStateService` otoritesidir; ayrı
+STDIO MCP köprüsü bu açık sürece kimlik doğrulamalı yerel loopback bağlantısıyla
+erişir. Böylece arayüzden ve model aracından gelen değişiklikler tek doğrulama
+hattından geçer ve önceden açılmış pencere korunur. MCP STDIO aktarımı yalnız izinli get/set ve yaşam döngüsü araçlarını
 açar; genel amaçlı kod, dosya, ağ veya kabuk erişimi sunmaz. Değişiklik kaynağı
 `OPERATOR` veya `MCP` olarak son 100 olaylık bellek içi audit listesine yazılır.
 Operatör arayüzündeki yazma kilidi modelin `set_*` araçlarını anında reddederken
